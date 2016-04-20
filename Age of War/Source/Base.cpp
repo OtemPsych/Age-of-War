@@ -55,7 +55,7 @@ void Base::spawnUnit()
 
 	sf::FloatRect bounds(getGlobalBounds());
 	sf::FloatRect charBounds(mUnits.back()->getGlobalBounds());
-	sf::Vector2f spawnPos(bounds.width / 2.f - charBounds.width / 2.f, bounds.height);
+	sf::Vector2f spawnPos(bounds.width / 2.f - charBounds.width / 2.f, bounds.height - charBounds.height);
 
 	mUnits.back()->setPosition(spawnPos);
 }

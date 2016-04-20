@@ -1,12 +1,12 @@
 #ifndef Unit_H_
 #define Unit_H_
 
-#include "Entity.h"
 #include "Animation.h"
 
 #include <PYRO/ResourceTypedefs.h>
 #include <PYRO/SoundPlayer.h>
 
+class Animation;
 class Unit : public Entity
 {
 	friend class BaseAI;

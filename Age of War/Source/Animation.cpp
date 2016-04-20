@@ -2,9 +2,10 @@
 
 #include <iostream>
 
-Animation::Animation(sf::Sprite& sprite, std::vector<sf::IntRect>& textureRects,
+Animation::Animation(Entity::Side side, sf::Sprite& sprite, std::vector<sf::IntRect>& textureRects,
 					 sf::Time duration, bool repeat)
-	: mSprite(sprite)
+	: mSide(side)
+	, mSprite(sprite)
 	, mTextureRects(textureRects)
 	, mCurrentRect(0)
 	, mTimePerRect(duration / static_cast<float>(textureRects.size()))
@@ -20,7 +21,13 @@ void Animation::update(sf::Time dt)
 	{
 		if (mCurrentRect < mTextureRects.size() - 1 || mRepeat)
 		{
-			mSprite.setTextureRect(mTextureRects[mCurrentRect]);
+			if (mSide == Entity::Side::Right) {
+				sf::IntRect rect(mTextureRects[mCurrentRect]);
+				mSprite.setTextureRect(sf::IntRect(rect.width, rect.top, -rect.width, rect.height));
+			} 
+			else
+				mSprite.setTextureRect(mTextureRects[mCurrentRect]);
+
 			mElapsedTime = sf::Time::Zero;
 
 			if (mRepeat)
