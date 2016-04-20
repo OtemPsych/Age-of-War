@@ -5,7 +5,7 @@
 namespace gui
 {
 	Bar::Bar(sf::FloatRect entityBounds, bool horizontal, const sf::Color& color)
-		: mShape(sf::Vector2f(entityBounds.width, 5.f * entityBounds.height / 100.f))
+		: mShape(sf::Vector2f(entityBounds.width, 0.055f * entityBounds.height))
 		, mOutline(mShape.getSize())
 	{
 		centerOrigin();
@@ -20,7 +20,7 @@ namespace gui
 		else
 		{
 			rotate(-90.f);
-			setPosition(-(entityBounds.width / 2.f) - mOutline.getOutlineThickness() - 5.f, 0.f);
+			setPosition(-(entityBounds.width / 2.f) - mOutline.getOutlineThickness() - 8.f, 0.f);
 		}
 	}
 

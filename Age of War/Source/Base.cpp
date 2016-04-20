@@ -75,7 +75,7 @@ void Base::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void Base::handleUnitSpawn(Unit::Type type)
 {
-	if (mGold >= mUnitData[type].cost && mSpawnBar.spawnNewUnit(type, mUnitData[type].spawn))
+	if (mGold >= mUnitData[type].cost && mSpawnBar.spawnNewUnit(gui::UnitQueue::UnitData(type, mUnitData[type].spawn)))
 	{
 		mGold -= mUnitData[type].cost;
 		updateGoldGUI();

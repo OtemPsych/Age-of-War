@@ -15,10 +15,11 @@ namespace gui
 
 	void SpawnBar::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
-		if (mSpawning)
+		if (mSpawning) 
+		{
 			Bar::draw(target, states);
-
-		target.draw(mUnitQueue, states.transform *= getTransform());
+			target.draw(mUnitQueue, states.transform *= getTransform());
+		}
 	}
 
 	bool SpawnBar::update(sf::Time dt)
@@ -28,32 +29,30 @@ namespace gui
 			{
 				mElapsedTime = sf::Time::Zero;
 				mSpawning = false;
+
 				return true;
 			}
 			else
 				Bar::update(mUnitSpawnTime.asMilliseconds(), mElapsedTime.asMilliseconds());
 		else if (!mUnitQueue.empty())
-		{
-			UnitQueue::UnitData data(mUnitQueue.getNextUnitData());
-			spawnNewUnit(data.type, data.spawn);
-		}
+			spawnNewUnit(std::move(mUnitQueue.getNextUnitData()));
 
 		return false;
 	}
 
-	bool SpawnBar::spawnNewUnit(Unit::Type type, sf::Time spawnTime)
+	bool SpawnBar::spawnNewUnit(const UnitQueue::UnitData& data)
 	{
 		if (!mSpawning)
 		{
-			mUnitType = type;
-			mUnitSpawnTime = spawnTime;
+			mUnitType = data.type;
+			mUnitSpawnTime = data.spawn;
 			mSpawning = true;
 
 			return true;
 		}
 		else if (!mUnitQueue.full())
 		{
-			mUnitQueue.push(UnitQueue::UnitData(type, spawnTime));
+			mUnitQueue.push(std::move(data));
 			return true;
 		}
 

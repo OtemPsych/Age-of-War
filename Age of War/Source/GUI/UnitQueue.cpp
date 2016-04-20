@@ -58,7 +58,7 @@ namespace gui
 
 	void UnitQueue::push(const UnitData& data)
 	{
-		mQueue.push(data);
+		mQueue.push(std::move(data));
 		update(Identifier::Fill);
 	}
 

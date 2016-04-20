@@ -24,7 +24,7 @@ namespace gui
 		SpawnBar(sf::FloatRect unitBounds, bool horizontal, const sf::Color& color);
 	public:
 		bool update(sf::Time dt);
-		bool spawnNewUnit(Unit::Type type, sf::Time spawnTime);
+		bool spawnNewUnit(const UnitQueue::UnitData& data);
 
 		inline Unit::Type getUnitTypeSpawning() const { return mUnitType; }
 	};
