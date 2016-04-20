@@ -2,6 +2,7 @@
 #define GameState_H_
 
 #include "BaseAI.h"
+#include "GlobalStructs.h"
 
 #include <PYRO/State.h>
 #include <PYRO/MusicPlayer.h>
@@ -14,7 +15,7 @@ private:
 	pyro::TextureHolder<Unit::Type>  mUnitTextures;
 	sf::Texture						 mBaseTexture;
 									 
-	std::vector<Unit::UnitData>		 mUnitData;
+	std::vector<gStruct::UnitData>	 mUnitData;
 	std::unique_ptr<Base>		     mLeftBase;
 	std::unique_ptr<BaseAI>		     mRightBase;
 								   	 

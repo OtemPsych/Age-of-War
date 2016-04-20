@@ -4,7 +4,7 @@
 
 GameState::GameState(pyro::StateStack& stack, sf::RenderWindow& window)
 	: State(stack, window)
-	, mUnitData(Unit::initializeUnitData())
+	, mUnitData(std::move(gStruct::initializeUnitData()))
 	, mLeftBase(nullptr)
 	, mRightBase(nullptr)
 	, mBackground(sf::Quads, 4)
@@ -50,7 +50,6 @@ void GameState::setupResources()
 	mBaseTexture.loadFromFile("Assets/Textures/Base.png");
 
 	mMusicPlayer.loadTheme(MusicID::Soundtrack, "Assets/Music/Soundtrack.wav");
-
 	mSoundPlayer.loadEffect(Unit::SoundID::MageAttack, "Assets/Sounds/MageAttack.wav");
 }
 
@@ -60,7 +59,6 @@ bool GameState::handleEvent(const sf::Event& event)
 		requestStateClear();
 
 	mLeftBase->handleEvent(event);
-	//mRightBase->handleEvent(event);
 
 	return true;
 }
@@ -72,9 +70,8 @@ bool GameState::update(sf::Time dt)
 		mLeftBase->attack(mRightBase->getFirstUnit());
 		mRightBase->attack(mLeftBase->getFirstUnit());
 	}
-	else 
-	{
-		mLeftBase->attack(dynamic_cast<Base*>(&(*mRightBase)));
+	else {
+		mLeftBase->attack(mRightBase.get());
 		mRightBase->attack(mLeftBase.get());
 	}
 

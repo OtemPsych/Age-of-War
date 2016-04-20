@@ -9,7 +9,6 @@
 #include <SFML/Window/Event.hpp>
 
 #include <list>
-#include <queue>
 
 class Base : public Entity
 {
@@ -24,7 +23,7 @@ private:
 
 	gui::SpawnBar						   mSpawnBar;
 protected:
-	std::vector<Unit::UnitData>&		   mUnitData;					   
+	std::vector<gStruct::UnitData>&		   mUnitData;					   
 	std::list<std::unique_ptr<Unit>>	   mUnits;
 
 	unsigned							   mGold;
@@ -39,7 +38,7 @@ protected:
 public:
 	Base(Side side, sf::IntRect worldBounds, const sf::Texture& baseTexture,
 		 const pyro::TextureHolder<Unit::Type>& textures,
-		 std::vector<Unit::UnitData>& data,
+		 std::vector<gStruct::UnitData>& data,
 		 pyro::SoundPlayer<Unit::SoundID>& soundPlayer);
 	virtual ~Base();
 public:

@@ -1,6 +1,7 @@
 #ifndef Entity_H_
 #define Entity_H_
 
+#include "GlobalStructs.h"
 #include "GUI/Bar.h"
 
 #include <SFML/System/Time.hpp>
@@ -12,22 +13,14 @@ public:
 	enum class Side { Left, Right };
 protected:
 	enum class Type { Base, Unit };
-private:
-	struct Health
-	{
-		const unsigned original;
-		unsigned	   current;
-
-		explicit Health(unsigned health);
-	};
 protected:
-	sf::Sprite mSprite;
-	Side	   mSide;
+	sf::Sprite					mSprite;
+	Side						mSide;
 private:
-	Health	   mHealth;
-	gui::Bar   mHealthBar;
+	gStruct::Resource<unsigned> mHealth;
+	gui::Bar					mHealthBar;
 
-	bool	   mIsDestroyable;
+	bool						mIsDestroyable;
 
 protected:
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -37,7 +30,7 @@ public:
 	virtual ~Entity();
 public:
 	void reduceHealth(unsigned damage);
-	virtual void update(sf::Time dt);
+	virtual void update(sf::Time dt) = 0;
 
 	sf::FloatRect getGlobalBounds() const;
 	inline bool isDestroyable() const { return mIsDestroyable; }

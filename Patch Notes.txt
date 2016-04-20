@@ -1,12 +1,16 @@
-v0.4.1 | 20/04/2016
+v0.4.1 | 20/04/2016, 21/04/2016
 
   Updates
- 
+
+    - Overall optimizations
+
     - Decreased chance of application-crashing errors
 
   Bug Fixes
 
     ~ Fixed a bug where the Destroyer one-shotted everything
+
+    ~ Fixed a bug where the enemy units' health bar appeared inversed
 
 
 

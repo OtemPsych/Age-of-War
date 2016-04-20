@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
-Mage::Mage(Side side, UnitData& data, const pyro::TextureHolder<Unit::Type>& textures,
+Mage::Mage(Side side, gStruct::UnitData& data, const pyro::TextureHolder<Unit::Type>& textures,
 		   pyro::SoundPlayer<SoundID>& soundPlayer)
 	: Unit(side, data, textures, soundPlayer)
 {

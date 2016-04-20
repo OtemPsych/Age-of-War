@@ -15,7 +15,7 @@ namespace gui
 		mOutline.setOutlineColor(sf::Color::White);
 		mOutline.setOutlineThickness(0.015f * entityBounds.width);
 
-		if (horizontal)
+		if (horizontal) 
 			setPosition(0.f, -entityBounds.height / 2.f - mOutline.getOutlineThickness() - 10.f);
 		else
 		{

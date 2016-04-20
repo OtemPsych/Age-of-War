@@ -15,7 +15,7 @@ private:
 	void spawnSphere();
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 public:
-	Mage(Side side, UnitData& data, const pyro::TextureHolder<Unit::Type>& textures,
+	Mage(Side side, gStruct::UnitData& data, const pyro::TextureHolder<Unit::Type>& textures,
 		 pyro::SoundPlayer<SoundID>& soundPlayer);
 public:
 	virtual void attack(Entity& entity);
