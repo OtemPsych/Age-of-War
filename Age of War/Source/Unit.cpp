@@ -35,24 +35,23 @@ bool Unit::canAttackTarget(Entity& entity)
 {
 	if (mAttackRate.current == mAttackRate.original)
 	{
-		float unitStartPoint, entityStartPoint;
-
-	/*	unitStartPoint = getPosition().x + getGlobalBounds().width / 2.f;
-		entityStartPoint = entity.getPosition().x - entity.getGlobalBounds().width / 2.f;*/
 		if (mSide == Side::Left)
 		{
-			unitStartPoint = getPosition().x + getGlobalBounds().width / 2.f;
-			entityStartPoint = entity.getPosition().x - entity.getGlobalBounds().width / 2.f;
+			float unitStartPoint = getPosition().x + getGlobalBounds().width / 2.f;
+			float entityStartPoint = entity.getPosition().x - entity.getGlobalBounds().width / 2.f;
+
+			if (unitStartPoint + mAttackRange >= entityStartPoint)
+				return true;
 		}
 		else {
-			unitStartPoint = getPosition().x - getGlobalBounds().width / 2.f;
-			entityStartPoint = entity.getPosition().x + entity.getGlobalBounds().width / 2.f;
-		}
+			float unitStartPoint = getPosition().x - getGlobalBounds().width / 2.f;
+			float entityStartPoint = entity.getPosition().x + entity.getGlobalBounds().width / 2.f;
 
-		if (abs(entityStartPoint - unitStartPoint) <= mAttackRange)
-			return true;
-		else
-			mMoving = true;
+			if (unitStartPoint - mAttackRange <= entityStartPoint)
+				return true;
+		}
+			
+		mMoving = true;
 	}
 
 	return false;
@@ -111,9 +110,9 @@ std::vector<Unit::UnitData> Unit::initializeUnitData()
 	data[Unit::Mage].attackRects.push_back(sf::IntRect(380, 5, 121, 123));
 
 	data[Unit::Knight].type   = Unit::Knight;
-	data[Unit::Knight].health = 180;
+	data[Unit::Knight].health = 280;
 	data[Unit::Knight].damage = 45;
-	data[Unit::Knight].range  = 65.f;
+	data[Unit::Knight].range  = 18.f;
 	data[Unit::Knight].rate   = sf::seconds(0.75f);
 	data[Unit::Knight].speed  = 65.f;
 	data[Unit::Knight].spawn  = sf::seconds(3.5f);
@@ -128,8 +127,8 @@ std::vector<Unit::UnitData> Unit::initializeUnitData()
 
 	data[Unit::Destroyer].type   = Unit::Destroyer;
 	data[Unit::Destroyer].health = 450;
-	data[Unit::Destroyer].damage = 85;
-	data[Unit::Destroyer].range  = 5.f;
+	data[Unit::Destroyer].damage = 75;
+	data[Unit::Destroyer].range  = 25.f;
 	data[Unit::Destroyer].rate   = sf::seconds(0.75f);
 	data[Unit::Destroyer].speed  = 50.f;
 	data[Unit::Destroyer].spawn  = sf::seconds(5.f);
@@ -137,6 +136,7 @@ std::vector<Unit::UnitData> Unit::initializeUnitData()
 	data[Unit::Destroyer].scale  = 0.9f;
 	data[Unit::Destroyer].walkRects.push_back(sf::IntRect(4, 15, 211, 169));
 	data[Unit::Destroyer].walkRects.push_back(sf::IntRect(287, 10, 207, 167));
+	data[Unit::Destroyer].attackRects.push_back(sf::IntRect(874, 0, 172, 157));
 	data[Unit::Destroyer].attackRects.push_back(sf::IntRect(874, 0, 172, 157));
 
 	for (unsigned i = 0; i < data.size(); i++)

@@ -15,12 +15,16 @@ namespace gui
 		setupIdentifiers(spawnBarBounds);
 	}
 
-	void UnitQueue::update()
+	void UnitQueue::update(const Identifier& id)
 	{
-		for (unsigned i = 0; i < mIdentifiers.size(); i++)
+		if (id == Identifier::Fill) {
+			unsigned short idPos = mQueue.size() - 1;
+			mIdentifiers[idPos].setFillColor(sf::Color(179, 89, 0));
+		} 
+		else if (!mQueue.empty())
 		{
-			sf::Color newColor = i < mQueue.size() ? sf::Color(179, 89, 0) : sf::Color(51, 51, 51);
-			mIdentifiers[i].setFillColor(newColor);
+			unsigned short idPos = mQueue.size();
+			mIdentifiers[idPos].setFillColor(sf::Color(51, 51, 51));
 		}
 	}
 
@@ -33,10 +37,10 @@ namespace gui
 		for (size_t i = 0; i < mIdentifiers.size(); i++)
 		{
 			mIdentifiers[i].setSize(size);
-
 			mIdentifiers[i].setPosition(sf::Vector2f((size.x + margin) * i - margin * mIdentifiers.size(),
-													 -margin - size.y));
+													 -size.y * 2 - thickness));
 
+			mIdentifiers[i].setFillColor(sf::Color(51, 51, 51));
 			mIdentifiers[i].setOutlineThickness(thickness);
 			mIdentifiers[i].setOutlineColor(sf::Color::White);
 		}
@@ -55,14 +59,14 @@ namespace gui
 	void UnitQueue::push(const UnitData& data)
 	{
 		mQueue.push(data);
-		update();
+		update(Identifier::Fill);
 	}
 
 	UnitQueue::UnitData UnitQueue::getNextUnitData()
 	{
 		UnitData data(mQueue.front());
 		mQueue.pop();
-		update();
+		update(Identifier::Empty);
 
 		return data;
 	}

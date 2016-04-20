@@ -102,12 +102,15 @@ void Base::attack(std::unique_ptr<Unit>& otherUnit)
 		unit->attack(*otherUnit);
 		if (otherUnit->isDestroyable())
 		{
-			unit->stopAttacking();
 			mGold += otherUnit->getRewardMoney();
 			updateGoldGUI();
-			return;
+			break;
 		}
 	}
+
+	if (otherUnit->isDestroyable())
+		for (auto& unit : mUnits)
+			unit->stopAttacking();
 }
 
 void Base::attack(Base* otherBase)
@@ -117,7 +120,7 @@ void Base::attack(Base* otherBase)
 		unit->attack(*otherBase);
 		if (otherBase->isDestroyable())
 		{
-
+			
 		}
 	}
 }

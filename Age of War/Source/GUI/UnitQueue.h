@@ -12,6 +12,8 @@ namespace gui
 {
 	class UnitQueue : public sf::Transformable, public sf::Drawable
 	{
+	private:
+		enum class Identifier { Fill, Empty };
 	public:
 		struct UnitData
 		{
@@ -25,7 +27,7 @@ namespace gui
 		std::array<sf::RectangleShape, 5> mIdentifiers;
 
 	private:
-		void update();
+		void update(const Identifier& id);
 		void setupIdentifiers(sf::FloatRect spawnBarBounds);
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 	public:

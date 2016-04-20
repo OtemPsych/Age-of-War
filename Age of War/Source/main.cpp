@@ -7,7 +7,7 @@ int main()
 	srand(static_cast<unsigned>(time(0)));
 
 	pyro::Application app(sf::VideoMode::getDesktopMode(), "Age of War",
-						  sf::Style::Fullscreen, sf::ContextSettings(0, 0, 8));
+						  sf::Style::Fullscreen);
 	app.setClearScreen(true);
 	app.setFPS(144);
 
