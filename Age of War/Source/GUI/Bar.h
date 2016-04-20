@@ -11,6 +11,8 @@ namespace gui
 		sf::RectangleShape mShape;
 		sf::RectangleShape mOutline;
 
+	private:
+		void centerOrigin();
 	protected:
 		sf::FloatRect getGlobalBounds() const;
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;

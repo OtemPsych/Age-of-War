@@ -34,14 +34,12 @@ namespace gui
 		{
 			mIdentifiers[i].setSize(size);
 
-			mIdentifiers[i].setPosition(sf::Vector2f((size.x + margin) * i - margin * mIdentifiers.size() - size.x / mIdentifiers.size(),
+			mIdentifiers[i].setPosition(sf::Vector2f((size.x + margin) * i - margin * mIdentifiers.size(),
 													 -margin - size.y));
 
 			mIdentifiers[i].setOutlineThickness(thickness);
 			mIdentifiers[i].setOutlineColor(sf::Color::White);
 		}
-
-		move(spawnBarBounds.width / 2.f, 0.f);
 	}
 
 	void UnitQueue::draw(sf::RenderTarget& target, sf::RenderStates states) const

@@ -17,8 +17,11 @@ Entity::Entity(Side side, Type type, unsigned health,
 	, mHealthBar(mSprite.getGlobalBounds(), type == Type::Unit, side == Side::Left ? sf::Color(0, 230, 0) : sf::Color(179, 0, 0))
 	, mIsDestroyable(false)
 {
-	if (side == Side::Right)
-		mHealthBar.move(getGlobalBounds().width + 20.f, 0.f);
+	sf::FloatRect lBounds(mSprite.getLocalBounds());
+	mSprite.setOrigin(lBounds.width / 2.f, lBounds.height / 2.f);
+
+	if (mSide == Side::Right)
+		scale(-1.f, 1.f);
 }
 
 Entity::~Entity()
@@ -52,8 +55,10 @@ void Entity::update(sf::Time dt)
 
 sf::FloatRect Entity::getGlobalBounds() const
 {
-	sf::FloatRect entityBounds(mSprite.getGlobalBounds());
-	sf::Vector2f pos(getPosition());
+	//sf::FloatRect entityBounds(getTransform().transformRect(mSprite.getGlobalBounds()));
+	//sf::Vector2f pos(getPosition());
 
-	return sf::FloatRect(pos.x, pos.y, entityBounds.width, entityBounds.height);
+	//return sf::FloatRect(pos.x, pos.y, entityBounds.width, entityBounds.height);
+
+	return getTransform().transformRect(mSprite.getGlobalBounds());
 }

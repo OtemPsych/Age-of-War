@@ -53,7 +53,7 @@ void Mage::attack(Entity& entity)
 
 	for (unsigned i = 0; i < mSpheres.size(); i++)
 	{
-		if (entity.getGlobalBounds().contains(mSpheres[i][0].position))
+		if (entity.getGlobalBounds().contains(getTransform().transformPoint(mSpheres[i][0].position)))
 		{
 			entity.reduceHealth(mDamage);
 			mSpheres.erase(mSpheres.begin() + i);

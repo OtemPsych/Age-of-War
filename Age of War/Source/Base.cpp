@@ -14,9 +14,10 @@ Base::Base(Side side, sf::IntRect worldBounds, const sf::Texture& baseTexture,
 	, mGold(200)
 {
 	if (side == Side::Left)
-		setPosition(20.f, 0.645f * worldBounds.height);
+		setPosition(getGlobalBounds().width / 2.f + 20.f, 0.75f * worldBounds.height);
 	else {
-		setPosition(worldBounds.width - getGlobalBounds().width - 20.f, 0.645f * worldBounds.height);
+		setPosition(worldBounds.width - getGlobalBounds().width / 2.f - 20.f, 0.75f * worldBounds.height);
+		mSpawnBar.scale(-1.f, 1.f);
 	}
 
 	mGoldCoinTexture.loadFromFile("Assets/Textures/GoldCoin.png");
@@ -51,18 +52,17 @@ void Base::spawnUnit()
 	if (type == Unit::Type::Mage)
 		mUnits.emplace_back(new Mage(mSide, mUnitData[type], mTextureHolder, mSoundPlayer));
 	else
-		mUnits.emplace_back(new Mage(mSide, mUnitData[type], mTextureHolder, mSoundPlayer));
+		mUnits.emplace_back(new Unit(mSide, mUnitData[type], mTextureHolder, mSoundPlayer));
 
-	sf::FloatRect bounds(getGlobalBounds());
-	sf::FloatRect charBounds(mUnits.back()->getGlobalBounds());
-	sf::Vector2f spawnPos(bounds.width / 2.f - charBounds.width / 2.f, bounds.height);
-
-	mUnits.back()->setPosition(spawnPos);
+	mUnits.back()->setPosition(getPosition().x, getPosition().y + getGlobalBounds().height / 2.f - mUnits.back()->getGlobalBounds().height / 2.f);
 }
 
 void Base::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	Entity::draw(target, states);
+
+	for (const auto& unit : mUnits)
+		target.draw(*unit, states);
 
 	if (mSide == Side::Left)
 	{
@@ -70,12 +70,7 @@ void Base::draw(sf::RenderTarget& target, sf::RenderStates states) const
 		target.draw(mGoldText, states.transform * mGoldCoinSprite.getTransform());
 	}
 
-	states.transform *= getTransform();
-
-	target.draw(mSpawnBar, states);
-
-	for (const auto& unit : mUnits)
-		target.draw(*unit, states);
+	target.draw(mSpawnBar, states.transform *= getTransform());
 }
 
 void Base::handleUnitSpawn(Unit::Type type)

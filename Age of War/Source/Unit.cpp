@@ -1,4 +1,5 @@
 #include "Unit.h"
+#include "Base.h"
 
 #include <PYRO/Math.h>
 
@@ -36,14 +37,16 @@ bool Unit::canAttackTarget(Entity& entity)
 	{
 		float unitStartPoint, entityStartPoint;
 
+	/*	unitStartPoint = getPosition().x + getGlobalBounds().width / 2.f;
+		entityStartPoint = entity.getPosition().x - entity.getGlobalBounds().width / 2.f;*/
 		if (mSide == Side::Left)
 		{
-			unitStartPoint = getPosition().x + getGlobalBounds().width;
-			entityStartPoint = entity.getPosition().x - entity.getGlobalBounds().width;
+			unitStartPoint = getPosition().x + getGlobalBounds().width / 2.f;
+			entityStartPoint = entity.getPosition().x - entity.getGlobalBounds().width / 2.f;
 		}
 		else {
-			unitStartPoint = getPosition().x - getGlobalBounds().width;
-			entityStartPoint = entity.getPosition().x + entity.getGlobalBounds().width;
+			unitStartPoint = getPosition().x - getGlobalBounds().width / 2.f;
+			entityStartPoint = entity.getPosition().x + entity.getGlobalBounds().width / 2.f;
 		}
 
 		if (abs(entityStartPoint - unitStartPoint) <= mAttackRange)
@@ -57,16 +60,15 @@ bool Unit::canAttackTarget(Entity& entity)
 
 void Unit::attack(Entity& entity)
 {
-	if (!mAttacking && canAttackTarget(entity))
-		mAttacking = true;
+	mAttacking = canAttackTarget(entity);
 
 	if (!mAttackAnimation.isAnimationOngoing())
 	{
 		entity.reduceHealth(mDamage);
 		mAttackRate.current = sf::Time::Zero;
 		mAttackAnimation.restart();
-		if (entity.isDestroyable())
-			mAttacking = false;
+		//if (entity.isDestroyable())
+		//	mAttacking = false;
 	}
 }
 
@@ -81,7 +83,10 @@ void Unit::update(sf::Time dt)
 	if (!mAttacking && mMoving)
 	{
 		mWalkingAnimation.update(dt);
-		move(mSpeed * dt.asSeconds(), 0.f);
+		if (mSide == Side::Left)
+			move(mSpeed * dt.asSeconds(), 0.f);
+		else
+			move(-(mSpeed * dt.asSeconds()), 0.f);
 	}
 	else if (mAttacking)
 		mAttackAnimation.update(dt);

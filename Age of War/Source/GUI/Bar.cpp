@@ -8,23 +8,33 @@ namespace gui
 		: mShape(sf::Vector2f(entityBounds.width, 5.f * entityBounds.height / 100.f))
 		, mOutline(mShape.getSize())
 	{
+		centerOrigin();
+
 		mShape.setFillColor(color);
 		mOutline.setFillColor(sf::Color(51, 51, 51));
 		mOutline.setOutlineColor(sf::Color::White);
 		mOutline.setOutlineThickness(0.015f * entityBounds.width);
 
 		if (horizontal)
-			setPosition(0.f, -mOutline.getOutlineThickness() - 20.f);
+			setPosition(0.f, -entityBounds.height / 2.f - mOutline.getOutlineThickness() - 10.f);
 		else
 		{
 			rotate(-90.f);
-			setPosition(0.f - mShape.getSize().y - mOutline.getOutlineThickness() - 2.f,
-						entityBounds.height - mOutline.getOutlineThickness() - 20.f);
+			setPosition(-(entityBounds.width / 2.f) - mOutline.getOutlineThickness() - 5.f, 0.f);
 		}
 	}
 
 	Bar::~Bar()
 	{
+	}
+
+	void Bar::centerOrigin()
+	{
+		sf::FloatRect shapeLBounds(mShape.getLocalBounds());
+		mShape.setOrigin(shapeLBounds.width / 2.f, shapeLBounds.height / 2.f);
+
+		sf::FloatRect outlineLBounds(mOutline.getLocalBounds());
+		mOutline.setOrigin(outlineLBounds.width / 2.f, outlineLBounds.height / 2.f);
 	}
 
 	sf::FloatRect Bar::getGlobalBounds() const
