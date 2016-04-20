@@ -67,11 +67,7 @@ void Mage::update(sf::Time dt)
 		for (unsigned i = 0; i < sphere.getVertexCount(); i++)
 		{
 			sf::Vector2f currPos(sphere[i].position);
-			sf::Vector2f velocity(700.f * dt.asSeconds(), 0.f);
-			if (mSide == Side::Left)
-				sphere[i].position += velocity;
-			else
-				sphere[i].position -= velocity;
+			sphere[i].position += sf::Vector2f(700.f * dt.asSeconds(), 0.f);
 		}
 
 	Unit::update(dt);

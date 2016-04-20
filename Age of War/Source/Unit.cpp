@@ -19,8 +19,8 @@ Unit::Unit(Side side, UnitData& data, const pyro::TextureHolder<Unit::Type>& tex
 	, mReward(125u * data.cost / 100u)
 	, mMoving(true)
 	, mAttacking(false)
-	, mWalkingAnimation(mSide, mSprite, data.walkRects, sf::seconds(0.75f), true)
-	, mAttackAnimation(mSide, mSprite, data.attackRects, data.rate, false)
+	, mWalkingAnimation(mSprite, data.walkRects, sf::seconds(0.75f), true)
+	, mAttackAnimation(mSprite, data.attackRects, data.rate, false)
 	, mSoundPlayer(soundPlayer)
 {
 	scale(data.scale, data.scale);
@@ -81,10 +81,7 @@ void Unit::update(sf::Time dt)
 	if (!mAttacking && mMoving)
 	{
 		mWalkingAnimation.update(dt);
-		if (mSide == Side::Left)
-			move(mSpeed * dt.asSeconds(), 0.f);
-		else
-			move(-(mSpeed * dt.asSeconds()), 0.f);
+		move(mSpeed * dt.asSeconds(), 0.f);
 	}
 	else if (mAttacking)
 		mAttackAnimation.update(dt);
