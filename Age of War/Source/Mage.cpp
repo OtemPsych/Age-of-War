@@ -39,10 +39,7 @@ void Mage::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void Mage::attack(Entity& entity)
 {
-	if (canAttackTarget(entity))
-		mAttacking = true;
-	else
-		mAttacking = false;
+	mAttacking = canAttackTarget(entity);
 
 	if (!mAttackAnimation.isAnimationOngoing())
 	{

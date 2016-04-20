@@ -10,6 +10,6 @@ BaseAI::BaseAI(Side side, sf::IntRect worldBounds, const sf::Texture& baseTextur
 
 void BaseAI::update(sf::Time dt)
 {
-	handleUnitSpawn(static_cast<Unit::Type>(rand() % (Unit::Type::TypeCount - 1)));
+	handleUnitSpawn(Unit::Type::Knight);
 	Base::update(dt);
 }

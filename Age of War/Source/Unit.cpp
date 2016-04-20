@@ -60,15 +60,14 @@ bool Unit::canAttackTarget(Entity& entity)
 
 void Unit::attack(Entity& entity)
 {
-	mAttacking = canAttackTarget(entity);
+	if (!mAttacking && canAttackTarget(entity))
+		mAttacking = true;
 
 	if (!mAttackAnimation.isAnimationOngoing())
 	{
 		entity.reduceHealth(mDamage);
 		mAttackRate.current = sf::Time::Zero;
 		mAttackAnimation.restart();
-		//if (entity.isDestroyable())
-		//	mAttacking = false;
 	}
 }
 
@@ -114,7 +113,7 @@ std::vector<Unit::UnitData> Unit::initializeUnitData()
 	data[Unit::Knight].type   = Unit::Knight;
 	data[Unit::Knight].health = 180;
 	data[Unit::Knight].damage = 45;
-	data[Unit::Knight].range  = 5.f;
+	data[Unit::Knight].range  = 65.f;
 	data[Unit::Knight].rate   = sf::seconds(0.75f);
 	data[Unit::Knight].speed  = 65.f;
 	data[Unit::Knight].spawn  = sf::seconds(3.5f);
@@ -135,7 +134,7 @@ std::vector<Unit::UnitData> Unit::initializeUnitData()
 	data[Unit::Destroyer].speed  = 50.f;
 	data[Unit::Destroyer].spawn  = sf::seconds(5.f);
 	data[Unit::Destroyer].cost   = 200;
-	data[Unit::Destroyer].scale  = 1.f;
+	data[Unit::Destroyer].scale  = 0.9f;
 	data[Unit::Destroyer].walkRects.push_back(sf::IntRect(4, 15, 211, 169));
 	data[Unit::Destroyer].walkRects.push_back(sf::IntRect(287, 10, 207, 167));
 	data[Unit::Destroyer].attackRects.push_back(sf::IntRect(874, 0, 172, 157));

@@ -102,6 +102,7 @@ void Base::attack(std::unique_ptr<Unit>& otherUnit)
 		unit->attack(*otherUnit);
 		if (otherUnit->isDestroyable())
 		{
+			unit->stopAttacking();
 			mGold += otherUnit->getRewardMoney();
 			updateGoldGUI();
 			return;

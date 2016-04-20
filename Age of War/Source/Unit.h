@@ -63,6 +63,7 @@ public:
 	virtual void update(sf::Time dt);
 
 	inline void startMovement(bool state) { mMoving = state; }
+	inline void stopAttacking() { mAttacking = false; }
 	inline unsigned getRewardMoney() const { return mReward; }
 
 	static std::vector<UnitData> initializeUnitData();
