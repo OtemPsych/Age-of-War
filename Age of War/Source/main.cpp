@@ -1,4 +1,7 @@
 #include "GameState.h"
+#include "MenuState.h"
+#include "MultiplayerConnectState.h"
+#include "MultiplayerGameState.h"
 
 #include <PYRO/Application.h>
 
@@ -6,13 +9,14 @@ int main()
 {
 	srand(static_cast<unsigned>(time(0)));
 
-	pyro::Application app(sf::VideoMode::getDesktopMode(), "Age of War",
-						  sf::Style::Fullscreen);
-	app.setClearScreen(true);
+	pyro::Application app(sf::VideoMode(1280, 720), "Age of War",
+						  sf::Style::Titlebar | sf::Style::Close);
 	app.setFPS(144);
-
+	app.registerState<MenuState>(pyro::StateID::Menu);
+	app.registerState<MultiplayerConnectState>(pyro::StateID::MultiplayerConnect);
+	app.registerState<MultiplayerGameState>(pyro::StateID::Multiplayer);
 	app.registerState<GameState>(pyro::StateID::Game);
-	app.pushState(pyro::StateID::Game);
+	app.pushState(pyro::StateID::Menu);
 	app.run();
 
 	return 0;

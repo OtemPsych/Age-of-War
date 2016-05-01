@@ -1,3 +1,29 @@
+v0.5.1a | 01/05/2016
+
+  Updates
+
+    - A unit's gui overlay changes color to indicate if the player has sufficient gold to spawn that unit
+
+
+
+v0.5.1 | 30/04/2016
+
+  Updates
+
+    - Various optimizations were put in place for the text and gui
+
+
+
+v0.5.0 | 26/04/2016
+
+  Features
+
+    * Added a Menu Screen
+ 
+    * Added Multiplayer
+
+
+
 v0.4.1 | 20/04/2016, 21/04/2016
 
   Updates

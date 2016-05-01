@@ -13,8 +13,7 @@ void Mage::spawnSphere()
 	const float PI = 3.141592654f;
 	const float radius = 35.f;
 
-	sf::Vector2f pos(getPosition());
-	sf::Vector2f center(getGlobalBounds().width * 2, 15.f);
+	sf::Vector2f center(15.f, -15.f);
 
 	mSpheres.push_back(sf::VertexArray(sf::TrianglesFan, 32));
 	mSpheres.back()[0].position = center;

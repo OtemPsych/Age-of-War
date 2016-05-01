@@ -4,7 +4,7 @@
 #include <PYRO/Math.h>
 
 Unit::Unit(Side side, gStruct::UnitData& data, const pyro::TextureHolder<Unit::Type>& textureHolder,
-		   pyro::SoundPlayer<SoundID>& soundPlayer)
+	       pyro::SoundPlayer<SoundID>& soundPlayer)
 	: Entity(side, Entity::Type::Unit, data.health, textureHolder.get(static_cast<Unit::Type>(data.type)),
 			 data.walkRects[0])
 	, mType(static_cast<Unit::Type>(data.type))

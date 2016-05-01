@@ -10,6 +10,7 @@ Base::Base(Side side, sf::IntRect worldBounds, const sf::Texture& baseTexture,
 	, mTextureHolder(textures)
 	, mSoundPlayer(soundPlayer)
 	, mSpawnBar(getGlobalBounds(), true, sf::Color(153, 77, 0))
+	, mUnitTypeToSpawn(-1)
 	, mUnitData(data)
 	, mGold(200)
 {
@@ -19,31 +20,10 @@ Base::Base(Side side, sf::IntRect worldBounds, const sf::Texture& baseTexture,
 		setPosition(worldBounds.width - getGlobalBounds().width / 2.f - 20.f, 0.75f * worldBounds.height);
 		mSpawnBar.scale(-1.f, 1.f);
 	}
-
-	mGoldCoinTexture.loadFromFile("Assets/Textures/GoldCoin.png");
-	mGoldCoinSprite.setTexture(mGoldCoinTexture);
-	mGoldCoinSprite.setPosition(10.f, 10.f);
-
-	mGoldFont.loadFromFile("Assets/Fonts/Gold.ttf");
-	mGoldText.setFont(mGoldFont);
-	mGoldText.setCharacterSize(45);
-	mGoldText.setColor(sf::Color::Black);
-	mGoldText.setString(std::to_string(mGold));
-	mGoldText.centerOrigin();
-	mGoldText.setPosition(mGoldCoinSprite.getGlobalBounds().width + mGoldText.getGlobalBounds().width / 2.f + 15.f,
-						  mGoldCoinSprite.getGlobalBounds().height / 2.f);
 }
 
 Base::~Base()
 {
-}
-
-void Base::updateGoldGUI()
-{
-	mGoldText.setString(std::to_string(mGold));
-	mGoldText.centerOrigin();
-	mGoldText.setPosition(mGoldCoinSprite.getGlobalBounds().width + mGoldText.getGlobalBounds().width / 2.f + 15.f,
-						  mGoldText.getPosition().y);
 }
 
 void Base::spawnUnit()
@@ -64,12 +44,6 @@ void Base::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	for (const auto& unit : mUnits)
 		target.draw(*unit, states);
 
-	if (mSide == Side::Left)
-	{
-		target.draw(mGoldCoinSprite, states);
-		target.draw(mGoldText, states.transform * mGoldCoinSprite.getTransform());
-	}
-
 	target.draw(mSpawnBar, states.transform *= getTransform());
 }
 
@@ -77,33 +51,19 @@ void Base::handleUnitSpawn(Unit::Type type)
 {
 	if (mGold >= mUnitData[type].cost && mSpawnBar.spawnNewUnit(gui::UnitQueue::UnitData(type, mUnitData[type].spawn)))
 	{
-		mGold -= mUnitData[type].cost;
-		updateGoldGUI();
+		modifyGold(-mUnitData[type].cost);
+		mUnitTypeToSpawn = static_cast<sf::Int16>(type);
 	}
 }
 
-void Base::handleEvent(const sf::Event& event)
-{
-	if (event.type == sf::Event::KeyPressed)
-	{
-		if (event.key.code == sf::Keyboard::Num1)
-			handleUnitSpawn(Unit::Type::Mage);
-		else if (event.key.code == sf::Keyboard::Num2)
-			handleUnitSpawn(Unit::Type::Knight);
-		else if (event.key.code == sf::Keyboard::Num3)
-			handleUnitSpawn(Unit::Type::Destroyer);
-	}
-}
-
-void Base::attack(std::unique_ptr<Unit>& otherUnit)
+void Base::attack(std::shared_ptr<Unit>& otherUnit)
 {
 	for (auto& unit : mUnits)
 	{
 		unit->attack(*otherUnit);
 		if (otherUnit->isDestroyable())
 		{
-			mGold += otherUnit->getRewardMoney();
-			updateGoldGUI();
+			modifyGold(otherUnit->getRewardMoney());
 			break;
 		}
 	}
@@ -143,4 +103,31 @@ void Base::update(sf::Time dt)
 
 	if (!mUnits.empty() && mUnits.front()->isDestroyable())
 		mUnits.pop_front();
+}
+
+void Base::modifyGold(int amount)
+{
+	mGold += amount;
+}
+
+sf::Packet& operator<<(sf::Packet& packet, Base& base)
+{
+	if (base.mUnitTypeToSpawn > -1) 
+	{
+		assert(packet << base.mUnitTypeToSpawn);
+		base.mUnitTypeToSpawn = -1;
+	}
+
+	return packet;
+}
+
+sf::Packet& operator>>(sf::Packet& packet, Base& base)
+{
+	if (!packet.endOfPacket()) 
+	{
+		assert(packet >> base.mUnitTypeToSpawn);
+		base.handleUnitSpawn(static_cast<Unit::Type>(base.mUnitTypeToSpawn));
+	}
+
+	return packet;
 }

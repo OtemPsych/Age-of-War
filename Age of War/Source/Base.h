@@ -6,31 +6,27 @@
 
 #include <PYRO/Text.h>
 
+#include <SFML/Network/Packet.hpp>
 #include <SFML/Window/Event.hpp>
 
 #include <list>
+#include <memory>
 
 class Base : public Entity
 {
 private:
-	const pyro::TextureHolder<Unit::Type>& mTextureHolder;
 	pyro::SoundPlayer<Unit::SoundID>&	   mSoundPlayer;
-
-	pyro::Text							   mGoldText;
-	sf::Font							   mGoldFont;
-	sf::Texture							   mGoldCoinTexture;
-	sf::Sprite							   mGoldCoinSprite;
-
 	gui::SpawnBar						   mSpawnBar;
-protected:
-	std::vector<gStruct::UnitData>&		   mUnitData;					   
-	std::list<std::unique_ptr<Unit>>	   mUnits;
 
+	sf::Int16							   mUnitTypeToSpawn;
+protected:
+	const pyro::TextureHolder<Unit::Type>& mTextureHolder;
+	std::vector<gStruct::UnitData>&		   mUnitData;					   
+	std::list<std::shared_ptr<Unit>>	   mUnits;
 	unsigned							   mGold;
 								   		   
 
-private:
-	void updateGoldGUI();
+protected:
 	void spawnUnit();
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 protected:
@@ -42,12 +38,15 @@ public:
 		 pyro::SoundPlayer<Unit::SoundID>& soundPlayer);
 	virtual ~Base();
 public:
-	void attack(std::unique_ptr<Unit>& otherUnit);
+	void attack(std::shared_ptr<Unit>& otherUnit);
 	void attack(Base* otherBase);
-	void handleEvent(const sf::Event& event);
 	virtual void update(sf::Time dt);
+	virtual void modifyGold(int amount);
 
-	inline std::unique_ptr<Unit>& getFirstUnit() { return mUnits.front(); }
+	inline std::shared_ptr<Unit>& getFirstUnit() { return mUnits.front(); }
 	inline bool hasUnits() const { return !mUnits.empty(); }
+
+	friend sf::Packet& operator<<(sf::Packet& packet, Base& base);
+	friend sf::Packet& operator>>(sf::Packet& packet, Base& base);
 };
 #endif

@@ -5,23 +5,26 @@
 GameState::GameState(pyro::StateStack& stack, sf::RenderWindow& window)
 	: State(stack, window)
 	, mUnitData(std::move(gStruct::initializeUnitData()))
-	, mLeftBase(nullptr)
-	, mRightBase(nullptr)
+	, mBasePlayer(nullptr)
+	, mBaseOpponent(nullptr)
 	, mBackground(sf::Quads, 4)
+	, mPlaying(true)
 {
-	mWindow.setFramerateLimit(144);
-
 	setupResources();
 	setupBackground();
 
 	sf::Vector2u winSize(mWindow.getSize());
-	mLeftBase = std::unique_ptr<Base>(new Base(Entity::Side::Left, sf::IntRect(0, 0, winSize.x, winSize.y),
-											   mBaseTexture, mUnitTextures, mUnitData, mSoundPlayer));
-	mRightBase = std::unique_ptr<BaseAI>(new BaseAI(Entity::Side::Right, sf::IntRect(0, 0, winSize.x, winSize.y),
-												mBaseTexture, mUnitTextures, mUnitData, mSoundPlayer));
+	mBasePlayer = std::unique_ptr<BasePlayer>(new BasePlayer(mWindow, sf::IntRect(0, 0, winSize.x, winSize.y),
+											                 mBaseTexture, mUnitTextures, mUnitData, mSoundPlayer));
+	mBaseOpponent = std::unique_ptr<Base>(new BaseAI(Entity::Side::Right, sf::IntRect(0, 0, winSize.x, winSize.y),
+													   mBaseTexture, mUnitTextures, mUnitData, mSoundPlayer));
 
 	mMusicPlayer.setVolume(50.f);
 	mMusicPlayer.play(MusicID::Soundtrack);
+}
+
+GameState::~GameState()
+{
 }
 
 void GameState::setupBackground()
@@ -49,34 +52,37 @@ void GameState::setupResources()
 	mBackgroundTexture.loadFromFile("Assets/Textures/Background.png");
 	mBaseTexture.loadFromFile("Assets/Textures/Base.png");
 
-	mMusicPlayer.loadTheme(MusicID::Soundtrack, "Assets/Music/Soundtrack.wav");
+	mMusicPlayer.loadTheme(MusicID::Soundtrack, "Assets/Music/Soundtrack.ogg");
 	mSoundPlayer.loadEffect(Unit::SoundID::MageAttack, "Assets/Sounds/MageAttack.wav");
 }
 
 bool GameState::handleEvent(const sf::Event& event)
 {
 	if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
+	{
+		mPlaying = false;
 		requestStateClear();
+	}
 
-	mLeftBase->handleEvent(event);
+	mBasePlayer->handleEvent(event);
 
 	return true;
 }
 
 bool GameState::update(sf::Time dt)
 {
-	if (mLeftBase->hasUnits() && mRightBase->hasUnits())
+	if (mBasePlayer->hasUnits() && mBaseOpponent->hasUnits())
 	{
-		mLeftBase->attack(mRightBase->getFirstUnit());
-		mRightBase->attack(mLeftBase->getFirstUnit());
+		mBasePlayer->attack(mBaseOpponent->getFirstUnit());
+		mBaseOpponent->attack(mBasePlayer->getFirstUnit());
 	}
 	else {
-		mLeftBase->attack(mRightBase.get());
-		mRightBase->attack(mLeftBase.get());
+		mBasePlayer->attack(mBaseOpponent.get());
+		mBaseOpponent->attack(mBasePlayer.get());
 	}
 
-	mLeftBase->update(dt);
-	mRightBase->update(dt);
+	mBasePlayer->update(dt);
+	mBaseOpponent->update(dt);
 
 	return true;
 }
@@ -84,6 +90,6 @@ bool GameState::update(sf::Time dt)
 void GameState::draw()
 {
 	mWindow.draw(mBackground, &mBackgroundTexture);
-	mWindow.draw(*mLeftBase);
-	mWindow.draw(*mRightBase);
+	mWindow.draw(*mBasePlayer);
+	mWindow.draw(*mBaseOpponent);
 }

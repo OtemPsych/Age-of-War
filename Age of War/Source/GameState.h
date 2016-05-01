@@ -1,35 +1,39 @@
 #ifndef GameState_H_
 #define GameState_H_
 
+#include "BasePlayer.h"
 #include "BaseAI.h"
 #include "GlobalStructs.h"
 
 #include <PYRO/State.h>
-#include <PYRO/MusicPlayer.h>
+#include <PYRO/Audio/MusicPlayer.h>
 
 class GameState : public pyro::State
 {
-private:
+protected:
 	enum class MusicID { Soundtrack };
 private:
+	sf::VertexArray				     mBackground;
+	sf::Texture					     mBackgroundTexture;
+protected:
 	pyro::TextureHolder<Unit::Type>  mUnitTextures;
 	sf::Texture						 mBaseTexture;
 									 
 	std::vector<gStruct::UnitData>	 mUnitData;
-	std::unique_ptr<Base>		     mLeftBase;
-	std::unique_ptr<BaseAI>		     mRightBase;
-								   	 
-	sf::VertexArray				     mBackground;
-	sf::Texture					     mBackgroundTexture;
+	std::unique_ptr<BasePlayer>		 mBasePlayer;
+	std::unique_ptr<Base>		     mBaseOpponent;
 									 
 	pyro::MusicPlayer<MusicID>		 mMusicPlayer;
 	pyro::SoundPlayer<Unit::SoundID> mSoundPlayer;
+
+	bool							 mPlaying;
 
 private:
 	void setupBackground();
 	virtual void setupResources();
 public:
 	GameState(pyro::StateStack& stack, sf::RenderWindow& window);
+	virtual ~GameState();
 public:
 	virtual bool handleEvent(const sf::Event& event);
 	virtual bool update(sf::Time dt);

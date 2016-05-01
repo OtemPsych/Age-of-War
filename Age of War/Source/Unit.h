@@ -5,8 +5,8 @@
 #include "GlobalStructs.h"
 #include "Animation.h"
 
-#include <PYRO/ResourceTypedefs.h>
-#include <PYRO/SoundPlayer.h>
+#include <PYRO/ResourceHolder.h>
+#include<PYRO/Audio/SoundPlayer.h>
 
 class Unit : public Entity
 {
@@ -14,21 +14,21 @@ class Unit : public Entity
 public:
 	enum Type { Mage, Knight, Destroyer, TypeCount };
 	enum class SoundID { MageAttack };
-protected:
+private:
 	Type						mType;
-	const unsigned short		mDamage;
 	const float					mAttackRange;
 	gStruct::Resource<sf::Time> mAttackRate;
 	const float					mSpeed;
 	const unsigned short		mReward;
 								
 	bool						mMoving;
-	bool						mAttacking;
-								
 	Animation					mWalkingAnimation;
-	Animation					mAttackAnimation;
-
+protected:
+	const unsigned short		mDamage;
 	pyro::SoundPlayer<SoundID>& mSoundPlayer;
+
+	bool						mAttacking;
+	Animation					mAttackAnimation;
 
 protected:
 	bool canAttackTarget(Entity& entity);

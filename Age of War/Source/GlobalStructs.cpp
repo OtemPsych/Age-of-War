@@ -10,8 +10,8 @@ namespace gStruct
 		data[Unit::Mage].type   = Unit::Mage;
 		data[Unit::Mage].health = 75;
 		data[Unit::Mage].damage = 25;
-		data[Unit::Mage].range  = 100.f;
-		data[Unit::Mage].rate   = sf::seconds(0.5f);
+		data[Unit::Mage].range  = 70.f;
+		data[Unit::Mage].rate   = sf::seconds(0.7f);
 		data[Unit::Mage].speed  = 50.f;
 		data[Unit::Mage].spawn  = sf::seconds(2.f);
 		data[Unit::Mage].cost   = 25;
@@ -39,14 +39,14 @@ namespace gStruct
 		data[Unit::Knight].attackRects.push_back(sf::IntRect(1699, 11, 272, 256));
 
 		data[Unit::Destroyer].type   = Unit::Destroyer;
-		data[Unit::Destroyer].health = 450;
+		data[Unit::Destroyer].health = 500;
 		data[Unit::Destroyer].damage = 75;
 		data[Unit::Destroyer].range  = 25.f;
 		data[Unit::Destroyer].rate   = sf::seconds(0.75f);
 		data[Unit::Destroyer].speed  = 50.f;
 		data[Unit::Destroyer].spawn  = sf::seconds(5.f);
-		data[Unit::Destroyer].cost   = 200;
-		data[Unit::Destroyer].scale  = 0.9f;
+		data[Unit::Destroyer].cost   = 250;
+		data[Unit::Destroyer].scale  = 0.85f;
 		data[Unit::Destroyer].walkRects.push_back(sf::IntRect(4, 15, 211, 169));
 		data[Unit::Destroyer].walkRects.push_back(sf::IntRect(287, 10, 207, 167));
 		data[Unit::Destroyer].attackRects.push_back(sf::IntRect(874, 0, 172, 157));
@@ -61,6 +61,6 @@ namespace gStruct
 				data[i].attackRects.push_back(data[i].attackRects[j]);
 		}
 
-		return data;
+		return std::move(data);
 	}
 }
