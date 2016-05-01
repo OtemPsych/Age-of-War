@@ -1,4 +1,16 @@
+v0.6.0 | 01/05/2016
+
+  Features
+
+    * Added a pause screen
+
+
+
 v0.5.1a | 01/05/2016
+
+  Features
+
+    * Added a sound effect for the knight's attack
 
   Updates
 

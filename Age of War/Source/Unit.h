@@ -13,9 +13,8 @@ class Unit : public Entity
 	friend class BaseAI;
 public:
 	enum Type { Mage, Knight, Destroyer, TypeCount };
-	enum class SoundID { MageAttack };
+	enum class SoundID { MageAttack, KnightAttack };
 private:
-	Type						mType;
 	const float					mAttackRange;
 	gStruct::Resource<sf::Time> mAttackRate;
 	const float					mSpeed;
@@ -24,6 +23,7 @@ private:
 	bool						mMoving;
 	Animation					mWalkingAnimation;
 protected:
+	Type						mType;
 	const unsigned short		mDamage;
 	pyro::SoundPlayer<SoundID>& mSoundPlayer;
 

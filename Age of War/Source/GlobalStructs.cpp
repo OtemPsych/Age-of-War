@@ -23,7 +23,7 @@ namespace gStruct
 		data[Unit::Mage].attackRects.push_back(sf::IntRect(380, 5, 121, 123));
 
 		data[Unit::Knight].type   = Unit::Knight;
-		data[Unit::Knight].health = 280;
+		data[Unit::Knight].health = 250;
 		data[Unit::Knight].damage = 45;
 		data[Unit::Knight].range  = 18.f;
 		data[Unit::Knight].rate   = sf::seconds(0.75f);

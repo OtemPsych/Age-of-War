@@ -30,7 +30,7 @@ void Base::spawnUnit()
 {
 	Unit::Type type(mSpawnBar.getUnitTypeSpawning());
 	if (type == Unit::Type::Mage)
-		mUnits.emplace_back(new Mage(mSide, mUnitData[type], mTextureHolder, mSoundPlayer));
+		mUnits.emplace_back(new Mage(mSide, mUnitData[type], mTextureHolder, mSoundPlayer, nullptr));
 	else
 		mUnits.emplace_back(new Unit(mSide, mUnitData[type], mTextureHolder, mSoundPlayer));
 

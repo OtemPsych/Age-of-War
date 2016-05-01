@@ -54,14 +54,25 @@ void GameState::setupResources()
 
 	mMusicPlayer.loadTheme(MusicID::Soundtrack, "Assets/Music/Soundtrack.ogg");
 	mSoundPlayer.loadEffect(Unit::SoundID::MageAttack, "Assets/Sounds/MageAttack.wav");
+	mSoundPlayer.loadEffect(Unit::SoundID::KnightAttack, "Assets/Sounds/KnightAttack.ogg");
+}
+
+void GameState::unpauseMusic()
+{
+	mMusicPlayer.pause(false);
 }
 
 bool GameState::handleEvent(const sf::Event& event)
 {
-	if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
+	if (event.type == sf::Event::Closed)
 	{
 		mPlaying = false;
 		requestStateClear();
+	}
+	else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
+	{
+		requestStatePush(pyro::StateID::Pause);
+		mMusicPlayer.pause(true);
 	}
 
 	mBasePlayer->handleEvent(event);

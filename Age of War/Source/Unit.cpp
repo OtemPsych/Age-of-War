@@ -59,6 +59,7 @@ void Unit::attack(Entity& entity)
 
 	if (!mAttackAnimation.isAnimationOngoing())
 	{
+		mSoundPlayer.play(static_cast<Unit::SoundID>(mType), getPosition(), 15.f);
 		entity.reduceHealth(mDamage);
 		mAttackRate.current = sf::Time::Zero;
 		mAttackAnimation.restart();

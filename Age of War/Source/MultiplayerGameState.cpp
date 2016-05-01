@@ -78,3 +78,14 @@ void MultiplayerGameState::packetHandling()
 		sf::sleep(sf::milliseconds(40));
 	}
 }
+
+bool MultiplayerGameState::handleEvent(const sf::Event& event)
+{
+	if (event.type == sf::Event::Closed)
+	{
+		mPlaying = false;
+		requestStateClear();
+	}
+
+	return true;
+}

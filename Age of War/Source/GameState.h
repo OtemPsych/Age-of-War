@@ -35,6 +35,8 @@ public:
 	GameState(pyro::StateStack& stack, sf::RenderWindow& window);
 	virtual ~GameState();
 public:
+	void unpauseMusic();
+
 	virtual bool handleEvent(const sf::Event& event);
 	virtual bool update(sf::Time dt);
 	virtual void draw();
