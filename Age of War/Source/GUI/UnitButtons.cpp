@@ -4,7 +4,7 @@ namespace gui
 {
 	UnitButtons::UnitButtons(sf::RenderWindow& window, const pyro::TextureHolder<Unit::Type>& textures,
 		                     const std::vector<gStruct::UnitData>& unitData)
-		: mButtonColors(std::make_pair(sf::Color(0, 128, 255), sf::Color::Red))
+		: mButtonColors(std::make_pair(sf::Color(0, 128, 255), sf::Color(140, 140, 140)))
 		, mButtonOverlay(sf::Quads, 4)
 		, mUnitData(unitData)
 	{
@@ -48,15 +48,18 @@ namespace gui
 		mButtonOverlay[2].position = mButtons.back().second[2].position + sf::Vector2f(margin, margin);
 		mButtonOverlay[3].position = mButtons.front().second[3].position + sf::Vector2f(-margin, margin);
 
-		mButtonOverlay[0].color =
-		mButtonOverlay[1].color = sf::Color(61, 61, 41);
-		mButtonOverlay[2].color =
-		mButtonOverlay[3].color = sf::Color(122, 122, 82);
+		mButtonOverlayTexture.loadFromFile("Assets/Textures/UnitBackground.png");
+		sf::Vector2f textureSize(mButtonOverlayTexture.getSize());
+
+		mButtonOverlay[0].texCoords = sf::Vector2f(0.f, 0.f);
+		mButtonOverlay[1].texCoords = sf::Vector2f(textureSize.x, 0.f);
+		mButtonOverlay[2].texCoords = textureSize;
+		mButtonOverlay[3].texCoords = sf::Vector2f(0.f, textureSize.y);
 	}
 
 	void UnitButtons::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
-		target.draw(mButtonOverlay, states);
+		target.draw(mButtonOverlay, &mButtonOverlayTexture);
 		for (const auto& button : mButtons) 
 		{
 			target.draw(button.second, states);

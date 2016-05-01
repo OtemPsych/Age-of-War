@@ -15,9 +15,9 @@ Base::Base(Side side, sf::IntRect worldBounds, const sf::Texture& baseTexture,
 	, mGold(200)
 {
 	if (side == Side::Left)
-		setPosition(getGlobalBounds().width / 2.f + 20.f, 0.75f * worldBounds.height);
+		setPosition(getGlobalBounds().width / 2.f + 20.f, 0.7f * worldBounds.height);
 	else {
-		setPosition(worldBounds.width - getGlobalBounds().width / 2.f - 20.f, 0.75f * worldBounds.height);
+		setPosition(worldBounds.width - getGlobalBounds().width / 2.f - 20.f, 0.7f * worldBounds.height);
 		mSpawnBar.scale(-1.f, 1.f);
 	}
 }

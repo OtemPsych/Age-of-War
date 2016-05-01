@@ -27,6 +27,7 @@ void BasePlayer::setupGoldGUI()
 
 void BasePlayer::updateGoldGUI()
 {
+	mUnitButtons.update(mGold);
 	mGoldText.setString(std::to_string(mGold));
 	mGoldText.setPosition(mGoldCoinSprite.getGlobalBounds().width + mGoldText.getGlobalBounds().width / 2.f + 15.f,
 		                  mGoldCoinSprite.getGlobalBounds().height / 2.f);
@@ -52,6 +53,5 @@ void BasePlayer::handleEvent(const sf::Event& event)
 void BasePlayer::modifyGold(int amount)
 {
 	mGold += amount;
-	mUnitButtons.update(mGold);
 	updateGoldGUI();
 }

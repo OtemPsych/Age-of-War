@@ -4,6 +4,8 @@ v0.5.1a | 01/05/2016
 
     - A unit's gui overlay changes color to indicate if the player has sufficient gold to spawn that unit
 
+    - Changed the surrounding overlay of the unit buttons
+
 
 
 v0.5.1 | 30/04/2016

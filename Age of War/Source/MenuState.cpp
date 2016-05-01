@@ -30,20 +30,17 @@ MenuState::MenuState(pyro::StateStack& stack, sf::RenderWindow& window)
 
 bool MenuState::handleEvent(const sf::Event& event)
 {
-	if (event.type == sf::Event::Closed)
-		requestStateClear();
-
-	if (mButtons[Play].clicked(event))
+	if (mButtons[Play].clicked(event)) 
 	{
 		requestStatePop();
 		requestStatePush(pyro::StateID::Game);
-	}
-	else if (mButtons[Multiplayer].clicked(event))
+	} 
+	else if (mButtons[Multiplayer].clicked(event)) 
 	{
 		requestStatePop();
 		requestStatePush(pyro::StateID::MultiplayerConnect);
-	}
-	else if (mButtons[Quit].clicked(event))
+	} 
+	else if (event.type == sf::Event::Closed || mButtons[Quit].clicked(event))
 		requestStateClear();
 
 	return true;

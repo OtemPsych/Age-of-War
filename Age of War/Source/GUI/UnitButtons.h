@@ -19,6 +19,7 @@ namespace gui
 		Buttons         mButtons;
 		ButtonColors    mButtonColors;
 		sf::VertexArray mButtonOverlay;
+		sf::Texture     mButtonOverlayTexture;
 
 		const UnitData& mUnitData;
 
