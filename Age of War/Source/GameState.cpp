@@ -17,7 +17,7 @@ GameState::GameState(pyro::StateStack& stack, sf::RenderWindow& window)
 	mBasePlayer = std::unique_ptr<BasePlayer>(new BasePlayer(mWindow, sf::IntRect(0, 0, winSize.x, winSize.y),
 											                 mBaseTexture, mUnitTextures, mUnitData, mSoundPlayer));
 	mBaseOpponent = std::unique_ptr<Base>(new BaseAI(Entity::Side::Right, sf::IntRect(0, 0, winSize.x, winSize.y),
-													   mBaseTexture, mUnitTextures, mUnitData, mSoundPlayer));
+													 mBaseTexture, mUnitTextures, mUnitData, mSoundPlayer));
 
 	mMusicPlayer.setVolume(50.f);
 	mMusicPlayer.play(MusicID::Soundtrack);
@@ -49,11 +49,13 @@ void GameState::setupResources()
 	mUnitTextures.load(Unit::Type::Knight, "Assets/Textures/Knight.png");
 	mUnitTextures.load(Unit::Type::Destroyer, "Assets/Textures/Destroyer.png");
 
+	mTurretTextures.load(Turret::Type::Turret1, "Assets/Textures/Turret1.png");
+
 	mBackgroundTexture.loadFromFile("Assets/Textures/Background.png");
 	mBaseTexture.loadFromFile("Assets/Textures/Base.png");
 
 	mMusicPlayer.loadTheme(MusicID::Soundtrack, "Assets/Music/Soundtrack.ogg");
-	mSoundPlayer.loadEffect(Unit::SoundID::MageAttack, "Assets/Sounds/MageAttack.wav");
+	mSoundPlayer.loadEffect(Unit::SoundID::MageAttack, "Assets/Sounds/MageAttack.ogg");
 	mSoundPlayer.loadEffect(Unit::SoundID::KnightAttack, "Assets/Sounds/KnightAttack.ogg");
 }
 

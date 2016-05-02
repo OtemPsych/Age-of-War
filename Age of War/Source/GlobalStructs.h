@@ -5,6 +5,8 @@
 #include <SFML/Graphics/Rect.hpp>
 
 #include <vector>
+#include <memory>
+#include <functional>
 
 namespace gStruct
 {
@@ -24,6 +26,7 @@ namespace gStruct
 	struct UnitData
 	{
 		unsigned short			 type;
+		std::string              name;
 		unsigned short			 health;
 		unsigned short			 damage;
 		float					 range;

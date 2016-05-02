@@ -1,6 +1,8 @@
 #include "GlobalStructs.h"
 #include "Unit.h"
 
+#include <PYRO/Math.h>
+
 namespace gStruct
 {
 	std::vector<UnitData> initializeUnitData()
@@ -8,6 +10,7 @@ namespace gStruct
 		std::vector<UnitData> data(Unit::TypeCount);
 
 		data[Unit::Mage].type   = Unit::Mage;
+		data[Unit::Mage].name   = "Mage";
 		data[Unit::Mage].health = 75;
 		data[Unit::Mage].damage = 25;
 		data[Unit::Mage].range  = 70.f;
@@ -23,6 +26,7 @@ namespace gStruct
 		data[Unit::Mage].attackRects.push_back(sf::IntRect(380, 5, 121, 123));
 
 		data[Unit::Knight].type   = Unit::Knight;
+		data[Unit::Knight].name   = "Knight";
 		data[Unit::Knight].health = 250;
 		data[Unit::Knight].damage = 45;
 		data[Unit::Knight].range  = 18.f;
@@ -39,6 +43,7 @@ namespace gStruct
 		data[Unit::Knight].attackRects.push_back(sf::IntRect(1699, 11, 272, 256));
 
 		data[Unit::Destroyer].type   = Unit::Destroyer;
+		data[Unit::Destroyer].name   = "Destroyer";
 		data[Unit::Destroyer].health = 500;
 		data[Unit::Destroyer].damage = 75;
 		data[Unit::Destroyer].range  = 25.f;

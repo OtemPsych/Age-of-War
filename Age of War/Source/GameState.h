@@ -13,20 +13,21 @@ class GameState : public pyro::State
 protected:
 	enum class MusicID { Soundtrack };
 private:
-	sf::VertexArray				     mBackground;
-	sf::Texture					     mBackgroundTexture;
-protected:
-	pyro::TextureHolder<Unit::Type>  mUnitTextures;
-	sf::Texture						 mBaseTexture;
-									 
-	std::vector<gStruct::UnitData>	 mUnitData;
-	std::unique_ptr<BasePlayer>		 mBasePlayer;
-	std::unique_ptr<Base>		     mBaseOpponent;
-									 
-	pyro::MusicPlayer<MusicID>		 mMusicPlayer;
-	pyro::SoundPlayer<Unit::SoundID> mSoundPlayer;
-
-	bool							 mPlaying;
+	sf::VertexArray				      mBackground;
+	sf::Texture					      mBackgroundTexture;
+protected:							  
+	pyro::TextureHolder<Unit::Type>   mUnitTextures;
+	pyro::TextureHolder<Turret::Type> mTurretTextures;
+	sf::Texture						  mBaseTexture;
+									  
+	std::vector<gStruct::UnitData>	  mUnitData;
+	std::unique_ptr<BasePlayer>		  mBasePlayer;
+	std::unique_ptr<Base>		      mBaseOpponent;
+									  
+	pyro::MusicPlayer<MusicID>		  mMusicPlayer;
+	pyro::SoundPlayer<Unit::SoundID>  mSoundPlayer;
+									  
+	bool							  mPlaying;
 
 private:
 	void setupBackground();

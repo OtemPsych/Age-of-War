@@ -87,5 +87,7 @@ bool MultiplayerGameState::handleEvent(const sf::Event& event)
 		requestStateClear();
 	}
 
+	mBasePlayer->handleEvent(event);
+
 	return true;
 }

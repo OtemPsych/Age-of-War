@@ -30,7 +30,7 @@ void Base::spawnUnit()
 {
 	Unit::Type type(mSpawnBar.getUnitTypeSpawning());
 	if (type == Unit::Type::Mage)
-		mUnits.emplace_back(new Mage(mSide, mUnitData[type], mTextureHolder, mSoundPlayer, nullptr));
+		mUnits.emplace_back(new Mage(mSide, mUnitData[type], mTextureHolder, mSoundPlayer));
 	else
 		mUnits.emplace_back(new Unit(mSide, mUnitData[type], mTextureHolder, mSoundPlayer));
 
@@ -45,6 +45,9 @@ void Base::draw(sf::RenderTarget& target, sf::RenderStates states) const
 		target.draw(*unit, states);
 
 	target.draw(mSpawnBar, states.transform *= getTransform());
+
+	for (const auto& turret : mTurrets)
+		target.draw(turret, states);
 }
 
 void Base::handleUnitSpawn(Unit::Type type)
@@ -62,15 +65,22 @@ void Base::attack(std::shared_ptr<Unit>& otherUnit)
 	{
 		unit->attack(*otherUnit);
 		if (otherUnit->isDestroyable())
-		{
-			modifyGold(otherUnit->getRewardMoney());
 			break;
-		}
+	}
+
+	for (auto& turret : mTurrets)
+	{
+		turret.attack(*otherUnit);
+		if (otherUnit->isDestroyable())
+			break;
 	}
 
 	if (otherUnit->isDestroyable())
+	{
+		modifyGold(otherUnit->getRewardMoney());
 		for (auto& unit : mUnits)
 			unit->stopAttacking();
+	}
 }
 
 void Base::attack(Base* otherBase)
@@ -80,7 +90,6 @@ void Base::attack(Base* otherBase)
 		unit->attack(*otherBase);
 		if (otherBase->isDestroyable())
 		{
-			
 		}
 	}
 }
@@ -100,6 +109,9 @@ void Base::update(sf::Time dt)
 
 	for (auto& Unit : mUnits)
 		Unit->update(dt);
+
+	for (auto& turret : mTurrets)
+		turret.update(dt);
 
 	if (!mUnits.empty() && mUnits.front()->isDestroyable())
 		mUnits.pop_front();

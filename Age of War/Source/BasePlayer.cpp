@@ -48,6 +48,12 @@ void BasePlayer::handleEvent(const sf::Event& event)
 	int i = mUnitButtons.handleEvent(event);
 	if (i != -1)
 		handleUnitSpawn(static_cast<Unit::Type>(i));
+
+	if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num1)
+	{
+		sf::Vector2f baseSize(getGlobalBounds().width, getGlobalBounds().height);
+		mTurrets.emplace_back(Turret(Turret::Type::Turret1, baseSize))
+	}
 }
 
 void BasePlayer::modifyGold(int amount)

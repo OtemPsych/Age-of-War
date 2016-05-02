@@ -2,6 +2,7 @@
 #define Base_H_
 
 #include "Mage.h"
+#include "Turret.h"
 #include "GUI/SpawnBar.h"
 
 #include <PYRO/Text.h>
@@ -23,6 +24,7 @@ protected:
 	const pyro::TextureHolder<Unit::Type>& mTextureHolder;
 	std::vector<gStruct::UnitData>&		   mUnitData;					   
 	std::list<std::shared_ptr<Unit>>	   mUnits;
+	std::vector<Turret>                    mTurrets;
 	unsigned							   mGold;
 								   		   
 

@@ -10,14 +10,13 @@ class Mage : public Unit
 {
 private:
 	std::vector<sf::VertexArray> mSpheres;
-	const sf::Texture*           mProjectileTexture;
 
 private:
 	void spawnSphere();
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 public:
 	Mage(Side side, gStruct::UnitData& data, const pyro::TextureHolder<Unit::Type>& textures,
-		 pyro::SoundPlayer<SoundID>& soundPlayer, const sf::Texture* projTexture);
+		 pyro::SoundPlayer<SoundID>& soundPlayer);
 public:
 	virtual void attack(Entity& entity);
 	virtual void update(sf::Time dt);

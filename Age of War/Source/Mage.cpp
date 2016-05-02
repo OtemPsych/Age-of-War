@@ -4,9 +4,8 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 
 Mage::Mage(Side side, gStruct::UnitData& data, const pyro::TextureHolder<Unit::Type>& textures,
-		   pyro::SoundPlayer<SoundID>& soundPlayer, const sf::Texture* projTexture)
+		   pyro::SoundPlayer<SoundID>& soundPlayer)
 	: Unit(side, data, textures, soundPlayer)
-	, mProjectileTexture(projTexture)
 {
 }
 
@@ -26,15 +25,6 @@ void Mage::spawnSphere()
 		mSpheres.back()[i].position = center + sf::Vector2f(cos(angle) * radius, sin(angle) * radius);
 		mSpheres.back()[i].color = i % 5 == 0 ? sf::Color::White : sf::Color::Magenta;
 	}
-
-	if (mProjectileTexture)
-	{
-		sf::Vector2f textureSize(mProjectileTexture->getSize());
-		mSpheres.back()[0].texCoords = sf::Vector2f(0.f, 0.f);
-		mSpheres.back()[1].texCoords = sf::Vector2f(textureSize.x, 0.f);
-		mSpheres.back()[2].texCoords = textureSize;
-		mSpheres.back()[3].texCoords = sf::Vector2f(0.f, textureSize.y);
-	}
 }
 
 void Mage::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -42,9 +32,6 @@ void Mage::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	Entity::draw(target, states);
 
 	states.transform *= getTransform();
-	if (mProjectileTexture)
-		states.texture = mProjectileTexture;
-
 	for (const auto& sphere : mSpheres)
 		target.draw(sphere, states);
 }
