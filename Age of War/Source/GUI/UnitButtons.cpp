@@ -2,16 +2,18 @@
 
 namespace gui
 {
-	UnitButtons::UnitButtons(sf::RenderWindow& window, const pyro::TextureHolder<Unit::Type>& textures,
+	UnitButtons::UnitButtons(sf::RenderWindow& window, const pyro::TextureHolder<Unit::UnitType>& textures,
 		                     const std::vector<gStruct::UnitData>& unitData)
 		: mButtonColors(std::make_pair(sf::Color(0, 128, 255), sf::Color(140, 140, 140)))
 		, mButtonOverlay(sf::Quads, 4)
+		, mUnitTooltip(nullptr)
 		, mUnitData(unitData)
+		, mWindow(window)
 	{
 		setup(window, textures);
 	}
 
-	void UnitButtons::setup(sf::RenderWindow& window, const pyro::TextureHolder<Unit::Type>& textures)
+	void UnitButtons::setup(sf::RenderWindow& window, const pyro::TextureHolder<Unit::UnitType>& textures)
 	{
 		const sf::Vector2f size(55.f, 60.f);
 		const float thickness = 3.f;
@@ -27,7 +29,7 @@ namespace gui
 			mButtons[i].first.setPosition(buttonPos.x + totalSizeX * (i + 0.5f), buttonPos.y);
 			
 			sf::RectangleShape& shape(mButtons[i].first.getShape());
-			shape.setTexture(&textures.get(static_cast<Unit::Type>(i)));
+			shape.setTexture(&textures.get(static_cast<Unit::UnitType>(i)));
 			shape.setTextureRect(mUnitData[i].walkRects[0]);
 			shape.setOutlineThickness(thickness);
 			shape.setOutlineColor(sf::Color::Black);
@@ -55,6 +57,12 @@ namespace gui
 		mButtonOverlay[1].texCoords = sf::Vector2f(textureSize.x, 0.f);
 		mButtonOverlay[2].texCoords = textureSize;
 		mButtonOverlay[3].texCoords = sf::Vector2f(0.f, textureSize.y);
+
+		mUnitTooltip = std::unique_ptr<UnitTooltip>(new UnitTooltip(mUnitData, window,
+			sf::FloatRect(mButtonOverlay[0].position.x,
+			              mButtonOverlay[1].position.y,
+			              mButtonOverlay[2].position.x - mButtonOverlay[0].position.x,
+						  mButtonOverlay[2].position.y - mButtonOverlay[0].position.y)));
 	}
 
 	void UnitButtons::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -65,6 +73,8 @@ namespace gui
 			target.draw(button.second, states);
 			target.draw(button.first, states);
 		}
+
+		target.draw(*mUnitTooltip, states);
 	}
 
 	int UnitButtons::handleEvent(const sf::Event& event)
@@ -76,7 +86,22 @@ namespace gui
 		return -1;
 	}
 
-	void UnitButtons::update(unsigned gold)
+	void UnitButtons::update()
+	{
+		sf::Vector2f mousePos(static_cast<sf::Vector2f>(sf::Mouse::getPosition(mWindow)));
+		if (mousePos.x > mButtonOverlay[0].position.x && mousePos.y > mButtonOverlay[0].position.y
+		 && mousePos.x < mButtonOverlay[2].position.x && mousePos.y < mButtonOverlay[2].position.y)
+			for (unsigned i = 0; i < mButtons.size(); i++)
+				if (mButtons[i].first.hover())
+				{
+					mUnitTooltip->update(i);
+					return;
+				}
+
+		mUnitTooltip->update(-1);
+	}
+
+	void UnitButtons::updateButtonOverlay(unsigned gold)
 	{
 		for (unsigned i = 0; i < mButtons.size(); i++)
 			if (mUnitData[i].cost > gold)

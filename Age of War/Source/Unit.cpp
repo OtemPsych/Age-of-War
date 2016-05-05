@@ -3,16 +3,16 @@
 
 #include <PYRO/Math.h>
 
-Unit::Unit(Side side, gStruct::UnitData& data, const pyro::TextureHolder<Unit::Type>& textureHolder,
+Unit::Unit(Side side, gStruct::UnitData& data, const pyro::TextureHolder<UnitType>& unitTextures,
 	       pyro::SoundPlayer<SoundID>& soundPlayer)
-	: Entity(side, Entity::Type::Unit, data.health, textureHolder.get(static_cast<Unit::Type>(data.type)),
-			 data.walkRects[0])
-	, mType(static_cast<Unit::Type>(data.type))
+	: HealthEntity(side, EntityType::Unit, data.health, unitTextures.get(static_cast<UnitType>(data.unitType)),
+			       data.walkRects[0])
+	, mUnitType(static_cast<UnitType>(data.unitType))
 	, mDamage(data.damage)
 	, mAttackRange(data.range)
 	, mAttackRate(data.rate)
 	, mSpeed(data.speed)
-	, mReward(125u * data.cost / 100u)
+	, mGoldReward(125u * data.cost / 100u)
 	, mMoving(true)
 	, mAttacking(false)
 	, mWalkingAnimation(mSprite, data.walkRects, sf::seconds(0.75f), true)
@@ -26,21 +26,21 @@ Unit::~Unit()
 {
 }
 
-bool Unit::canAttackTarget(Entity& entity)
+bool Unit::canAttackTarget(HealthEntity& enemy)
 {
 	if (mAttackRate.current == mAttackRate.original)
 	{
-		if (mSide == Side::Left)
+		if (mSide == Side::Ally)
 		{
 			float unitStartPoint = getPosition().x + getGlobalBounds().width / 2.f;
-			float entityStartPoint = entity.getPosition().x - entity.getGlobalBounds().width / 2.f;
+			float entityStartPoint = enemy.getPosition().x - enemy.getGlobalBounds().width / 2.f;
 
 			if (unitStartPoint + mAttackRange >= entityStartPoint)
 				return true;
 		}
 		else {
 			float unitStartPoint = getPosition().x - getGlobalBounds().width / 2.f;
-			float entityStartPoint = entity.getPosition().x + entity.getGlobalBounds().width / 2.f;
+			float entityStartPoint = enemy.getPosition().x + enemy.getGlobalBounds().width / 2.f;
 
 			if (unitStartPoint - mAttackRange <= entityStartPoint)
 				return true;
@@ -52,15 +52,15 @@ bool Unit::canAttackTarget(Entity& entity)
 	return false;
 }
 
-void Unit::attack(Entity& entity)
+void Unit::attack(HealthEntity& enemy)
 {
-	if (!mAttacking && canAttackTarget(entity))
+	if (!mAttacking && canAttackTarget(enemy))
 		mAttacking = true;
 
 	if (!mAttackAnimation.isAnimationOngoing())
 	{
-		mSoundPlayer.play(static_cast<Unit::SoundID>(mType), getPosition(), 15.f);
-		entity.reduceHealth(mDamage);
+		mSoundPlayer.play(static_cast<Unit::SoundID>(mUnitType), getPosition(), 15.f);
+		enemy.receiveDamage(mDamage);
 		mAttackRate.current = sf::Time::Zero;
 		mAttackAnimation.restart();
 	}
@@ -77,7 +77,7 @@ void Unit::update(sf::Time dt)
 	if (!mAttacking && mMoving)
 	{
 		mWalkingAnimation.update(dt);
-		if (mSide == Side::Left)
+		if (mSide == Side::Ally)
 			move(mSpeed * dt.asSeconds(), 0.f);
 		else
 			move(-(mSpeed * dt.asSeconds()), 0.f);

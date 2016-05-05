@@ -4,7 +4,7 @@
 
 namespace gui
 {
-	UnitQueue::UnitData::UnitData(Unit::Type pType, sf::Time pSpawn)
+	UnitQueue::UnitData::UnitData(Unit::UnitType pType, sf::Time pSpawn)
 		: type(pType)
 		, spawn(pSpawn)
 	{

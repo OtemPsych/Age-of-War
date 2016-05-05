@@ -1,3 +1,20 @@
+v0.6.2a | 05/05/2016
+
+  Updates
+
+    - Highly optimized the stat tooltip
+
+
+
+v0.6.2 | 05/05/2016
+
+  Features
+
+    * Added a projectile attack for the Destroyer
+
+    * Added a unit stat tooltip gui
+
+
 v0.6.0 | 01/05/2016
 
   Features

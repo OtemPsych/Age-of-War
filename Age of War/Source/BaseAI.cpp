@@ -1,7 +1,7 @@
 #include "BaseAI.h"
 
 BaseAI::BaseAI(Side side, sf::IntRect worldBounds, const sf::Texture& baseTexture,
-			   const pyro::TextureHolder<Unit::Type>& textures,
+			   const pyro::TextureHolder<Unit::UnitType>& textures,
 			   std::vector<gStruct::UnitData>& data,
 			   pyro::SoundPlayer<Unit::SoundID>& soundPlayer)
 	: Base(side, worldBounds, baseTexture, textures, data, soundPlayer)
@@ -10,6 +10,6 @@ BaseAI::BaseAI(Side side, sf::IntRect worldBounds, const sf::Texture& baseTextur
 
 void BaseAI::update(sf::Time dt)
 {
-	handleUnitSpawn(static_cast<Unit::Type>(rand() % Unit::Type::TypeCount));
+	handleUnitSpawn(static_cast<Unit::UnitType>(rand() % Unit::UnitType::TypeCount));
 	Base::update(dt);
 }

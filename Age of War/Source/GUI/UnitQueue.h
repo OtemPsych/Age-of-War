@@ -17,10 +17,10 @@ namespace gui
 	public:
 		struct UnitData
 		{
-			Unit::Type type;
-			sf::Time   spawn;
+			Unit::UnitType type;
+			sf::Time       spawn;
 
-			UnitData(Unit::Type pType, sf::Time pSpawn);
+			UnitData(Unit::UnitType pType, sf::Time pSpawn);
 		};
 	private:
 		std::queue<UnitData>			  mQueue;
@@ -29,7 +29,7 @@ namespace gui
 	private:
 		void update(const Identifier& id);
 		void setupIdentifiers(sf::FloatRect spawnBarBounds);
-		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	public:
 		explicit UnitQueue(sf::FloatRect spawnBarBounds);
 	public:

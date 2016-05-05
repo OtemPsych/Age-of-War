@@ -21,7 +21,7 @@ void MultiplayerConnectState::setupGUIEntities()
 {
 	sf::Vector2f winSize(mWindow.getSize());
 	mIpTextbox.setPosition(winSize.x / 2.f, winSize.y / 2.f);
-	mIpTextbox.getShape().setFillColor(sf::Color(143, 177, 189));
+	mIpTextbox.getShape().setFillColor(sf::Color(143, 177, 189, 150));
 	mIpTextbox.getText().setFont(mFont);
 
 	mPortTextbox.setPosition(mIpTextbox.getPosition().x, mIpTextbox.getPosition().y + mIpTextbox.getGlobalBounds().height * 1.5f);

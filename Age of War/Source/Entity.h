@@ -1,38 +1,30 @@
 #ifndef Entity_H_
 #define Entity_H_
 
-#include "GlobalStructs.h"
-#include "GUI/Bar.h"
-
 #include <SFML/System/Time.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 
 class Entity : public sf::Transformable, public sf::Drawable
 {
 public:
-	enum class Side { Left, Right };
+	enum class Side { Ally, Enemy };
 protected:
-	enum class Type { Base, Unit };
+	enum class EntityType { Unit, Turret, Base };
 protected:
-	sf::Sprite					mSprite;
-	Side						mSide;
+	Side       mSide;
+	EntityType mEntityType;
+	sf::Sprite mSprite;
+
 private:
-	gStruct::Resource<unsigned> mHealth;
-	gui::Bar					mHealthBar;
-
-	bool						mIsDestroyable;
-
+	void setup();
 protected:
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 public:
-	Entity(Side side, Type type, unsigned health,
-		   const sf::Texture& texture, sf::IntRect textureRect = sf::IntRect());
+	Entity(Side side, EntityType entityType, const sf::Texture& texture);
+	Entity(Side side, EntityType entityType, const sf::Texture& texture, sf::IntRect rect);
 	virtual ~Entity();
 public:
-	void reduceHealth(unsigned damage);
-	virtual void update(sf::Time dt) = 0;
-
 	sf::FloatRect getGlobalBounds() const;
-	inline bool isDestroyable() const { return mIsDestroyable; }
+	virtual void update(sf::Time dt) = 0;
 };
 #endif

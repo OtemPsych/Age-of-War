@@ -3,10 +3,10 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 
 BasePlayer::BasePlayer(sf::RenderWindow& window, sf::IntRect worldBounds,
-					   const sf::Texture& baseTexture, const pyro::TextureHolder<Unit::Type>& textures,
+					   const sf::Texture& baseTexture, const pyro::TextureHolder<Unit::UnitType>& textures,
 	                   std::vector<gStruct::UnitData>& data,
 	                   pyro::SoundPlayer<Unit::SoundID>& soundPlayer)
-	: Base(Side::Left, worldBounds, baseTexture, textures, data, soundPlayer)
+	: Base(Side::Ally, worldBounds, baseTexture, textures, data, soundPlayer)
 	, mUnitButtons(window, textures, data)
 {
 	setupGoldGUI();
@@ -27,7 +27,7 @@ void BasePlayer::setupGoldGUI()
 
 void BasePlayer::updateGoldGUI()
 {
-	mUnitButtons.update(mGold);
+	mUnitButtons.updateButtonOverlay(mGold);
 	mGoldText.setString(std::to_string(mGold));
 	mGoldText.setPosition(mGoldCoinSprite.getGlobalBounds().width + mGoldText.getGlobalBounds().width / 2.f + 15.f,
 		                  mGoldCoinSprite.getGlobalBounds().height / 2.f);
@@ -47,13 +47,13 @@ void BasePlayer::handleEvent(const sf::Event& event)
 {
 	int i = mUnitButtons.handleEvent(event);
 	if (i != -1)
-		handleUnitSpawn(static_cast<Unit::Type>(i));
+		handleUnitSpawn(static_cast<Unit::UnitType>(i));
+}
 
-	if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num1)
-	{
-		sf::Vector2f baseSize(getGlobalBounds().width, getGlobalBounds().height);
-		mTurrets.emplace_back(Turret(Turret::Type::Turret1, baseSize))
-	}
+void BasePlayer::update(sf::Time dt)
+{
+	Base::update(dt);
+	mUnitButtons.update();
 }
 
 void BasePlayer::modifyGold(int amount)

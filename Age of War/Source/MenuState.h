@@ -25,8 +25,8 @@ private:
 public:
 	MenuState(pyro::StateStack& stack, sf::RenderWindow& window);
 public:
-	virtual bool handleEvent(const sf::Event& event);
-	virtual bool update(sf::Time dt);
-	virtual void draw();
+	virtual bool handleEvent(const sf::Event& event) override;
+	virtual bool update(sf::Time dt) override;
+	virtual void draw() override;
 };
 #endif

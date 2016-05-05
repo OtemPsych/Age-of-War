@@ -3,6 +3,7 @@
 
 #include <SFML/System/Time.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
 
 #include <vector>
 #include <memory>
@@ -23,20 +24,31 @@ namespace gStruct
 		}
 	};
 
+	struct RangedUnitData
+	{
+		using SpawnProjectileFunction = std::function<void(std::vector<sf::VertexArray>&, sf::Vector2f unitSize)>;
+
+		float                   projectileSpeed;
+		SpawnProjectileFunction spawnProjectile;
+	};
+
 	struct UnitData
 	{
-		unsigned short			 type;
-		std::string              name;
-		unsigned short			 health;
-		unsigned short			 damage;
-		float					 range;
-		sf::Time				 rate;
-		float					 speed;
-		sf::Time				 spawn;
-		unsigned short			 cost;
-		float					 scale;
-		std::vector<sf::IntRect> walkRects;
-		std::vector<sf::IntRect> attackRects;
+		unsigned short                  generalUnitType;
+		unsigned short	                unitType;
+		std::string                     name;
+		unsigned short			        health;
+		unsigned short			        damage;
+		float					        range;
+		sf::Time				        rate;
+		float					        speed;
+		sf::Time				        spawn;
+		unsigned short			        cost;
+		float					        scale;
+		std::vector<sf::IntRect>        walkRects;
+		std::vector<sf::IntRect>        attackRects;
+
+		std::unique_ptr<RangedUnitData> rangedData;
 	};
 
 	std::vector<UnitData> initializeUnitData();

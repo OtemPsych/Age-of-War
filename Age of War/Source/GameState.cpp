@@ -16,7 +16,7 @@ GameState::GameState(pyro::StateStack& stack, sf::RenderWindow& window)
 	sf::Vector2u winSize(mWindow.getSize());
 	mBasePlayer = std::unique_ptr<BasePlayer>(new BasePlayer(mWindow, sf::IntRect(0, 0, winSize.x, winSize.y),
 											                 mBaseTexture, mUnitTextures, mUnitData, mSoundPlayer));
-	mBaseOpponent = std::unique_ptr<Base>(new BaseAI(Entity::Side::Right, sf::IntRect(0, 0, winSize.x, winSize.y),
+	mBaseOpponent = std::unique_ptr<Base>(new BaseAI(Entity::Side::Enemy, sf::IntRect(0, 0, winSize.x, winSize.y),
 													 mBaseTexture, mUnitTextures, mUnitData, mSoundPlayer));
 
 	mMusicPlayer.setVolume(50.f);
@@ -45,11 +45,11 @@ void GameState::setupBackground()
 
 void GameState::setupResources()
 {
-	mUnitTextures.load(Unit::Type::Mage, "Assets/Textures/Mage.png");
-	mUnitTextures.load(Unit::Type::Knight, "Assets/Textures/Knight.png");
-	mUnitTextures.load(Unit::Type::Destroyer, "Assets/Textures/Destroyer.png");
+	mUnitTextures.load(Unit::UnitType::Mage, "Assets/Textures/Mage.png");
+	mUnitTextures.load(Unit::UnitType::Knight, "Assets/Textures/Knight.png");
+	mUnitTextures.load(Unit::UnitType::Destroyer, "Assets/Textures/Destroyer.png");
 
-	mTurretTextures.load(Turret::Type::Turret1, "Assets/Textures/Turret1.png");
+	//mTurretTextures.load(Turret::Type::Turret1, "Assets/Textures/Turret1.png");
 
 	mBackgroundTexture.loadFromFile("Assets/Textures/Background.png");
 	mBaseTexture.loadFromFile("Assets/Textures/Base.png");
@@ -84,15 +84,28 @@ bool GameState::handleEvent(const sf::Event& event)
 
 bool GameState::update(sf::Time dt)
 {
-	if (mBasePlayer->hasUnits() && mBaseOpponent->hasUnits())
+	if (mBasePlayer->hasUnits() || mBaseOpponent->hasUnits())
 	{
-		mBasePlayer->attack(mBaseOpponent->getFirstUnit());
-		mBaseOpponent->attack(mBasePlayer->getFirstUnit());
+		if (mBasePlayer->hasUnits())
+			mBaseOpponent->attack(mBasePlayer->getFirstUnit());
+		else
+			mBaseOpponent->attack(*mBasePlayer);
+	
+		if (mBaseOpponent->hasUnits())
+			mBasePlayer->attack(mBaseOpponent->getFirstUnit());
+		else
+			mBasePlayer->attack(*mBaseOpponent);
 	}
-	else {
-		mBasePlayer->attack(mBaseOpponent.get());
-		mBaseOpponent->attack(mBasePlayer.get());
-	}
+
+	//if (mBasePlayer->hasUnits() && mBaseOpponent->hasUnits())
+	//{
+	//	mBasePlayer->attack(mBaseOpponent->getFirstUnit());
+	//	mBaseOpponent->attack(mBasePlayer->getFirstUnit());
+	//}
+	//else {
+	//	mBasePlayer->attack(mBaseOpponent.get());
+	//	mBaseOpponent->attack(mBasePlayer.get());
+	//}
 
 	mBasePlayer->update(dt);
 	mBaseOpponent->update(dt);

@@ -3,18 +3,18 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 
 Base::Base(Side side, sf::IntRect worldBounds, const sf::Texture& baseTexture,
-	       const pyro::TextureHolder<Unit::Type>& textures,
-		   std::vector<gStruct::UnitData>& data,
-		   pyro::SoundPlayer<Unit::SoundID>& soundPlayer)
-	: Entity(side, Entity::Type::Base, 1500, baseTexture)
-	, mTextureHolder(textures)
+	       const pyro::TextureHolder<Unit::UnitType>& unitTextures,
+	       std::vector<gStruct::UnitData>& data,
+	       pyro::SoundPlayer<Unit::SoundID>& soundPlayer)
+	: HealthEntity(side, EntityType::Base, 1500, baseTexture)
+	, mUnitTextures(unitTextures)
 	, mSoundPlayer(soundPlayer)
 	, mSpawnBar(getGlobalBounds(), true, sf::Color(153, 77, 0))
 	, mUnitTypeToSpawn(-1)
 	, mUnitData(data)
 	, mGold(200)
 {
-	if (side == Side::Left)
+	if (side == Side::Ally)
 		setPosition(getGlobalBounds().width / 2.f + 20.f, 0.7f * worldBounds.height);
 	else {
 		setPosition(worldBounds.width - getGlobalBounds().width / 2.f - 20.f, 0.7f * worldBounds.height);
@@ -26,31 +26,7 @@ Base::~Base()
 {
 }
 
-void Base::spawnUnit()
-{
-	Unit::Type type(mSpawnBar.getUnitTypeSpawning());
-	if (type == Unit::Type::Mage)
-		mUnits.emplace_back(new Mage(mSide, mUnitData[type], mTextureHolder, mSoundPlayer));
-	else
-		mUnits.emplace_back(new Unit(mSide, mUnitData[type], mTextureHolder, mSoundPlayer));
-
-	mUnits.back()->setPosition(getPosition().x, getPosition().y + getGlobalBounds().height / 2.f - mUnits.back()->getGlobalBounds().height / 2.f);
-}
-
-void Base::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-	Entity::draw(target, states);
-
-	for (const auto& unit : mUnits)
-		target.draw(*unit, states);
-
-	target.draw(mSpawnBar, states.transform *= getTransform());
-
-	for (const auto& turret : mTurrets)
-		target.draw(turret, states);
-}
-
-void Base::handleUnitSpawn(Unit::Type type)
+void Base::handleUnitSpawn(Unit::UnitType type)
 {
 	if (mGold >= mUnitData[type].cost && mSpawnBar.spawnNewUnit(gui::UnitQueue::UnitData(type, mUnitData[type].spawn)))
 	{
@@ -59,38 +35,50 @@ void Base::handleUnitSpawn(Unit::Type type)
 	}
 }
 
-void Base::attack(std::shared_ptr<Unit>& otherUnit)
+void Base::spawnUnit()
+{
+	Unit::UnitType type(mSpawnBar.getUnitTypeSpawning());
+	if (mUnitData[type].generalUnitType == Unit::GeneralUnitType::Melee)
+		mUnits.emplace_back(new Unit(mSide, mUnitData[type], mUnitTextures, mSoundPlayer));
+	else
+		mUnits.emplace_back(new RangedUnit(mSide, mUnitData[type], mUnitTextures, mSoundPlayer));
+
+	mUnits.back()->setPosition(getPosition().x,
+		getPosition().y + getGlobalBounds().height / 2.f - mUnits.back()->getGlobalBounds().height / 2.f);
+}
+
+void Base::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+	HealthEntity::draw(target, states);
+
+	for (const auto& unit : mUnits)
+		target.draw(*unit, states);
+
+	target.draw(mSpawnBar, states.transform *= getTransform());
+}
+
+void Base::attack(Unit& enemyUnit)
 {
 	for (auto& unit : mUnits)
 	{
-		unit->attack(*otherUnit);
-		if (otherUnit->isDestroyable())
+		unit->attack(enemyUnit);
+		if (enemyUnit.isDestroyable())
 			break;
 	}
 
-	for (auto& turret : mTurrets)
+	if (enemyUnit.isDestroyable())
 	{
-		turret.attack(*otherUnit);
-		if (otherUnit->isDestroyable())
-			break;
-	}
-
-	if (otherUnit->isDestroyable())
-	{
-		modifyGold(otherUnit->getRewardMoney());
+		modifyGold(enemyUnit.getGoldReward());
 		for (auto& unit : mUnits)
 			unit->stopAttacking();
 	}
 }
 
-void Base::attack(Base* otherBase)
+void Base::attack(Base& enemyBase)
 {
 	for (auto& unit : mUnits)
 	{
-		unit->attack(*otherBase);
-		if (otherBase->isDestroyable())
-		{
-		}
+		unit->attack(enemyBase);
 	}
 }
 
@@ -99,22 +87,18 @@ void Base::update(sf::Time dt)
 	for (auto& itr = mUnits.begin(); itr != mUnits.end(); itr++)
 	{
 		auto& nextItr = std::next(itr);
-		if (nextItr != mUnits.end())
-			if ((*itr)->getGlobalBounds().intersects((*nextItr)->getGlobalBounds()))
-				(*nextItr)->startMovement(false);
+		if (nextItr != mUnits.end() && (*itr)->getGlobalBounds().intersects((*nextItr)->getGlobalBounds()))
+			(*nextItr)->startMovement(false);
 	}
 
 	if (mSpawnBar.update(dt))
 		spawnUnit();
 
-	for (auto& Unit : mUnits)
-		Unit->update(dt);
-
-	for (auto& turret : mTurrets)
-		turret.update(dt);
+	for (auto& unit : mUnits)
+		unit->update(dt);
 
 	if (!mUnits.empty() && mUnits.front()->isDestroyable())
-		mUnits.pop_front();
+		mUnits.erase(mUnits.begin());
 }
 
 void Base::modifyGold(int amount)
@@ -124,7 +108,7 @@ void Base::modifyGold(int amount)
 
 sf::Packet& operator<<(sf::Packet& packet, Base& base)
 {
-	if (base.mUnitTypeToSpawn > -1) 
+	if (base.mUnitTypeToSpawn > -1)
 	{
 		assert(packet << base.mUnitTypeToSpawn);
 		base.mUnitTypeToSpawn = -1;
@@ -135,10 +119,10 @@ sf::Packet& operator<<(sf::Packet& packet, Base& base)
 
 sf::Packet& operator>>(sf::Packet& packet, Base& base)
 {
-	if (!packet.endOfPacket()) 
+	if (!packet.endOfPacket())
 	{
 		assert(packet >> base.mUnitTypeToSpawn);
-		base.handleUnitSpawn(static_cast<Unit::Type>(base.mUnitTypeToSpawn));
+		base.handleUnitSpawn(static_cast<Unit::UnitType>(base.mUnitTypeToSpawn));
 	}
 
 	return packet;

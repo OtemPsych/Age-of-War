@@ -20,12 +20,12 @@ private:
 
 private:
 	void setupGUIEntities();
-	virtual void setupResources();
+	virtual void setupResources() override;
 public:
 	MultiplayerConnectState(pyro::StateStack& stack, sf::RenderWindow& window);
 public:
-	virtual bool handleEvent(const sf::Event& event);
-	virtual void draw();
+	virtual bool handleEvent(const sf::Event& event) override;
+	virtual void draw() override;
 
 	std::string getHostIP();
 	std::string getHostPort();

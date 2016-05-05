@@ -23,14 +23,15 @@ private:
 	void setupGoldGUI();
 
 	void updateGoldGUI();
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 public:
 	BasePlayer(sf::RenderWindow& window, sf::IntRect worldBounds,
-			   const sf::Texture& baseTexture, const pyro::TextureHolder<Unit::Type>& textures,
+			   const sf::Texture& baseTexture, const pyro::TextureHolder<Unit::UnitType>& textures,
 		       std::vector<gStruct::UnitData>& data,
 		       pyro::SoundPlayer<Unit::SoundID>& soundPlayer);
 public:
 	void handleEvent(const sf::Event& event);
-	virtual void modifyGold(int amount);
+	virtual void update(sf::Time dt) override;
+	virtual void modifyGold(int amount) override;
 };
 #endif

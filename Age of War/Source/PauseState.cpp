@@ -17,7 +17,7 @@ PauseState::PauseState(pyro::StateStack& stack, sf::RenderWindow& window)
 		mButtons.emplace_back(pyro::gui::ClickableGUIEntity(window, buttonSize));
 		mButtons.back().setPosition(winSize.x / 2.f, winSize.y / 2.f + (buttonSize.y + margin) * i);
 		mButtons.back().getText().setFont(mFont);
-		mButtons.back().getText().setColor(sf::Color(255, 255, 255, 200));
+		mButtons.back().getText().setColor(sf::Color(255, 255, 255, 150));
 		mButtons.back().getShape().setFillColor(sf::Color(0, 0, 0, 0));
 	}
 
@@ -75,7 +75,7 @@ bool PauseState::update(sf::Time dt)
 		if (button.hover())
 			button.getText().setColor(sf::Color(255, 255, 255, 255));
 		else
-			button.getText().setColor(sf::Color(255, 255, 255, 200));
+			button.getText().setColor(sf::Color(255, 255, 255, 150));
 
 	return false;
 }

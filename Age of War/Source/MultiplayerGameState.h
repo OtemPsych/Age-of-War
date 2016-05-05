@@ -21,6 +21,6 @@ public:
 	MultiplayerGameState(pyro::StateStack& stack, sf::RenderWindow& window);
 public:
 	void packetHandling();
-	virtual bool handleEvent(const sf::Event& event);
+	virtual bool handleEvent(const sf::Event& event) override;
 };
 #endif
