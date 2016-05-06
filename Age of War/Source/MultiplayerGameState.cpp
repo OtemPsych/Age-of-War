@@ -11,9 +11,12 @@ MultiplayerGameState::MultiplayerGameState(pyro::StateStack& stack, sf::RenderWi
 	, mThread(&MultiplayerGameState::packetHandling, this)
 	, mOpponentPort(0)
 {
+	mMusicPlayer.pause(true);
+
 	sf::Vector2u winSize(mWindow.getSize());
 	mBaseOpponent = std::unique_ptr<Base>(new Base(Entity::Side::Enemy, sf::IntRect(0, 0, winSize.x, winSize.y),
-												   mBaseTexture, mUnitTextures, mUnitData, mSoundPlayer));
+												   mBaseTexture, mUnitTextures, mUnitData,
+												   mTurretTextures, mTurretData, mSoundPlayer));
 
 	auto* connectState = const_cast<MultiplayerConnectState*>(dynamic_cast<const MultiplayerConnectState*>(stack.getState(pyro::StateID::MultiplayerConnect)));
 	if (connectState) 
@@ -27,28 +30,27 @@ MultiplayerGameState::MultiplayerGameState(pyro::StateStack& stack, sf::RenderWi
 		}
 	}
 
-	stack.removeState(pyro::StateID::MultiplayerConnect);
+	mThread.launch();
+}
 
+void MultiplayerGameState::packetHandling()
+{
 	if (mHost)
 	{
 		sf::TcpListener listener;
 		if (listener.listen(53000) == sf::Socket::Status::Done)
 			listener.accept(mSocket);
 	}
-	else {
-		if (mSocket.connect(mOpponentIP, mOpponentPort, sf::seconds(3.f)) != sf::Socket::Done)
-		{
-			requestStateClear();
-			return;
-		}
+	else if (mSocket.connect(mOpponentIP, mOpponentPort) != sf::Socket::Done)
+	{
+		requestStateClear();
+		return;
 	}
 
-	mThread.launch();
-}
-
-void MultiplayerGameState::packetHandling()
-{
-	while (mPlaying)
+	mStack.removeState(pyro::StateID::MultiplayerConnect);
+	mMusicPlayer.pause(false);
+		
+	while (true)
 	{
 		if (mHost)
 		{
@@ -83,11 +85,29 @@ bool MultiplayerGameState::handleEvent(const sf::Event& event)
 {
 	if (event.type == sf::Event::Closed)
 	{
-		mPlaying = false;
+		mThread.terminate();
 		requestStateClear();
 	}
 
-	mBasePlayer->handleEvent(event);
+	if (mSocket.getRemoteAddress() != sf::IpAddress::None)
+	{
+		mBasePlayer->handleEvent(event);
+		return true;
+	}
 
-	return true;
+	return false;
+}
+
+bool MultiplayerGameState::update(sf::Time dt)
+{
+	if (mSocket.getRemoteAddress() != sf::IpAddress::None)
+		GameState::update(dt);
+
+	return false;
+}
+
+void MultiplayerGameState::draw()
+{
+	if (mSocket.getRemoteAddress() != sf::IpAddress::None)
+		GameState::draw();
 }

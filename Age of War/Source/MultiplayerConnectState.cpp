@@ -1,5 +1,7 @@
 #include "MultiplayerConnectState.h"
 
+#include <iostream>
+
 MultiplayerConnectState::MultiplayerConnectState(pyro::StateStack& stack, sf::RenderWindow& window)
 	: State(stack, window)
 	, mIpTextbox(window, sf::Vector2f(250.f, 30.f))

@@ -1,10 +1,12 @@
 #include "BaseAI.h"
 
 BaseAI::BaseAI(Side side, sf::IntRect worldBounds, const sf::Texture& baseTexture,
-			   const pyro::TextureHolder<Unit::UnitType>& textures,
-			   std::vector<gStruct::UnitData>& data,
-			   pyro::SoundPlayer<Unit::SoundID>& soundPlayer)
-	: Base(side, worldBounds, baseTexture, textures, data, soundPlayer)
+	           const pyro::TextureHolder<Unit::UnitType>& unitTextures,
+	           std::vector<gStruct::UnitData>& unitData,
+	           const pyro::TextureHolder<Turret::TurretType>& turretTextures,
+	           std::vector<gStruct::TurretData>& turretData,
+	           pyro::SoundPlayer<Unit::SoundID>& soundPlayer)
+	: Base(side, worldBounds, baseTexture, unitTextures, unitData, turretTextures, turretData, soundPlayer)
 {
 }
 

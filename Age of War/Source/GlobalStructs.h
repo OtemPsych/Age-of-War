@@ -31,7 +31,6 @@ namespace gStruct
 		float                   projectileSpeed;
 		SpawnProjectileFunction spawnProjectile;
 	};
-
 	struct UnitData
 	{
 		unsigned short                  generalUnitType;
@@ -51,6 +50,19 @@ namespace gStruct
 		std::unique_ptr<RangedUnitData> rangedData;
 	};
 
+	struct TurretData
+	{
+		unsigned short turretType;
+		std::string    name;
+		unsigned short damage;
+		float          range;
+		sf::Time       rate;
+		unsigned short cost;
+		float          scale;
+		float          projectileSpeed;
+	};
+
 	std::vector<UnitData> initializeUnitData();
+	std::vector<TurretData> initializeTurretData();
 }
 #endif

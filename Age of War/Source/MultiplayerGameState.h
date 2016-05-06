@@ -22,5 +22,7 @@ public:
 public:
 	void packetHandling();
 	virtual bool handleEvent(const sf::Event& event) override;
+	virtual bool update(sf::Time dt) override;
+	virtual void draw() override;
 };
 #endif

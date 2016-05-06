@@ -15,7 +15,7 @@ Unit::Unit(Side side, gStruct::UnitData& data, const pyro::TextureHolder<UnitTyp
 	, mGoldReward(125u * data.cost / 100u)
 	, mMoving(true)
 	, mAttacking(false)
-	, mWalkingAnimation(mSprite, data.walkRects, sf::seconds(0.75f), true)
+	, mWalkingAnimation(mSprite, data.walkRects, sf::seconds(0.65f), true)
 	, mAttackAnimation(mSprite, data.attackRects, data.rate, false)
 	, mSoundPlayer(soundPlayer)
 {
@@ -59,7 +59,7 @@ void Unit::attack(HealthEntity& enemy)
 
 	if (!mAttackAnimation.isAnimationOngoing())
 	{
-		mSoundPlayer.play(static_cast<Unit::SoundID>(mUnitType), getPosition(), 15.f);
+		mSoundPlayer.play(static_cast<Unit::SoundID>(mUnitType), getPosition(), 10.f);
 		enemy.receiveDamage(mDamage);
 		mAttackRate.current = sf::Time::Zero;
 		mAttackAnimation.restart();

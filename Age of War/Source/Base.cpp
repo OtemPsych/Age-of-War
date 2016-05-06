@@ -4,14 +4,18 @@
 
 Base::Base(Side side, sf::IntRect worldBounds, const sf::Texture& baseTexture,
 	       const pyro::TextureHolder<Unit::UnitType>& unitTextures,
-	       std::vector<gStruct::UnitData>& data,
+	       std::vector<gStruct::UnitData>& unitData,
+		   const pyro::TextureHolder<Turret::TurretType>& turretTextures,
+		   std::vector<gStruct::TurretData>& turretData,
 	       pyro::SoundPlayer<Unit::SoundID>& soundPlayer)
 	: HealthEntity(side, EntityType::Base, 1500, baseTexture)
-	, mUnitTextures(unitTextures)
-	, mSoundPlayer(soundPlayer)
 	, mSpawnBar(getGlobalBounds(), true, sf::Color(153, 77, 0))
 	, mUnitTypeToSpawn(-1)
-	, mUnitData(data)
+	, mUnitTextures(unitTextures)
+	, mSoundPlayer(soundPlayer)
+	, mUnitData(unitData)
+	, mTurretTextures(turretTextures)
+	, mTurretData(turretData)
 	, mGold(200)
 {
 	if (side == Side::Ally)
@@ -54,6 +58,9 @@ void Base::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	for (const auto& unit : mUnits)
 		target.draw(*unit, states);
 
+	for (const auto& turret : mTurrets)
+		target.draw(turret, states);
+
 	target.draw(mSpawnBar, states.transform *= getTransform());
 }
 
@@ -62,6 +69,13 @@ void Base::attack(Unit& enemyUnit)
 	for (auto& unit : mUnits)
 	{
 		unit->attack(enemyUnit);
+		if (enemyUnit.isDestroyable())
+			break;
+	}
+
+	for (auto& turret : mTurrets)
+	{
+		turret.attack(enemyUnit);
 		if (enemyUnit.isDestroyable())
 			break;
 	}
@@ -96,6 +110,9 @@ void Base::update(sf::Time dt)
 
 	for (auto& unit : mUnits)
 		unit->update(dt);
+
+	for (auto& turret : mTurrets)
+		turret.update(dt);
 
 	if (!mUnits.empty() && mUnits.front()->isDestroyable())
 		mUnits.erase(mUnits.begin());

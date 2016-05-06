@@ -5,19 +5,19 @@
 GameState::GameState(pyro::StateStack& stack, sf::RenderWindow& window)
 	: State(stack, window)
 	, mUnitData(std::move(gStruct::initializeUnitData()))
+	, mTurretData(std::move(gStruct::initializeTurretData()))
 	, mBasePlayer(nullptr)
 	, mBaseOpponent(nullptr)
 	, mBackground(sf::Quads, 4)
-	, mPlaying(true)
 {
 	setupResources();
 	setupBackground();
 
 	sf::Vector2u winSize(mWindow.getSize());
-	mBasePlayer = std::unique_ptr<BasePlayer>(new BasePlayer(mWindow, sf::IntRect(0, 0, winSize.x, winSize.y),
-											                 mBaseTexture, mUnitTextures, mUnitData, mSoundPlayer));
-	mBaseOpponent = std::unique_ptr<Base>(new BaseAI(Entity::Side::Enemy, sf::IntRect(0, 0, winSize.x, winSize.y),
-													 mBaseTexture, mUnitTextures, mUnitData, mSoundPlayer));
+	mBasePlayer = std::unique_ptr<BasePlayer>(new BasePlayer(mWindow, sf::IntRect(0, 0, winSize.x, winSize.y), mBaseTexture,
+		                                                     mUnitTextures, mUnitData, mTurretTextures, mTurretData, mSoundPlayer));
+	mBaseOpponent = std::unique_ptr<Base>(new BaseAI(Entity::Side::Enemy, sf::IntRect(0, 0, winSize.x, winSize.y), mBaseTexture,
+		                                             mUnitTextures, mUnitData, mTurretTextures, mTurretData, mSoundPlayer));
 
 	mMusicPlayer.setVolume(50.f);
 	mMusicPlayer.play(MusicID::Soundtrack);
@@ -49,7 +49,7 @@ void GameState::setupResources()
 	mUnitTextures.load(Unit::UnitType::Knight, "Assets/Textures/Knight.png");
 	mUnitTextures.load(Unit::UnitType::Destroyer, "Assets/Textures/Destroyer.png");
 
-	//mTurretTextures.load(Turret::Type::Turret1, "Assets/Textures/Turret1.png");
+	mTurretTextures.load(Turret::LaserTurret, "Assets/Textures/LaserTurret.png");
 
 	mBackgroundTexture.loadFromFile("Assets/Textures/Background.png");
 	mBaseTexture.loadFromFile("Assets/Textures/Base.png");
@@ -67,10 +67,7 @@ void GameState::unpauseMusic()
 bool GameState::handleEvent(const sf::Event& event)
 {
 	if (event.type == sf::Event::Closed)
-	{
-		mPlaying = false;
 		requestStateClear();
-	}
 	else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
 	{
 		requestStatePush(pyro::StateID::Pause);
@@ -96,16 +93,6 @@ bool GameState::update(sf::Time dt)
 		else
 			mBasePlayer->attack(*mBaseOpponent);
 	}
-
-	//if (mBasePlayer->hasUnits() && mBaseOpponent->hasUnits())
-	//{
-	//	mBasePlayer->attack(mBaseOpponent->getFirstUnit());
-	//	mBaseOpponent->attack(mBasePlayer->getFirstUnit());
-	//}
-	//else {
-	//	mBasePlayer->attack(mBaseOpponent.get());
-	//	mBaseOpponent->attack(mBasePlayer.get());
-	//}
 
 	mBasePlayer->update(dt);
 	mBaseOpponent->update(dt);

@@ -31,7 +31,7 @@ void RangedUnit::attack(HealthEntity& enemy)
 		mSpawnProjectile(mProjectiles, sf::Vector2f(gBounds.width, gBounds.height));
 
 		if (mUnitType < static_cast<unsigned short>(Unit::SoundID::TypeCount))
-			mSoundPlayer.play(static_cast<Unit::SoundID>(mUnitType), getPosition(), 15.f);
+			mSoundPlayer.play(static_cast<Unit::SoundID>(mUnitType), getPosition(), 10.f);
 
 		mAttackAnimation.restart();
 	}

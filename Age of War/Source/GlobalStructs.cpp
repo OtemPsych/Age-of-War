@@ -1,5 +1,5 @@
 #include "GlobalStructs.h"
-#include "Unit.h"
+#include "Turret.h"
 
 #include <PYRO/Math.h>
 
@@ -75,10 +75,10 @@ namespace gStruct
 		data[Unit::Destroyer].spawn           = sf::seconds(5.f);
 		data[Unit::Destroyer].cost            = 250;
 		data[Unit::Destroyer].scale           = 0.85f;
-		data[Unit::Destroyer].walkRects.emplace_back(sf::IntRect(4, 15, 211, 169));
-		data[Unit::Destroyer].walkRects.emplace_back(sf::IntRect(287, 10, 207, 167));
-		data[Unit::Destroyer].attackRects.emplace_back(sf::IntRect(874, 0, 172, 157));
-		data[Unit::Destroyer].attackRects.emplace_back(sf::IntRect(874, 0, 172, 157));
+		data[Unit::Destroyer].walkRects.emplace_back(sf::IntRect(0, 0, 212, 169));
+		data[Unit::Destroyer].walkRects.emplace_back(sf::IntRect(248, 0, 206, 168));
+		data[Unit::Destroyer].attackRects.emplace_back(sf::IntRect(484, 9, 171, 160));
+		data[Unit::Destroyer].attackRects.emplace_back(sf::IntRect(484, 9, 171, 160));
 		data[Unit::Destroyer].rangedData = std::unique_ptr<RangedUnitData>(new RangedUnitData());
 		data[Unit::Destroyer].rangedData->projectileSpeed = 500.f;
 		data[Unit::Destroyer].rangedData->spawnProjectile =
@@ -108,6 +108,22 @@ namespace gStruct
 			for (int j = data[i].attackRects.size() - 2; j >= 0; j--)
 				data[i].attackRects.push_back(data[i].attackRects[j]);
 		}
+
+		return std::move(data);
+	}
+
+	std::vector<TurretData> initializeTurretData()
+	{
+		std::vector<TurretData> data(Turret::TypeCount);
+
+		data[Turret::LaserTurret].turretType      = Turret::LaserTurret;
+		data[Turret::LaserTurret].name            = "Laser Turret";
+		data[Turret::LaserTurret].damage          = 15;
+		data[Turret::LaserTurret].range           = 120.f;
+		data[Turret::LaserTurret].rate            = sf::seconds(0.4f);
+		data[Turret::LaserTurret].cost            = 150;
+		data[Turret::LaserTurret].scale           = 1.f;
+		data[Turret::LaserTurret].projectileSpeed = 450.f;
 
 		return std::move(data);
 	}

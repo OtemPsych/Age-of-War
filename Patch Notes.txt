@@ -1,3 +1,15 @@
+v0.6.3 | 06/05/2016
+
+  Features
+
+    * Added prototype turret framework
+
+  Updates
+
+    - The application no longer crashes if the multiplayer connection fails
+
+
+
 v0.6.2a | 05/05/2016
 
   Updates
@@ -13,6 +25,7 @@ v0.6.2 | 05/05/2016
     * Added a projectile attack for the Destroyer
 
     * Added a unit stat tooltip gui
+
 
 
 v0.6.0 | 01/05/2016

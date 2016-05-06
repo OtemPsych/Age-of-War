@@ -2,6 +2,7 @@
 #define Base_H_
 
 #include "RangedUnit.h"
+#include "Turret.h"
 #include "GUI/SpawnBar.h"
 
 #include <SFML/Network/Packet.hpp>
@@ -9,16 +10,20 @@
 class Base : public HealthEntity, private sf::NonCopyable
 {
 private:
-	pyro::SoundPlayer<Unit::SoundID>&          mSoundPlayer;
-	gui::SpawnBar                              mSpawnBar;
-									           
-	sf::Int16                                  mUnitTypeToSpawn;
-protected:
-	const pyro::TextureHolder<Unit::UnitType>& mUnitTextures;
-	std::vector<gStruct::UnitData>&            mUnitData;
-	std::vector<std::unique_ptr<Unit>>         mUnits;
+	pyro::SoundPlayer<Unit::SoundID>&              mSoundPlayer;
+	gui::SpawnBar                                  mSpawnBar;
+									               
+	sf::Int16                                      mUnitTypeToSpawn;
+protected:									       
+	const pyro::TextureHolder<Unit::UnitType>&     mUnitTextures;
+	std::vector<gStruct::UnitData>&                mUnitData;
+	std::vector<std::unique_ptr<Unit>>             mUnits;
 
-	unsigned short                             mGold;
+	const pyro::TextureHolder<Turret::TurretType>& mTurretTextures;
+	std::vector<gStruct::TurretData>&              mTurretData;
+	std::vector<Turret>                            mTurrets;
+											       
+	unsigned short                                 mGold;
 
 protected:
 	void handleUnitSpawn(Unit::UnitType type);
@@ -27,7 +32,9 @@ protected:
 public:
 	Base(Side side, sf::IntRect worldBounds, const sf::Texture& baseTexture,
 		 const pyro::TextureHolder<Unit::UnitType>& unitTextures,
-		 std::vector<gStruct::UnitData>& data,
+		 std::vector<gStruct::UnitData>& unitData,
+		 const pyro::TextureHolder<Turret::TurretType>& turretTextures,
+		 std::vector<gStruct::TurretData>& turretData,
 		 pyro::SoundPlayer<Unit::SoundID>& soundPlayer);
 	virtual ~Base();
 public:

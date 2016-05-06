@@ -25,9 +25,11 @@ private:
 	void updateGoldGUI();
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 public:
-	BasePlayer(sf::RenderWindow& window, sf::IntRect worldBounds,
-			   const sf::Texture& baseTexture, const pyro::TextureHolder<Unit::UnitType>& textures,
-		       std::vector<gStruct::UnitData>& data,
+	BasePlayer(sf::RenderWindow& window, sf::IntRect worldBounds, const sf::Texture& baseTexture,
+		       const pyro::TextureHolder<Unit::UnitType>& unitTextures,
+		       std::vector<gStruct::UnitData>& unitData,
+			   const pyro::TextureHolder<Turret::TurretType>& turretTextures,
+			   std::vector<gStruct::TurretData>& turretData,
 		       pyro::SoundPlayer<Unit::SoundID>& soundPlayer);
 public:
 	void handleEvent(const sf::Event& event);
