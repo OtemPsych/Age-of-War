@@ -36,8 +36,6 @@ bool Unit::canAttackTarget(HealthEntity& enemy)
 			float unitStartPoint = getPosition().x + pyro::math::normalizeVector(mSprite.getOrigin()).x * getGlobalBounds().width;
 			float entityStartPoint = enemy.getPosition().x - pyro::math::normalizeVector(enemy.getSpriteOrigin()).x * enemy.getGlobalBounds().width;
 
-			std::cout << pyro::math::normalizeVector(enemy.getSpriteOrigin()).x << std::endl;
-
 			if (unitStartPoint + mAttackRange >= entityStartPoint)
 				return true;
 		}

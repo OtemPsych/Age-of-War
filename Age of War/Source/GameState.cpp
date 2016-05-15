@@ -50,7 +50,7 @@ void GameState::setupResources()
 	mUnitTextures.load(Unit::UnitType::Destroyer, "Assets/Textures/Destroyer.png");
 	mUnitTextures.load(Unit::UnitType::Executioner, "Assets/Textures/Executioner.png");
 	mUnitTextures.load(Unit::UnitType::Shadow, "Assets/Textures/Shadow.png");
-	//mUnitTextures.load(Unit::UnitType::Samurai, "Assets/Textures/Samurai.png");
+	mUnitTextures.load(Unit::UnitType::Samurai, "Assets/Textures/Samurai.png");
 
 	mTurretTextures.load(Turret::LaserTurret, "Assets/Textures/LaserTurret.png");
 
@@ -84,8 +84,8 @@ bool GameState::handleEvent(const sf::Event& event)
 
 bool GameState::update(sf::Time dt)
 {
-	if (mBasePlayer->hasUnits() || mBaseOpponent->hasUnits())
 	{
+	if (mBasePlayer->hasUnits() || mBaseOpponent->hasUnits())
 		if (mBasePlayer->hasUnits())
 			mBaseOpponent->attack(mBasePlayer->getFirstUnit());
 		else

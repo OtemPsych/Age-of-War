@@ -8,7 +8,7 @@ gStruct::UnitData::TextureData readTextureData(const std::string& unitName, cons
 {
 	gStruct::UnitData::TextureData data;
 
-	std::ifstream fin(unitName + "Data.json", std::ios::in);
+	std::ifstream fin("TextureData/" + unitName + "Data.json", std::ios::in);
 	if (fin.is_open())
 	{
 		unsigned short animTypeIndex = 1;

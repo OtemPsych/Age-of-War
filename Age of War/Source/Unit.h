@@ -11,7 +11,7 @@ class Unit : public HealthEntity
 {
 public:
 	enum GeneralUnitType { Melee, Ranged };
-	enum UnitType { Mage, Knight, Destroyer, Executioner, Shadow, TypeCount };
+	enum UnitType { Mage, Knight, Destroyer, Executioner, Shadow, Samurai, TypeCount };
 	enum class SoundID { MageAttack, KnightAttack, TypeCount };
 private:
 	const float                 mAttackRange;

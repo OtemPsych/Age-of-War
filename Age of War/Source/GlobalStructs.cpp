@@ -122,20 +122,20 @@ namespace gStruct
 		data[Unit::Shadow].iconRect = data[Unit::Shadow].walkRects.front().first;
 		data[Unit::Shadow].rangedData = nullptr;
 
-		//data[Unit::Samurai].generalUnitType = Unit::GeneralUnitType::Melee;
-		//data[Unit::Samurai].unitType = Unit::Samurai;
-		//data[Unit::Samurai].name = "Samurai";
-		//data[Unit::Samurai].health = 500;
-		//data[Unit::Samurai].damage = 40;
-		//data[Unit::Samurai].range = 25.f;
-		//data[Unit::Samurai].rate = sf::seconds(0.75f);
-		//data[Unit::Samurai].speed = 90.f;
-		//data[Unit::Samurai].spawn = sf::seconds(2.5f);
-		//data[Unit::Samurai].cost = 50;
-		//data[Unit::Samurai].scale = 0.3f;
-		//setupAnimation(data[Unit::Samurai], false, false);
-		//data[Unit::Samurai].iconRect = data[Unit::Samurai].walkRects[0];
-		//data[Unit::Samurai].rangedData = nullptr;
+		data[Unit::Samurai].generalUnitType = Unit::GeneralUnitType::Melee;
+		data[Unit::Samurai].unitType = Unit::Samurai;
+		data[Unit::Samurai].name = "Samurai";
+		data[Unit::Samurai].health = 500;
+		data[Unit::Samurai].damage = 40;
+		data[Unit::Samurai].range = 25.f;
+		data[Unit::Samurai].rate = sf::seconds(0.75f);
+		data[Unit::Samurai].speed = 90.f;
+		data[Unit::Samurai].spawn = sf::seconds(2.5f);
+		data[Unit::Samurai].cost = 50;
+		data[Unit::Samurai].scale = 0.3f;
+		setupAnimation(data[Unit::Samurai], false, false);
+		data[Unit::Samurai].iconRect = data[Unit::Samurai].walkRects.front().first;
+		data[Unit::Samurai].rangedData = nullptr;
 
 		return std::move(data);
 	}
