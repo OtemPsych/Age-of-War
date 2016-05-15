@@ -23,5 +23,6 @@ public:
 	virtual void update(sf::Time dt) = 0;
 
 	inline bool isDestroyable() const { return mIsDestroyable; }
+	inline sf::Vector2f getSpriteOrigin() const { return mSprite.getOrigin(); }
 };
 #endif

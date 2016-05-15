@@ -13,6 +13,7 @@ Turret::Turret(Side side, sf::Vector2f baseSize, gStruct::TurretData& data,
 	, mAttackRate(data.rate)
 	, mProjectileSpeed(data.projectileSpeed)
 {
+	scale(data.scale, data.scale);
 }
 
 void Turret::spawnProjectile()
@@ -36,11 +37,11 @@ void Turret::spawnProjectile()
 
 void Turret::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	states.transform *= getTransform();
-
+	sf::RenderStates projState = states.transform * getTransform();
 	for (const auto& projectile : mProjectiles)
-		target.draw(projectile, states);
-	target.draw(mSprite, states);
+		target.draw(projectile, projState);
+
+	Entity::draw(target, states);
 }
 
 void Turret::attack(Unit& unit)

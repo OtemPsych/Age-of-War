@@ -1,8 +1,6 @@
 #include "Animation.h"
 
-#include <iostream>
-
-Animation::Animation(sf::Sprite& sprite, std::vector<sf::IntRect>& textureRects,
+Animation::Animation(sf::Sprite& sprite, gStruct::UnitData::TextureData& textureRects,
 					 sf::Time duration, bool repeat)
 	: mSprite(sprite)
 	, mTextureRects(textureRects)
@@ -20,7 +18,12 @@ void Animation::update(sf::Time dt)
 	{
 		if (mCurrentRect < mTextureRects.size() - 1 || mRepeat)
 		{
-			mSprite.setTextureRect(mTextureRects[mCurrentRect]);
+			mSprite.setTextureRect(mTextureRects[mCurrentRect].first);
+
+			sf::FloatRect lBounds(mSprite.getLocalBounds());
+			sf::Vector2f origin(mTextureRects[mCurrentRect].second);
+			mSprite.setOrigin(origin.x * lBounds.width, origin.y * lBounds.height);
+
 			mElapsedTime = sf::Time::Zero;
 
 			if (mRepeat)

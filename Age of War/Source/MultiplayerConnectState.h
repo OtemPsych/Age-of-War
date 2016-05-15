@@ -9,14 +9,14 @@
 class MultiplayerConnectState : public pyro::State
 {
 private:
-	sf::Font		   mFont;
-
+	sf::Font	mFont;
 	sf::Sprite  mBackgroundSprite;
 	sf::Texture mBackgroundTexture;
 
 	pyro::gui::Textbox            mIpTextbox;
 	pyro::gui::Textbox            mPortTextbox;
 	pyro::gui::ClickableGUIEntity mConnectButton;
+	pyro::gui::ClickableGUIEntity mBackButton;
 
 private:
 	void setupGUIEntities();
@@ -25,6 +25,7 @@ public:
 	MultiplayerConnectState(pyro::StateStack& stack, sf::RenderWindow& window);
 public:
 	virtual bool handleEvent(const sf::Event& event) override;
+	virtual bool update(sf::Time dt) override;
 	virtual void draw() override;
 
 	std::string getHostIP();

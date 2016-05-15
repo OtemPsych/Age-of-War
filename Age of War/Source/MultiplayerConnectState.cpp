@@ -7,6 +7,7 @@ MultiplayerConnectState::MultiplayerConnectState(pyro::StateStack& stack, sf::Re
 	, mIpTextbox(window, sf::Vector2f(250.f, 30.f))
 	, mPortTextbox(window, sf::Vector2f(125.f, 30.f))
 	, mConnectButton(window, sf::Vector2f(125.f, 30.f))
+	, mBackButton(window, sf::Vector2f(125.f, 30.f))
 {
 	setupResources();
 
@@ -34,6 +35,12 @@ void MultiplayerConnectState::setupGUIEntities()
 	mConnectButton.getShape().setFillColor(mIpTextbox.getShape().getFillColor());
 	mConnectButton.getText().setFont(mFont);
 	mConnectButton.getText().setString("Connect");
+
+	sf::FloatRect backGBounds(mBackButton.getGlobalBounds());
+	mBackButton.setPosition(backGBounds.width / 2.f + 15.f, winSize.y - backGBounds.height / 2.f - 15.f);
+	mBackButton.getShape().setFillColor(sf::Color(255, 255, 255, 50));
+	mBackButton.getText().setFont(mFont);
+	mBackButton.getText().setString("Back");
 }
 
 void MultiplayerConnectState::setupResources()
@@ -51,6 +58,13 @@ bool MultiplayerConnectState::handleEvent(const sf::Event& event)
 		return false;
 	}
 
+	if (mBackButton.clicked(event))
+	{
+		requestStateClear();
+		requestStatePush(pyro::StateID::Menu);
+		return false;
+	}
+
 	mIpTextbox.handleEvent(event);
 	mPortTextbox.handleEvent(event);
 	if (mConnectButton.clicked(event))
@@ -62,6 +76,19 @@ bool MultiplayerConnectState::handleEvent(const sf::Event& event)
 	return true;
 }
 
+bool MultiplayerConnectState::update(sf::Time dt)
+{
+	if (mConnectButton.hover())
+		mConnectButton.getShape().setFillColor(sf::Color(255, 255, 255, 120));
+	else if (mBackButton.hover())
+		mBackButton.getShape().setFillColor(sf::Color(255, 255, 255, 120));
+	else {
+		mConnectButton.getShape().setFillColor(sf::Color(143, 177, 189, 150));
+		mBackButton.getShape().setFillColor(sf::Color(255, 255, 255, 50));
+	}
+
+	return true;
+}
 
 void MultiplayerConnectState::draw()
 {
@@ -69,6 +96,7 @@ void MultiplayerConnectState::draw()
 	mWindow.draw(mIpTextbox);
 	mWindow.draw(mPortTextbox);
 	mWindow.draw(mConnectButton);
+	mWindow.draw(mBackButton);
 }
 
 std::string MultiplayerConnectState::getHostIP()

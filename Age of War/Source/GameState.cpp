@@ -48,6 +48,9 @@ void GameState::setupResources()
 	mUnitTextures.load(Unit::UnitType::Mage, "Assets/Textures/Mage.png");
 	mUnitTextures.load(Unit::UnitType::Knight, "Assets/Textures/Knight.png");
 	mUnitTextures.load(Unit::UnitType::Destroyer, "Assets/Textures/Destroyer.png");
+	mUnitTextures.load(Unit::UnitType::Executioner, "Assets/Textures/Executioner.png");
+	mUnitTextures.load(Unit::UnitType::Shadow, "Assets/Textures/Shadow.png");
+	//mUnitTextures.load(Unit::UnitType::Samurai, "Assets/Textures/Samurai.png");
 
 	mTurretTextures.load(Turret::LaserTurret, "Assets/Textures/LaserTurret.png");
 

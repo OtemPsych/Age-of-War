@@ -1,4 +1,5 @@
 #include "Base.h"
+#include "RangedUnit.h"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
@@ -55,11 +56,11 @@ void Base::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	HealthEntity::draw(target, states);
 
-	for (const auto& unit : mUnits)
-		target.draw(*unit, states);
-
 	for (const auto& turret : mTurrets)
 		target.draw(turret, states);
+
+	for (const auto& unit : mUnits)
+		target.draw(*unit, states);
 
 	target.draw(mSpawnBar, states.transform *= getTransform());
 }

@@ -1,4 +1,3 @@
-#include "GameState.h"
 #include "MenuState.h"
 #include "MultiplayerConnectState.h"
 #include "MultiplayerGameState.h"

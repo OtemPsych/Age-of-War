@@ -1,0 +1,208 @@
+v0.7.1 | 15/05/2016
+
+  Updates
+
+    - Added functionality that reads in animation data json files
+
+  Bug Fixes
+
+    ~ Fixed a bug that caused certain units to go under the ground during their animations
+
+
+
+v0.7.0 | 07/05/2016 - 08/05/2016
+
+  Features
+
+    * New unit added: The Executioner
+
+    * Button added to return back to the main menu during the connection screen
+
+  Updates
+
+    - Slight optimizations put in place for the pause screen
+
+    - The buttons in the main menu and the connection screen now give an indication when the player hovers over them
+
+  Bug Fixes
+
+    ~ Fixed a bug where the turret button gui didn't change color if the player didn't have enough gold to spawn it
+
+
+
+v0.6.3 | 06/05/2016
+
+  Features
+
+    * Added prototype turret framework
+
+  Updates
+
+    - The application no longer crashes if the multiplayer connection fails
+
+
+
+v0.6.2a | 05/05/2016
+
+  Updates
+
+    - Highly optimized the stat tooltip
+
+
+
+v0.6.2 | 05/05/2016
+
+  Features
+
+    * Added a projectile attack for the Destroyer
+
+    * Added a unit stat tooltip gui
+
+
+
+v0.6.0 | 01/05/2016
+
+  Features
+
+    * Added a pause screen
+
+
+
+v0.5.1a | 01/05/2016
+
+  Features
+
+    * Added a sound effect for the knight's attack
+
+  Updates
+
+    - A unit's gui overlay changes color to indicate if the player has sufficient gold to spawn that unit
+
+    - Changed the surrounding overlay of the unit buttons
+
+
+
+v0.5.1 | 30/04/2016
+
+  Updates
+
+    - Various optimizations were put in place for the text and gui
+
+
+
+v0.5.0 | 26/04/2016
+
+  Features
+
+    * Added a Menu Screen
+ 
+    * Added Multiplayer
+
+
+
+v0.4.1 | 20/04/2016 - 21/04/2016
+
+  Updates
+
+    - Overall optimizations
+
+    - Decreased chance of application-crashing errors
+
+  Bug Fixes
+
+    ~ Fixed a bug where the Destroyer one-shotted everything
+
+    ~ Fixed a bug where the enemy units' health bar appeared inversed
+
+
+
+v0.4.0 | 15/04/2016 - 16/04/2016
+
+  Features
+
+    * Added very basic AI
+
+  Updates
+
+    - The identifiers for units that are added to a queue now have a white outline
+
+    - Slight optimizations were put in place for the spawn bar and the unit queue
+
+  Bug Fixes
+
+    ~ Fixed a bug where each unit's attack range differed from unit to unit based on their size
+
+    ~ Fixed a bug where the mage's attack range didn't matter if he had already started attacking
+
+
+
+v0.3.1 | 11/04/2016
+
+  Updates
+
+    - Animations now loop back to their original state
+
+
+
+v0.3.0 | 03/04/2016
+
+  Features
+
+    * Added an attack animation for the knight
+
+    * New unit added: The Destroyer
+
+  Updates
+
+    - Improved the knight's walking animation
+
+    - Game is now in fullscreen mode
+
+
+
+v0.2.1 | 03/04/2016
+
+  Features
+
+    * Added background music
+
+    * Added a sound effect for the mage's attack
+
+  Updates
+
+    - Increased the money earned after killing a unit to 125% (from 75%) of the cost to make them
+
+
+
+v0.2.0 | 01/04/2016 - 02/04/2016
+
+  Features
+
+    * Units are added to a queue if the command is given for them to spawn but another unit is already spawning (5 units max in queue)
+
+    * Units now cost gold to create, units award gold once killed, and the remaining gold is displayed on the top of the screen
+
+  Updates
+
+    - Optimizations were put in place that should reduce some unnecessary strain on the cpu
+
+  Bug Fixes
+
+    ~ Fixed a bug where the knight unit stopped advancing if he was previously stopped before reaching a target
+
+
+
+v0.1.0 | 30/03/2016 - 31/03/2016
+
+  Features
+ 
+    * All entities now have a spawn timer and a bar appears on top of the base that represents the time remaining till the entity spawns
+
+    * Added an attack animation for the mage
+
+    * Mage shoots projectiles when attacking
+
+  Updates
+ 
+    - Improved the mage's walking animation
+  

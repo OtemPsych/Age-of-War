@@ -2,22 +2,21 @@
 #define BasePlayer_H_
 
 #include "Base.h"
-#include "GUI/UnitButtons.h"
-
-#include <PYRO/Text.h>
-#include <PYRO/GUI/ClickableGUIEntity.h>
-#include <SFML/Network/Packet.hpp>
-#include <SFML/Window/Event.hpp>
+#include "GUI/SpawnButtons.h"
 
 class BasePlayer : public Base
 {
 private:
-	sf::Font         mFont;
-	pyro::Text		 mGoldText;
-	sf::Texture		 mGoldCoinTexture;
-	sf::Sprite		 mGoldCoinSprite;
-					
-	gui::UnitButtons mUnitButtons;
+	using UnitSpawnButtons = gui::SpawnButtons<gStruct::UnitData, Unit::UnitType>;
+	using TurretSpawnButtons = gui::SpawnButtons<gStruct::TurretData, Turret::TurretType>;
+private:
+	sf::Font           mFont;
+	pyro::Text		   mGoldText;
+	sf::Texture		   mGoldCoinTexture;
+	sf::Sprite		   mGoldCoinSprite;
+					   
+	UnitSpawnButtons   mUnitButtons;
+	TurretSpawnButtons mTurretButtons;
 
 private:
 	void setupGoldGUI();

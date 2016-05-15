@@ -3,7 +3,6 @@
 
 #include "GameState.h"
 
-#include <SFML/System/Thread.hpp>
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/TcpSocket.hpp>
 

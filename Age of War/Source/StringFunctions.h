@@ -5,19 +5,13 @@
 
 namespace strFunc
 {
-	std::string getPrecisionString(float value, int precision)
+	inline std::string getPrecisionString(float value, unsigned short precision)
 	{
 		std::stringstream stream;
-		stream.precision(1);
+		stream.precision(precision);
 		stream << std::fixed << value;
 
 		return std::string(stream.str());
-	}
-
-	void insertFrontString(std::string& str, char* charToAdd, unsigned amount)
-	{
-		for (unsigned i = str.length(); i < amount; i++)
-			str.insert(0, charToAdd);
 	}
 }
 #endif

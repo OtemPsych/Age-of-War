@@ -48,6 +48,14 @@ bool MenuState::handleEvent(const sf::Event& event)
 
 bool MenuState::update(sf::Time dt)
 {
+	for (auto& button : mButtons)
+		if (button.hover()) {
+			button.getShape().setFillColor(sf::Color(255, 255, 255, 120));
+			break;
+		}
+		else
+			button.getShape().setFillColor(sf::Color(0, 0, 0, 150));
+
 	return true;
 }
 

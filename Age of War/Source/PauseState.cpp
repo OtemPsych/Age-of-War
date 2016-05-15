@@ -72,8 +72,11 @@ bool PauseState::handleEvent(const sf::Event& event)
 bool PauseState::update(sf::Time dt)
 {
 	for (auto& button : mButtons)
-		if (button.hover())
+		if (button.hover()) 
+		{
 			button.getText().setColor(sf::Color(255, 255, 255, 255));
+			break;
+		}
 		else
 			button.getText().setColor(sf::Color(255, 255, 255, 150));
 

@@ -1,7 +1,5 @@
 #include "BasePlayer.h"
 
-#include <SFML/Graphics/RenderTarget.hpp>
-
 BasePlayer::BasePlayer(sf::RenderWindow& window, sf::IntRect worldBounds, const sf::Texture& baseTexture,
 	                   const pyro::TextureHolder<Unit::UnitType>& unitTextures,
 	                   std::vector<gStruct::UnitData>& unitData,
@@ -9,7 +7,8 @@ BasePlayer::BasePlayer(sf::RenderWindow& window, sf::IntRect worldBounds, const 
 	                   std::vector<gStruct::TurretData>& turretData,
 	                   pyro::SoundPlayer<Unit::SoundID>& soundPlayer)
 	: Base(Side::Ally, worldBounds, baseTexture, unitTextures, unitData, turretTextures, turretData, soundPlayer)
-	, mUnitButtons(window, unitTextures, unitData)
+	, mUnitButtons(unitData, window, unitTextures, sf::Vector2f(55.f, 60.f))
+	, mTurretButtons(turretData, window, turretTextures, sf::Vector2f(55.f, 25.f))
 {
 	setupGoldGUI();
 }
@@ -30,6 +29,8 @@ void BasePlayer::setupGoldGUI()
 void BasePlayer::updateGoldGUI()
 {
 	mUnitButtons.updateButtonOverlay(mGold);
+	mTurretButtons.updateButtonOverlay(mGold);
+
 	mGoldText.setString(std::to_string(mGold));
 	mGoldText.setPosition(mGoldCoinSprite.getGlobalBounds().width + mGoldText.getGlobalBounds().width / 2.f + 15.f,
 		                  mGoldCoinSprite.getGlobalBounds().height / 2.f);
@@ -40,6 +41,7 @@ void BasePlayer::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	Base::draw(target, states);
 
 	target.draw(mUnitButtons, states);
+	target.draw(mTurretButtons, states);
 
 	target.draw(mGoldCoinSprite, states);
 	target.draw(mGoldText, states.transform *= mGoldCoinSprite.getTransform());
@@ -57,15 +59,17 @@ void BasePlayer::handleEvent(const sf::Event& event)
 		                             mTurretData[Turret::LaserTurret], mTurretTextures));
 
 		sf::FloatRect turretGBounds(mTurrets.back().getGlobalBounds());
-		mTurrets.back().setPosition(getPosition().x + getGlobalBounds().width / 2.f - turretGBounds.width / 3.f,
-			                        getPosition().y + turretGBounds.height / 2.f);
+		mTurrets.back().setPosition(getPosition().x + getGlobalBounds().width / 4.f + turretGBounds.width / 5.f,
+			                        getPosition().y + turretGBounds.height / 2.f + turretGBounds.height / 4.f);
 	}
 }
 
 void BasePlayer::update(sf::Time dt)
 {
 	Base::update(dt);
+
 	mUnitButtons.update();
+	mTurretButtons.update();
 }
 
 void BasePlayer::modifyGold(int amount)

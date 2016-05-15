@@ -2,11 +2,12 @@
 #include "Base.h"
 
 #include <PYRO/Math.h>
+#include <iostream>
 
 Unit::Unit(Side side, gStruct::UnitData& data, const pyro::TextureHolder<UnitType>& unitTextures,
 	       pyro::SoundPlayer<SoundID>& soundPlayer)
 	: HealthEntity(side, EntityType::Unit, data.health, unitTextures.get(static_cast<UnitType>(data.unitType)),
-			       data.walkRects[0])
+			       data.walkRects.front().first)
 	, mUnitType(static_cast<UnitType>(data.unitType))
 	, mDamage(data.damage)
 	, mAttackRange(data.range)
@@ -32,15 +33,17 @@ bool Unit::canAttackTarget(HealthEntity& enemy)
 	{
 		if (mSide == Side::Ally)
 		{
-			float unitStartPoint = getPosition().x + getGlobalBounds().width / 2.f;
-			float entityStartPoint = enemy.getPosition().x - enemy.getGlobalBounds().width / 2.f;
+			float unitStartPoint = getPosition().x + pyro::math::normalizeVector(mSprite.getOrigin()).x * getGlobalBounds().width;
+			float entityStartPoint = enemy.getPosition().x - pyro::math::normalizeVector(enemy.getSpriteOrigin()).x * enemy.getGlobalBounds().width;
+
+			std::cout << pyro::math::normalizeVector(enemy.getSpriteOrigin()).x << std::endl;
 
 			if (unitStartPoint + mAttackRange >= entityStartPoint)
 				return true;
 		}
 		else {
-			float unitStartPoint = getPosition().x - getGlobalBounds().width / 2.f;
-			float entityStartPoint = enemy.getPosition().x + enemy.getGlobalBounds().width / 2.f;
+			float unitStartPoint = getPosition().x - pyro::math::normalizeVector(mSprite.getOrigin()).x * getGlobalBounds().width;
+			float entityStartPoint = enemy.getPosition().x + pyro::math::normalizeVector(enemy.getSpriteOrigin()).x * enemy.getGlobalBounds().width;
 
 			if (unitStartPoint - mAttackRange <= entityStartPoint)
 				return true;
@@ -59,7 +62,8 @@ void Unit::attack(HealthEntity& enemy)
 
 	if (!mAttackAnimation.isAnimationOngoing())
 	{
-		mSoundPlayer.play(static_cast<Unit::SoundID>(mUnitType), getPosition(), 10.f);
+		if (mUnitType < static_cast<unsigned short>(Unit::SoundID::TypeCount))
+			mSoundPlayer.play(static_cast<Unit::SoundID>(mUnitType), getPosition(), 10.f);
 		enemy.receiveDamage(mDamage);
 		mAttackRate.current = sf::Time::Zero;
 		mAttackAnimation.restart();

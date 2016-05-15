@@ -33,19 +33,22 @@ namespace gStruct
 	};
 	struct UnitData
 	{
+		using TextureData = std::vector<std::pair<sf::IntRect, sf::Vector2f>>;
+
 		unsigned short                  generalUnitType;
-		unsigned short	                unitType;
+		unsigned short                  unitType;
 		std::string                     name;
-		unsigned short			        health;
-		unsigned short			        damage;
-		float					        range;
-		sf::Time				        rate;
-		float					        speed;
-		sf::Time				        spawn;
-		unsigned short			        cost;
-		float					        scale;
-		std::vector<sf::IntRect>        walkRects;
-		std::vector<sf::IntRect>        attackRects;
+		unsigned short                  health;
+		unsigned short                  damage;
+		float		                    range;
+		sf::Time	                    rate;
+		float		                    speed;
+		sf::Time	                    spawn;
+		unsigned short                  cost;
+		float		                    scale;
+		TextureData                     walkRects;
+		TextureData                     attackRects;
+		sf::IntRect                     iconRect;
 
 		std::unique_ptr<RangedUnitData> rangedData;
 	};
@@ -54,15 +57,20 @@ namespace gStruct
 	{
 		unsigned short turretType;
 		std::string    name;
+		unsigned short health;
 		unsigned short damage;
 		float          range;
 		sf::Time       rate;
+		sf::Time	   spawn;
 		unsigned short cost;
 		float          scale;
 		float          projectileSpeed;
+		sf::IntRect    iconRect;
 	};
 
 	std::vector<UnitData> initializeUnitData();
 	std::vector<TurretData> initializeTurretData();
+
+	void setupAnimation(UnitData& unitData, bool walkLoopback, bool attackLoopback);
 }
 #endif
