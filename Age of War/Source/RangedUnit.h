@@ -19,6 +19,7 @@ private:
 	sf::Vector2f                                     mEnemyPosition;
 
 private:
+	virtual void handleAttackAnimation(HealthEntity& enemy) override;
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 public:
 	RangedUnit(Side side, gStruct::UnitData& data, const pyro::TextureHolder<UnitType>& textures,

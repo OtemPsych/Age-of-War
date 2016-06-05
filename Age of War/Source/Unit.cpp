@@ -2,23 +2,23 @@
 #include "Base.h"
 
 #include <PYRO/Math.h>
-#include <iostream>
 
 Unit::Unit(Side side, gStruct::UnitData& data, const pyro::TextureHolder<UnitType>& unitTextures,
 	       pyro::SoundPlayer<SoundID>& soundPlayer)
 	: HealthEntity(side, EntityType::Unit, data.health, unitTextures.get(static_cast<UnitType>(data.unitType)),
 			       data.walkRects.front().first)
-	, mUnitType(static_cast<UnitType>(data.unitType))
-	, mDamage(data.damage)
 	, mAttackRange(data.range)
 	, mAttackRate(data.rate)
 	, mSpeed(data.speed)
 	, mGoldReward(125u * data.cost / 100u)
 	, mMoving(true)
-	, mAttacking(false)
 	, mWalkingAnimation(mSprite, data.walkRects, sf::seconds(0.65f), true)
-	, mAttackAnimation(mSprite, data.attackRects, data.rate, false)
+	, mGeneralUnitType(static_cast<GeneralUnitType>(data.generalUnitType))
+	, mUnitType(static_cast<UnitType>(data.unitType))
+	, mDamage(data.damage)
 	, mSoundPlayer(soundPlayer)
+	, mAttacking(false)
+	, mAttackAnimation(mSprite, data.attackRects, data.rate, false)
 {
 	scale(data.scale, data.scale);
 }
@@ -27,37 +27,24 @@ Unit::~Unit()
 {
 }
 
-bool Unit::canAttackTarget(HealthEntity& enemy)
+bool Unit::enemyInRange(HealthEntity& enemy)
 {
-	if (mAttackRate.current == mAttackRate.original)
-	{
-		if (mSide == Side::Ally)
-		{
-			float unitStartPoint = getPosition().x + pyro::math::normalizeVector(mSprite.getOrigin()).x * getGlobalBounds().width;
-			float entityStartPoint = enemy.getPosition().x - pyro::math::normalizeVector(enemy.getSpriteOrigin()).x * enemy.getGlobalBounds().width;
+	const sf::FloatRect gBounds(getGlobalBounds());
+	const sf::FloatRect enemyGBounds(enemy.getGlobalBounds());
 
-			if (unitStartPoint + mAttackRange >= entityStartPoint)
-				return true;
-		}
-		else {
-			float unitStartPoint = getPosition().x - pyro::math::normalizeVector(mSprite.getOrigin()).x * getGlobalBounds().width;
-			float entityStartPoint = enemy.getPosition().x + pyro::math::normalizeVector(enemy.getSpriteOrigin()).x * enemy.getGlobalBounds().width;
-
-			if (unitStartPoint - mAttackRange <= entityStartPoint)
-				return true;
-		}
-			
-		mMoving = true;
+	if (mSide == Side::Ally) {
+		if (gBounds.left + gBounds.width + mAttackRange >= enemyGBounds.left)
+			return true;
 	}
+	else
+		if (gBounds.left - mAttackRange <= enemyGBounds.left + enemyGBounds.width)
+			return true;
 
 	return false;
 }
 
-void Unit::attack(HealthEntity& enemy)
+void Unit::handleAttackAnimation(HealthEntity& enemy)
 {
-	if (!mAttacking && canAttackTarget(enemy))
-		mAttacking = true;
-
 	if (!mAttackAnimation.isAnimationOngoing())
 	{
 		if (mUnitType < static_cast<unsigned short>(Unit::SoundID::TypeCount))
@@ -68,13 +55,22 @@ void Unit::attack(HealthEntity& enemy)
 	}
 }
 
+void Unit::attack(HealthEntity& enemy)
+{
+	if (enemyInRange(enemy)) {
+		mMoving = false;
+		if (mAttackRate.current >= mAttackRate.original)
+			mAttacking = true;
+	}
+	else
+		mMoving = true;
+
+	handleAttackAnimation(enemy);
+}
+
 void Unit::update(sf::Time dt)
 {
-	if (mAttackRate.current < mAttackRate.original)
-		if (mAttackRate.current + dt >= mAttackRate.original)
-			mAttackRate.current = mAttackRate.original;
-		else
-			mAttackRate.current += dt;
+	mAttackRate.current += dt;
 
 	if (!mAttacking && mMoving)
 	{

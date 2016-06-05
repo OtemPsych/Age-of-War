@@ -10,13 +10,12 @@
 
 namespace gui
 {
-	class UnitQueue : public sf::Transformable, public sf::Drawable
+	class UnitQueue : public sf::Transformable, public sf::Drawable, private sf::NonCopyable
 	{
 	private:
 		enum class Identifier { Fill, Empty };
 	public:
-		struct UnitData
-		{
+		struct UnitData {
 			Unit::UnitType type;
 			sf::Time       spawn;
 

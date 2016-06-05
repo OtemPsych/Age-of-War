@@ -11,7 +11,7 @@ class Unit : public HealthEntity
 {
 public:
 	enum GeneralUnitType { Melee, Ranged };
-	enum UnitType { Mage, Knight, Destroyer, Executioner, Shadow, Samurai, TypeCount };
+	enum UnitType { Mage, Knight, Samurai, Shadow, Destroyer, Executioner, TypeCount };
 	enum class SoundID { MageAttack, KnightAttack, TypeCount };
 private:
 	const float                 mAttackRange;
@@ -31,7 +31,8 @@ protected:
 	Animation                   mAttackAnimation;
 
 protected:
-	bool canAttackTarget(HealthEntity& enemy);
+	bool enemyInRange(HealthEntity& enemy);
+	virtual void handleAttackAnimation(HealthEntity& enemy);
 public:
 	Unit(Side side, gStruct::UnitData& data, const pyro::TextureHolder<UnitType>& unitTextures,
 		 pyro::SoundPlayer<SoundID>& soundPlayer);
@@ -42,6 +43,7 @@ public:
 
 	inline void startMovement(bool flag) { mMoving = flag; }
 	inline void stopAttacking() { mAttacking = false; }
-	inline unsigned getGoldReward() const { return mGoldReward; }
+	inline GeneralUnitType getGeneralUnitType() const { return mGeneralUnitType; }
+	inline unsigned        getGoldReward() const { return mGoldReward; }
 };
 #endif

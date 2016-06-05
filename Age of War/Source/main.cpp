@@ -1,7 +1,7 @@
-#include "MenuState.h"
-#include "MultiplayerConnectState.h"
-#include "MultiplayerGameState.h"
-#include "PauseState.h"
+#include "States/MenuState.h"
+#include "States/MultiplayerConnectState.h"
+#include "States/MultiplayerGameState.h"
+#include "States/PauseState.h"
 
 #include <PYRO/Application.h>
 

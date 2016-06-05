@@ -48,8 +48,7 @@ namespace gui
 
 	void UnitQueue::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
-		if (!mQueue.empty())
-		{
+		if (!mQueue.empty()) {
 			states.transform *= getTransform();
 			for (const auto& id : mIdentifiers)
 				target.draw(id, states);
@@ -68,6 +67,6 @@ namespace gui
 		mQueue.pop();
 		update(Identifier::Empty);
 
-		return data;
+		return std::move(data);
 	}
 }

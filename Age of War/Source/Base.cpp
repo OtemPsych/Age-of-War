@@ -67,12 +67,12 @@ void Base::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void Base::attack(Unit& enemyUnit)
 {
-	for (auto& unit : mUnits)
-	{
-		unit->attack(enemyUnit);
-		if (enemyUnit.isDestroyable())
-			break;
-	}
+	for (auto& itr = mUnits.begin(); itr != mUnits.end(); itr++)
+		if ((*itr)->getGeneralUnitType() == Unit::GeneralUnitType::Ranged || itr == mUnits.begin()) {
+			(*itr)->attack(enemyUnit);
+			if (enemyUnit.isDestroyable())
+				break;
+		}
 
 	for (auto& turret : mTurrets)
 	{
@@ -91,10 +91,12 @@ void Base::attack(Unit& enemyUnit)
 
 void Base::attack(Base& enemyBase)
 {
-	for (auto& unit : mUnits)
-	{
-		unit->attack(enemyBase);
-	}
+	for (auto& itr = mUnits.begin(); itr != mUnits.end(); itr++)
+		if ((*itr)->getGeneralUnitType() == Unit::GeneralUnitType::Ranged || itr == mUnits.begin()) {
+			(*itr)->attack(enemyBase);
+			if (enemyBase.isDestroyable())
+				break;
+		}
 }
 
 void Base::update(sf::Time dt)
@@ -102,8 +104,14 @@ void Base::update(sf::Time dt)
 	for (auto& itr = mUnits.begin(); itr != mUnits.end(); itr++)
 	{
 		auto& nextItr = std::next(itr);
-		if (nextItr != mUnits.end() && (*itr)->getGlobalBounds().intersects((*nextItr)->getGlobalBounds()))
-			(*nextItr)->startMovement(false);
+		if (nextItr != mUnits.end())
+		{
+			sf::FloatRect itrGBounds((*itr)->getGlobalBounds());
+			sf::FloatRect nextItrGBounds((*nextItr)->getGlobalBounds());
+			itrGBounds.width *= 1.5f;
+			nextItrGBounds.width *= 1.5f;
+			(*nextItr)->startMovement(!itrGBounds.intersects(nextItrGBounds));
+		}
 	}
 
 	if (mSpawnBar.update(dt))

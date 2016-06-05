@@ -2,7 +2,7 @@
 #define SpawnButtons_H_
 
 #include "StatTooltip.h"
-#include "../StringFunctions.h"
+#include "../Tools/StringFunctions.h"
 
 #include <PYRO/GUI/ClickableGUIEntity.h>
 

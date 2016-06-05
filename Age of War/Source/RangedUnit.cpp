@@ -12,6 +12,20 @@ RangedUnit::RangedUnit(Side side, gStruct::UnitData& data, const pyro::TextureHo
 {
 }
 
+void RangedUnit::handleAttackAnimation(HealthEntity& enemy)
+{
+	if (!mAttackAnimation.isAnimationOngoing())
+	{
+		sf::FloatRect gBounds(getGlobalBounds());
+		mSpawnProjectile(mProjectiles, sf::Vector2f(gBounds.width, gBounds.height));
+
+		if (mUnitType < static_cast<unsigned short>(Unit::SoundID::TypeCount))
+			mSoundPlayer.play(static_cast<Unit::SoundID>(mUnitType), getPosition(), 10.f);
+
+		mAttackAnimation.restart();
+	}
+}
+
 void RangedUnit::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	Unit::draw(target, states);
@@ -23,18 +37,7 @@ void RangedUnit::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void RangedUnit::attack(HealthEntity& enemy)
 {
-	mAttacking = canAttackTarget(enemy);
-
-	if (!mAttackAnimation.isAnimationOngoing())
-	{
-		sf::FloatRect gBounds(getGlobalBounds());
-		mSpawnProjectile(mProjectiles, sf::Vector2f(gBounds.width, gBounds.height));
-
-		if (mUnitType < static_cast<unsigned short>(Unit::SoundID::TypeCount))
-			mSoundPlayer.play(static_cast<Unit::SoundID>(mUnitType), getPosition(), 10.f);
-
-		mAttackAnimation.restart();
-	}
+	Unit::attack(enemy);
 
 	for (unsigned i = 0; i < mProjectiles.size(); i++)
 		if (enemy.getGlobalBounds().contains(getTransform().transformPoint(mProjectiles[i][0].position)))

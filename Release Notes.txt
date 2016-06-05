@@ -1,3 +1,53 @@
+v0.7.2 | 04/06/2016, 05/06/2016
+
+  Updates
+
+    - Slight change to the button's text that returns to the main menu from the connection screen
+
+    - Unit Stat Changes
+
+        - Knight
+            - Reduced health to 200 (from 250)
+            - Reduced range to 15 (from 18)
+
+        - Samurai
+            - Increased attack rate to 0.45s (from 0.75s)
+            - Increased spawn time to 3.5s (from 2.5s)
+            - Increased cost to 150g (from 50g)
+            - Reduced health to 280 (from 500)
+            - Reduced damage to 25 (from 40)
+            - Reduced range to 15 (from 25)
+            - Reduced speed to 70 (from 90)
+            - Reduced size
+
+        - Destroyer
+            - Increased health to 500 (from 400)
+            - Increased spawn time to 5s (from 4.5s)
+            - Increased cost to 450g (from 250g)
+
+        - Executioner
+            - Increased health to 600 (from 500)
+            - Increased range to 15 (from 1)
+            - Increased spawn time to 5s (from 4.5s)
+            - Increased cost to 550g (from 500g)
+            - Reduced speed to 55 (from 90)
+
+        - Shadow
+            - Reduced health to 350 (from 500)
+            - Increased damage to 65 (from 40)
+            - Increased range to 15 (from 1)
+            - Increased attack rate to 0.6s (from 0.75s)
+            - Increased spawn time to 3s (from 2.5s)
+            - Increased cost to 350g (from 50g)
+
+  Bug Fixes
+
+    ~ Fixed a bug where melee units could attack even if they weren't the first in line
+
+    ~ Fixed a bug that had units move past an enemy due to their attack rate that was on cooldown
+
+
+
 v0.7.1 | 15/05/2016
 
   Updates

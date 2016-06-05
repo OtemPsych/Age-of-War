@@ -21,16 +21,11 @@ void Turret::spawnProjectile()
 	const sf::Vector2f size(5.f, 3.f);
 	const sf::FloatRect gBounds(getGlobalBounds());
 
-	sf::VertexArray vert(sf::Quads, 4);
-	vert[0].position = sf::Vector2f(0.f, -size.y);
-	vert[1].position = sf::Vector2f(size.x, -size.y);
-	vert[2].position = sf::Vector2f(size.x, size.y);
-	vert[3].position = sf::Vector2f(0.f, size.y);
-
-	vert[0].color = sf::Color::Red;
-	vert[1].color = sf::Color::Red;
-	vert[2].color = sf::Color::White;
-	vert[3].color = sf::Color::Red;
+	sf::VertexArray vert(sf::Quads);
+	vert.append(sf::Vertex(sf::Vector2f(   0.f, -size.y), sf::Color::Red));
+	vert.append(sf::Vertex(sf::Vector2f(size.x, -size.y), sf::Color::Red));
+	vert.append(sf::Vertex(sf::Vector2f(size.x,  size.y), sf::Color::White));
+	vert.append(sf::Vertex(sf::Vector2f(   0.f,  size.y), sf::Color::Red));
 
 	mProjectiles.push_back(std::move(vert));
 }
@@ -103,4 +98,7 @@ void Turret::update(sf::Time dt)
 		for (unsigned i = 0; i < projectile.getVertexCount(); i++)
 			projectile[i].position += velocity;
 	}
+
+	if (!mProjectiles.empty() && pyro::math::getHypotenuse(mProjectiles.front()[0].position) > mRange)
+		mProjectiles.erase(mProjectiles.begin());
 }

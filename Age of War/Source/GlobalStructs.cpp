@@ -1,6 +1,6 @@
 #include "GlobalStructs.h"
 #include "Turret.h"
-#include "TextureDataReader.h"
+#include "Tools/TextureDataReader.h"
 
 #include <PYRO/Math.h>
 
@@ -46,9 +46,9 @@ namespace gStruct
 		data[Unit::Knight].generalUnitType = Unit::GeneralUnitType::Melee;
 		data[Unit::Knight].unitType        = Unit::Knight;
 		data[Unit::Knight].name            = "Knight";
-		data[Unit::Knight].health          = 250;
+		data[Unit::Knight].health          = 200;
 		data[Unit::Knight].damage          = 45;
-		data[Unit::Knight].range           = 18.f;
+		data[Unit::Knight].range           = 15.f;
 		data[Unit::Knight].rate            = sf::seconds(0.75f);
 		data[Unit::Knight].speed           = 65.f;
 		data[Unit::Knight].spawn           = sf::seconds(3.5f);
@@ -58,16 +58,46 @@ namespace gStruct
 		data[Unit::Knight].iconRect = data[Unit::Knight].walkRects.front().first;
 		data[Unit::Knight].rangedData = nullptr;
 
+		data[Unit::Samurai].generalUnitType = Unit::GeneralUnitType::Melee;
+		data[Unit::Samurai].unitType = Unit::Samurai;
+		data[Unit::Samurai].name = "Samurai";
+		data[Unit::Samurai].health = 280;
+		data[Unit::Samurai].damage = 25;
+		data[Unit::Samurai].range = 15.f;
+		data[Unit::Samurai].rate = sf::seconds(0.45f);
+		data[Unit::Samurai].speed = 70.f;
+		data[Unit::Samurai].spawn = sf::seconds(3.5f);
+		data[Unit::Samurai].cost = 150;
+		data[Unit::Samurai].scale = 0.25f;
+		setupAnimation(data[Unit::Samurai], false, false);
+		data[Unit::Samurai].iconRect = data[Unit::Samurai].walkRects.front().first;
+		data[Unit::Samurai].rangedData = nullptr;
+
+		data[Unit::Shadow].generalUnitType = Unit::GeneralUnitType::Melee;
+		data[Unit::Shadow].unitType = Unit::Shadow;
+		data[Unit::Shadow].name = "Shadow";
+		data[Unit::Shadow].health = 350;
+		data[Unit::Shadow].damage = 65;
+		data[Unit::Shadow].range = 15.f;
+		data[Unit::Shadow].rate = sf::seconds(0.6f);
+		data[Unit::Shadow].speed = 90.f;
+		data[Unit::Shadow].spawn = sf::seconds(3.f);
+		data[Unit::Shadow].cost = 350;
+		data[Unit::Shadow].scale = 0.5f;
+		setupAnimation(data[Unit::Shadow], false, false);
+		data[Unit::Shadow].iconRect = data[Unit::Shadow].walkRects.front().first;
+		data[Unit::Shadow].rangedData = nullptr;
+
 		data[Unit::Destroyer].generalUnitType = Unit::GeneralUnitType::Ranged;
 		data[Unit::Destroyer].unitType        = Unit::Destroyer;
 		data[Unit::Destroyer].name            = "Destroyer";
-		data[Unit::Destroyer].health          = 400;
+		data[Unit::Destroyer].health          = 500;
 		data[Unit::Destroyer].damage          = 75;
 		data[Unit::Destroyer].range           = 60.f;
 		data[Unit::Destroyer].rate            = sf::seconds(0.75f);
 		data[Unit::Destroyer].speed           = 50.f;
-		data[Unit::Destroyer].spawn           = sf::seconds(5.f);
-		data[Unit::Destroyer].cost            = 250;
+		data[Unit::Destroyer].spawn           = sf::seconds(4.5f);
+		data[Unit::Destroyer].cost            = 450;
 		data[Unit::Destroyer].scale           = 0.85f;
 		setupAnimation(data[Unit::Destroyer], true, true);
 		data[Unit::Destroyer].iconRect = data[Unit::Destroyer].walkRects.front().first;
@@ -95,47 +125,18 @@ namespace gStruct
 		data[Unit::Executioner].generalUnitType = Unit::GeneralUnitType::Melee;
 		data[Unit::Executioner].unitType        = Unit::Executioner;
 		data[Unit::Executioner].name            = "Executioner";
-		data[Unit::Executioner].health          = 500;
+		data[Unit::Executioner].health          = 600;
 		data[Unit::Executioner].damage          = 40;
-		data[Unit::Executioner].range           = 1.f;
+		data[Unit::Executioner].range           = 15.f;
 		data[Unit::Executioner].rate            = sf::seconds(0.35f);
-		data[Unit::Executioner].speed           = 90.f;
-		data[Unit::Executioner].spawn           = sf::seconds(4.5f);
-		data[Unit::Executioner].cost            = 500;
+		data[Unit::Executioner].speed           = 55.f;
+		data[Unit::Executioner].spawn           = sf::seconds(5.f);
+		data[Unit::Executioner].cost            = 550;
 		data[Unit::Executioner].scale           = 0.9f;
 		setupAnimation(data[Unit::Executioner], true, true);
 		data[Unit::Executioner].iconRect = data[Unit::Executioner].attackRects.front().first;
 		data[Unit::Executioner].rangedData = nullptr;
 
-		data[Unit::Shadow].generalUnitType = Unit::GeneralUnitType::Melee;
-		data[Unit::Shadow].unitType = Unit::Shadow;
-		data[Unit::Shadow].name = "Shadow";
-		data[Unit::Shadow].health = 500;
-		data[Unit::Shadow].damage = 40;
-		data[Unit::Shadow].range = 1.f;
-		data[Unit::Shadow].rate = sf::seconds(0.75f);
-		data[Unit::Shadow].speed = 90.f;
-		data[Unit::Shadow].spawn = sf::seconds(2.5f);
-		data[Unit::Shadow].cost = 50;
-		data[Unit::Shadow].scale = 0.5f;
-		setupAnimation(data[Unit::Shadow], false, false);
-		data[Unit::Shadow].iconRect = data[Unit::Shadow].walkRects.front().first;
-		data[Unit::Shadow].rangedData = nullptr;
-
-		data[Unit::Samurai].generalUnitType = Unit::GeneralUnitType::Melee;
-		data[Unit::Samurai].unitType = Unit::Samurai;
-		data[Unit::Samurai].name = "Samurai";
-		data[Unit::Samurai].health = 500;
-		data[Unit::Samurai].damage = 40;
-		data[Unit::Samurai].range = 25.f;
-		data[Unit::Samurai].rate = sf::seconds(0.75f);
-		data[Unit::Samurai].speed = 90.f;
-		data[Unit::Samurai].spawn = sf::seconds(2.5f);
-		data[Unit::Samurai].cost = 50;
-		data[Unit::Samurai].scale = 0.3f;
-		setupAnimation(data[Unit::Samurai], false, false);
-		data[Unit::Samurai].iconRect = data[Unit::Samurai].walkRects.front().first;
-		data[Unit::Samurai].rangedData = nullptr;
 
 		return std::move(data);
 	}
@@ -147,11 +148,11 @@ namespace gStruct
 		data[Turret::LaserTurret].turretType      = Turret::LaserTurret;
 		data[Turret::LaserTurret].name            = "Laser Turret";
 		data[Turret::LaserTurret].health          = 0;
-		data[Turret::LaserTurret].damage          = 15;
+		data[Turret::LaserTurret].damage          = 8;
 		data[Turret::LaserTurret].range           = 220.f;
 		data[Turret::LaserTurret].spawn           = sf::seconds(0.f);
 		data[Turret::LaserTurret].rate            = sf::seconds(0.75f);
-		data[Turret::LaserTurret].cost            = 150;
+		data[Turret::LaserTurret].cost            = 175;
 		data[Turret::LaserTurret].scale           = 0.8f;
 		data[Turret::LaserTurret].projectileSpeed = 450.f;
 		data[Turret::LaserTurret].iconRect        = sf::IntRect();

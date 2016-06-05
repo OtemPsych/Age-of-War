@@ -16,7 +16,7 @@ private:
 protected:									       
 	const pyro::TextureHolder<Unit::UnitType>&     mUnitTextures;
 	std::vector<gStruct::UnitData>&                mUnitData;
-	std::vector<std::unique_ptr<Unit>>             mUnits;
+	std::vector<std::shared_ptr<Unit>>             mUnits;
 
 	const pyro::TextureHolder<Turret::TurretType>& mTurretTextures;
 	std::vector<gStruct::TurretData>&              mTurretData;
