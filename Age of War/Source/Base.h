@@ -9,11 +9,13 @@
 class Base : public HealthEntity, private sf::NonCopyable
 {
 private:
+	enum class PacketTypeID { Unit, Turret };
+private:
 	pyro::SoundPlayer<Unit::SoundID>&              mSoundPlayer;
 	gui::SpawnBar                                  mSpawnBar;
 									               
-	sf::Int16                                      mUnitTypeToSpawn;
-	sf::Int16                                      mTurretTypeToSpawn;
+	sf::Int16                                      mMPUnitType;
+	std::pair<sf::Int16, sf::Int8>                 mMPTurretInfo;
 protected:									       
 	const pyro::TextureHolder<Unit::UnitType>&     mUnitTextures;
 	std::vector<gStruct::UnitData>&                mUnitData;
@@ -22,6 +24,7 @@ protected:
 	const pyro::TextureHolder<Turret::TurretType>& mTurretTextures;
 	std::vector<gStruct::TurretData>&              mTurretData;
 	std::vector<std::pair<Turret, int>>            mTurrets;
+	sf::Int16                                      mTurretTypeToSpawn;
 
 	std::array<sf::FloatRect, 3>                   mTurretWindowRects;
 											       

@@ -64,7 +64,7 @@ void Turret::attack(Unit& unit)
 			if (turretStartPoint - mRange <= unitStartPoint)
 			{
 				sf::Vector2f distanceVec(getPosition() - unit.getPosition());
-				mSprite.setRotation(pyro::math::toDegrees(std::atan2(distanceVec.y, distanceVec.x)));
+				mSprite.setRotation(-pyro::math::toDegrees(std::atan2(distanceVec.y, distanceVec.x)));
 
 				spawnProjectile();
 				mAttackRate.current = sf::Time::Zero;

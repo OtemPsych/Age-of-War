@@ -126,4 +126,10 @@ namespace gui
 				mButtons[i].second[j].color = color;
 		}
 	}
+
+	template <typename T, typename K>
+	const sf::RectangleShape& SpawnButtons<T, K>::getButtonShape(unsigned i)
+	{
+		return mButtons[i].first.getShape();
+	}
 }

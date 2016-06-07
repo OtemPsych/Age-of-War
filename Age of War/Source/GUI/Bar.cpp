@@ -17,8 +17,7 @@ namespace gui
 
 		if (horizontal) 
 			setPosition(0.f, -entityBounds.height / 2.f - mOutline.getOutlineThickness() - 10.f);
-		else
-		{
+		else {
 			rotate(-90.f);
 			setPosition(-(entityBounds.width / 2.f) - mOutline.getOutlineThickness() - 8.f, 0.f);
 		}

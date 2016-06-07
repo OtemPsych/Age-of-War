@@ -1,3 +1,34 @@
+v0.8.0 | 07/06/2016
+
+  Features
+
+    * Integrated turrets into multiplayer
+
+  Updates
+
+    - Completed turret functionality (draggable turret buttons, base turret indicators)
+
+    - Stat Changes
+
+        - Unit(s)
+            - Knight
+                - Reduced damage to 35 (from 45)
+            - Destroyer
+                - Reduced damage to 70 (from 75)
+                - Reduced attack speed to 0.7s (from 0.75s)
+
+        - Turret(s)
+            - Laser Turret
+                - Increased cost to 215g (from 175g)
+
+  Bug Fixes
+
+    ~ Fixed a bug that miscalculated the enemy base's turrets' rotation
+
+    ~ Fixed a bug that wrongly placed online opponents' turrets
+
+
+
 v0.7.2a | 06/06/2016
 
   Bug Fixes
@@ -26,8 +57,8 @@ v0.7.2 | 04/06/2016, 05/06/2016
             - Reduced damage to 25 (from 40)
             - Reduced range to 15 (from 25)
             - Reduced speed to 70 (from 90)
-            - Reduced size
 
+            - Reduced size
         - Destroyer
             - Increased health to 500 (from 400)
             - Increased spawn time to 5s (from 4.5s)

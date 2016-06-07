@@ -30,10 +30,9 @@ namespace gui
 		TurretPlacementIndicators(const std::array<sf::FloatRect, 3>& windowRects,
 			                      sf::RenderWindow& window);
 	public:
-		void handleEvent(const sf::Event& event);
+		bool handleEvent(const sf::Event& event);
 		void update();
 
-		inline bool shouldCreateTurret() const { return mShouldCreateTurret; }
 		inline int getTurretIndicator() const { return mSelectedIndicator; }
 	};
 }

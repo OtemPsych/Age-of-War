@@ -103,13 +103,17 @@ namespace gui
 		target.draw(mIndicators, states);
 	}
 
-	void TurretPlacementIndicators::handleEvent(const sf::Event& event)
+	bool TurretPlacementIndicators::handleEvent(const sf::Event& event)
 	{
 		mShouldCreateTurret = mSelectedIndicator != -1 && event.type == sf::Event::MouseButtonReleased
 							&& event.mouseButton.button == sf::Mouse::Left;
 
-		if (mShouldCreateTurret)
+		if (mShouldCreateTurret) {
 			turretPlacementOccupied(mSelectedIndicator, true);
+			return true;
+		}
+
+		return false;
 	}
 
 	void TurretPlacementIndicators::update()

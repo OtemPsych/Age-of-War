@@ -11,14 +11,19 @@ private:
 	using UnitSpawnButtons = gui::SpawnButtons<gStruct::UnitData, Unit::UnitType>;
 	using TurretSpawnButtons = gui::SpawnButtons<gStruct::TurretData, Turret::TurretType>;
 private:
-	sf::Font                       mFont;
-	pyro::Text		               mGoldText;
-	sf::Texture		               mGoldCoinTexture;
-	sf::Sprite		               mGoldCoinSprite;
-					               
-	UnitSpawnButtons               mUnitButtons;
-	TurretSpawnButtons             mTurretButtons;
-	gui::TurretPlacementIndicators mTurretPlacementIndicators;
+	sf::Font                            mFont;
+	pyro::Text		                    mGoldText;
+	sf::Texture		                    mGoldCoinTexture;
+	sf::Sprite		                    mGoldCoinSprite;
+					                    
+	UnitSpawnButtons                    mUnitButtons;
+	TurretSpawnButtons                  mTurretButtons;
+
+	bool                                mActiveTurretPlacementIndicators;
+	std::unique_ptr<sf::RectangleShape> mTurretIndicator;
+	gui::TurretPlacementIndicators      mTurretPlacementIndicators;
+
+	sf::RenderWindow&                   mWindow;
 
 private:
 	void setupGoldGUI();

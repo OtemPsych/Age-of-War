@@ -11,7 +11,8 @@ Base::Base(Side side, sf::IntRect worldBounds, const sf::Texture& baseTexture,
 	       pyro::SoundPlayer<Unit::SoundID>& soundPlayer)
 	: HealthEntity(side, EntityType::Base, 1500, baseTexture)
 	, mSpawnBar(getGlobalBounds(), true, sf::Color(153, 77, 0))
-	, mUnitTypeToSpawn(-1)
+	, mMPUnitType(-1)
+	, mMPTurretInfo(std::make_pair(-1, -1))
 	, mTurretTypeToSpawn(-1)
 	, mUnitTextures(unitTextures)
 	, mSoundPlayer(soundPlayer)
@@ -55,6 +56,8 @@ void Base::handleTurretSpawn(Turret::TurretType type, int turretIndicator)
 			                              getPosition().y + mTurretWindowRects[turretIndicator].top + mTurretWindowRects[turretIndicator].height / 2.f);
 
 		mTurretTypeToSpawn = static_cast<sf::Int16>(type);
+		mMPTurretInfo.first = mTurretTypeToSpawn;
+		mMPTurretInfo.second = turretIndicator;
 	}
 }
 
@@ -63,7 +66,7 @@ void Base::handleUnitSpawn(Unit::UnitType type)
 	if (mGold >= mUnitData[type].cost && mSpawnBar.spawnNewUnit(gui::UnitQueue::UnitData(type, mUnitData[type].spawn)))
 	{
 		modifyGold(-mUnitData[type].cost);
-		mUnitTypeToSpawn = static_cast<sf::Int16>(type);
+		mMPUnitType = static_cast<sf::Int16>(type);
 	}
 }
 
@@ -161,10 +164,28 @@ void Base::modifyGold(int amount)
 
 sf::Packet& operator<<(sf::Packet& packet, Base& base)
 {
-	if (base.mUnitTypeToSpawn > -1)
-	{
-		assert(packet << base.mUnitTypeToSpawn);
-		base.mUnitTypeToSpawn = -1;
+	if (base.mMPUnitType > -1) {
+		assert(packet << static_cast<sf::Uint8>(Base::PacketTypeID::Unit));
+		assert(packet << base.mMPUnitType);
+		base.mMPUnitType = -1;
+	}
+	if (base.mMPTurretInfo.first > -1) {
+		assert(packet << static_cast<sf::Uint8>(Base::PacketTypeID::Turret));
+		assert(packet << base.mMPTurretInfo.first);
+
+		switch (base.mMPTurretInfo.second) {
+		case sf::Int8(0):
+			assert(packet << sf::Int8(2));
+			break;
+		case sf::Int8(2):
+			assert(packet << sf::Int8(0));
+			break;
+		default:
+			assert(packet << sf::Int8(1));
+		}
+
+		base.mMPTurretInfo.first = -1;
+		base.mMPTurretInfo.second = -1;
 	}
 
 	return packet;
@@ -172,10 +193,18 @@ sf::Packet& operator<<(sf::Packet& packet, Base& base)
 
 sf::Packet& operator>>(sf::Packet& packet, Base& base)
 {
-	if (!packet.endOfPacket())
-	{
-		assert(packet >> base.mUnitTypeToSpawn);
-		base.handleUnitSpawn(static_cast<Unit::UnitType>(base.mUnitTypeToSpawn));
+	if (!packet.endOfPacket()) {
+		sf::Uint8 packetTypeID;
+		assert(packet >> packetTypeID);
+		if (static_cast<Base::PacketTypeID>(packetTypeID) == Base::PacketTypeID::Unit) {
+			assert(packet >> base.mMPUnitType);
+			base.handleUnitSpawn(static_cast<Unit::UnitType>(base.mMPUnitType));
+		}
+		else {
+			assert(packet >> base.mMPTurretInfo.first);
+			assert(packet >> base.mMPTurretInfo.second);
+			base.handleTurretSpawn(static_cast<Turret::TurretType>(base.mMPTurretInfo.first), base.mMPTurretInfo.second);
+		}
 	}
 
 	return packet;

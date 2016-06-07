@@ -9,7 +9,10 @@ BasePlayer::BasePlayer(sf::RenderWindow& window, sf::IntRect worldBounds, const 
 	: Base(Side::Ally, worldBounds, baseTexture, unitTextures, unitData, turretTextures, turretData, soundPlayer)
 	, mUnitButtons(unitData, window, unitTextures, sf::Vector2f(55.f, 60.f))
 	, mTurretButtons(turretData, window, turretTextures, sf::Vector2f(55.f, 25.f))
+	, mActiveTurretPlacementIndicators(false)
+	, mTurretIndicator(nullptr)
 	, mTurretPlacementIndicators(mTurretWindowRects, window)
+	, mWindow(window)
 {
 	setupGoldGUI();
 
@@ -46,7 +49,10 @@ void BasePlayer::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	target.draw(mUnitButtons, states);
 	target.draw(mTurretButtons, states);
 
-	target.draw(mTurretPlacementIndicators, states.transform * getTransform());
+	if (mActiveTurretPlacementIndicators) {
+		target.draw(mTurretPlacementIndicators, states.transform * getTransform());
+		target.draw(*mTurretIndicator, states);
+	}
 
 	target.draw(mGoldCoinSprite, states);
 	target.draw(mGoldText, states.transform *= mGoldCoinSprite.getTransform());
@@ -58,9 +64,28 @@ void BasePlayer::handleEvent(const sf::Event& event)
 	if (i != -1)
 		handleUnitSpawn(static_cast<Unit::UnitType>(i));
 
-	mTurretPlacementIndicators.handleEvent(event);
-	if (mTurretPlacementIndicators.shouldCreateTurret())
-		handleTurretSpawn(Turret::LaserTurret, mTurretPlacementIndicators.getTurretIndicator());
+	int j = mTurretButtons.handleEvent(event);
+	if (j != -1 && mGold >= mTurretData[j].cost) {
+		mActiveTurretPlacementIndicators = true;
+		mTurretTypeToSpawn = j;
+
+		mTurretIndicator = std::make_unique<sf::RectangleShape>(mTurretButtons.getButtonShape(j));
+		mTurretIndicator->setOutlineThickness(0.f);
+	}
+
+	if (mActiveTurretPlacementIndicators)
+	{
+		if (mTurretPlacementIndicators.handleEvent(event)) {
+			handleTurretSpawn(static_cast<Turret::TurretType>(mTurretTypeToSpawn), mTurretPlacementIndicators.getTurretIndicator());
+			mActiveTurretPlacementIndicators = false;
+			mTurretTypeToSpawn = -1;
+			mTurretIndicator.reset();
+		}
+		else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+			mActiveTurretPlacementIndicators = false;
+			mTurretIndicator.reset();
+		}
+	}
 }
 
 void BasePlayer::update(sf::Time dt)
@@ -69,7 +94,11 @@ void BasePlayer::update(sf::Time dt)
 
 	mUnitButtons.update();
 	mTurretButtons.update();
-	mTurretPlacementIndicators.update();
+
+	if (mActiveTurretPlacementIndicators) {
+		mTurretPlacementIndicators.update();
+		mTurretIndicator->setPosition(static_cast<sf::Vector2f>(sf::Mouse::getPosition(mWindow)));
+	}
 }
 
 void BasePlayer::modifyGold(int amount)

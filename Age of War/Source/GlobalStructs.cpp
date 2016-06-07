@@ -47,7 +47,7 @@ namespace gStruct
 		data[Unit::Knight].unitType        = Unit::Knight;
 		data[Unit::Knight].name            = "Knight";
 		data[Unit::Knight].health          = 200;
-		data[Unit::Knight].damage          = 45;
+		data[Unit::Knight].damage          = 35;
 		data[Unit::Knight].range           = 15.f;
 		data[Unit::Knight].rate            = sf::seconds(0.75f);
 		data[Unit::Knight].speed           = 65.f;
@@ -92,9 +92,9 @@ namespace gStruct
 		data[Unit::Destroyer].unitType        = Unit::Destroyer;
 		data[Unit::Destroyer].name            = "Destroyer";
 		data[Unit::Destroyer].health          = 500;
-		data[Unit::Destroyer].damage          = 75;
+		data[Unit::Destroyer].damage          = 70;
 		data[Unit::Destroyer].range           = 60.f;
-		data[Unit::Destroyer].rate            = sf::seconds(0.75f);
+		data[Unit::Destroyer].rate            = sf::seconds(0.7f);
 		data[Unit::Destroyer].speed           = 50.f;
 		data[Unit::Destroyer].spawn           = sf::seconds(4.5f);
 		data[Unit::Destroyer].cost            = 450;
@@ -152,7 +152,7 @@ namespace gStruct
 		data[Turret::LaserTurret].range           = 220.f;
 		data[Turret::LaserTurret].spawn           = sf::seconds(0.f);
 		data[Turret::LaserTurret].rate            = sf::seconds(0.75f);
-		data[Turret::LaserTurret].cost            = 175;
+		data[Turret::LaserTurret].cost            = 215;
 		data[Turret::LaserTurret].scale           = 0.75f;
 		data[Turret::LaserTurret].projectileSpeed = 450.f;
 		data[Turret::LaserTurret].iconRect        = sf::IntRect();
