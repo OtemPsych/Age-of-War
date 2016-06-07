@@ -12,6 +12,7 @@ Base::Base(Side side, sf::IntRect worldBounds, const sf::Texture& baseTexture,
 	: HealthEntity(side, EntityType::Base, 1500, baseTexture)
 	, mSpawnBar(getGlobalBounds(), true, sf::Color(153, 77, 0))
 	, mUnitTypeToSpawn(-1)
+	, mTurretTypeToSpawn(-1)
 	, mUnitTextures(unitTextures)
 	, mSoundPlayer(soundPlayer)
 	, mUnitData(unitData)
@@ -25,10 +26,36 @@ Base::Base(Side side, sf::IntRect worldBounds, const sf::Texture& baseTexture,
 		setPosition(worldBounds.width - getGlobalBounds().width / 2.f - 20.f, 0.7f * worldBounds.height);
 		mSpawnBar.scale(-1.f, 1.f);
 	}
+
+	const sf::FloatRect gBounds(getGlobalBounds());
+	mTurretWindowRects[0] = sf::FloatRect( 18.f - gBounds.width / 2.f, 103.f - gBounds.height / 2.f, 43.f, 44.f);
+	mTurretWindowRects[1] = sf::FloatRect( 67.f - gBounds.width / 2.f, 103.f - gBounds.height / 2.f, 43.f, 44.f);
+	mTurretWindowRects[2] = sf::FloatRect(117.f - gBounds.width / 2.f, 103.f - gBounds.height / 2.f, 43.f, 44.f);
 }
 
 Base::~Base()
 {
+}
+
+void Base::handleTurretSpawn(Turret::TurretType type, int turretIndicator)
+{
+	if (turretIndicator == -1)
+		return;
+
+	if (mGold >= mTurretData[type].cost) 
+	{
+		for (const auto& turret : mTurrets)
+			if (turret.second == turretIndicator)
+				return;
+
+		modifyGold(-mTurretData[type].cost);
+		mTurrets.emplace_back(std::make_pair(Turret(mSide, sf::Vector2f(getGlobalBounds().width, getGlobalBounds().height),
+			                                 mTurretData[type], mTurretTextures), turretIndicator));
+		mTurrets.back().first.setPosition(getPosition().x + mTurretWindowRects[turretIndicator].left + mTurretWindowRects[turretIndicator].width / 2.f,
+			                              getPosition().y + mTurretWindowRects[turretIndicator].top + mTurretWindowRects[turretIndicator].height / 2.f);
+
+		mTurretTypeToSpawn = static_cast<sf::Int16>(type);
+	}
 }
 
 void Base::handleUnitSpawn(Unit::UnitType type)
@@ -57,7 +84,7 @@ void Base::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	HealthEntity::draw(target, states);
 
 	for (const auto& turret : mTurrets)
-		target.draw(turret, states);
+		target.draw(turret.first, states);
 
 	for (const auto& unit : mUnits)
 		target.draw(*unit, states);
@@ -76,7 +103,7 @@ void Base::attack(Unit& enemyUnit)
 
 	for (auto& turret : mTurrets)
 	{
-		turret.attack(enemyUnit);
+		turret.first.attack(enemyUnit);
 		if (enemyUnit.isDestroyable())
 			break;
 	}
@@ -121,7 +148,7 @@ void Base::update(sf::Time dt)
 		unit->update(dt);
 
 	for (auto& turret : mTurrets)
-		turret.update(dt);
+		turret.first.update(dt);
 
 	if (!mUnits.empty() && mUnits.front()->isDestroyable())
 		mUnits.erase(mUnits.begin());

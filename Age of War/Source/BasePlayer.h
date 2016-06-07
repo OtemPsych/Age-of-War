@@ -3,6 +3,7 @@
 
 #include "Base.h"
 #include "GUI/SpawnButtons.h"
+#include "GUI/TurretPlacementIndicators.h"
 
 class BasePlayer : public Base
 {
@@ -10,13 +11,14 @@ private:
 	using UnitSpawnButtons = gui::SpawnButtons<gStruct::UnitData, Unit::UnitType>;
 	using TurretSpawnButtons = gui::SpawnButtons<gStruct::TurretData, Turret::TurretType>;
 private:
-	sf::Font           mFont;
-	pyro::Text		   mGoldText;
-	sf::Texture		   mGoldCoinTexture;
-	sf::Sprite		   mGoldCoinSprite;
-					   
-	UnitSpawnButtons   mUnitButtons;
-	TurretSpawnButtons mTurretButtons;
+	sf::Font                       mFont;
+	pyro::Text		               mGoldText;
+	sf::Texture		               mGoldCoinTexture;
+	sf::Sprite		               mGoldCoinSprite;
+					               
+	UnitSpawnButtons               mUnitButtons;
+	TurretSpawnButtons             mTurretButtons;
+	gui::TurretPlacementIndicators mTurretPlacementIndicators;
 
 private:
 	void setupGoldGUI();

@@ -13,6 +13,7 @@ private:
 	gui::SpawnBar                                  mSpawnBar;
 									               
 	sf::Int16                                      mUnitTypeToSpawn;
+	sf::Int16                                      mTurretTypeToSpawn;
 protected:									       
 	const pyro::TextureHolder<Unit::UnitType>&     mUnitTextures;
 	std::vector<gStruct::UnitData>&                mUnitData;
@@ -20,11 +21,14 @@ protected:
 
 	const pyro::TextureHolder<Turret::TurretType>& mTurretTextures;
 	std::vector<gStruct::TurretData>&              mTurretData;
-	std::vector<Turret>                            mTurrets;
+	std::vector<std::pair<Turret, int>>            mTurrets;
+
+	std::array<sf::FloatRect, 3>                   mTurretWindowRects;
 											       
 	unsigned short                                 mGold;
 
 protected:
+	void handleTurretSpawn(Turret::TurretType type, int turretIndicator);
 	void handleUnitSpawn(Unit::UnitType type);
 	void spawnUnit();
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

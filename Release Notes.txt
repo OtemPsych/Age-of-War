@@ -1,3 +1,11 @@
+v0.7.2a | 06/06/2016
+
+  Bug Fixes
+
+    ~ Fixed a bug that allowed the player to create multiple turrets in the same position
+
+
+
 v0.7.2 | 04/06/2016, 05/06/2016
 
   Updates

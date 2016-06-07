@@ -153,7 +153,7 @@ namespace gStruct
 		data[Turret::LaserTurret].spawn           = sf::seconds(0.f);
 		data[Turret::LaserTurret].rate            = sf::seconds(0.75f);
 		data[Turret::LaserTurret].cost            = 175;
-		data[Turret::LaserTurret].scale           = 0.8f;
+		data[Turret::LaserTurret].scale           = 0.75f;
 		data[Turret::LaserTurret].projectileSpeed = 450.f;
 		data[Turret::LaserTurret].iconRect        = sf::IntRect();
 
