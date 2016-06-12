@@ -29,6 +29,9 @@ void BasePlayer::setupGoldGUI()
 	mGoldText.setFont(mFont);
 	mGoldText.setCharacterSize(45);
 	mGoldText.setTextColor(sf::Color::Black);
+	mGoldText.setShadowOffset(3.f, 2.f);
+	mGoldText.setShadowColor(sf::Color::White);
+	mGoldText.setOriginFlags(pyro::utils::OriginFlags::Center);
 	updateGoldGUI();
 }
 

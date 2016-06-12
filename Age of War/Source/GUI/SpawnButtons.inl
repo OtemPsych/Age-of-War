@@ -1,5 +1,7 @@
 #include "../Unit.h"
 
+#include <PYRO/Utils.h>
+
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 
@@ -36,16 +38,25 @@ namespace gui
 		{
 			mButtons.emplace_back(std::make_pair(pyro::gui::ClickableGUIEntity(mWindow, buttonSize), sf::VertexArray(sf::Quads, 4)));
 
+			mButtons[i].first.setOriginFlags(pyro::utils::OriginFlags::Center);
 			mButtons[i].first.setPosition(buttonPos.x + totalButtonSizeX * (i + 0.5f), buttonPos.y);
 			
-			sf::RectangleShape& buttonShape(mButtons[i].first.getBox());
-			buttonShape.setTexture(&textures.get(static_cast<K>(i)));
+			sf::RectangleShape& buttonBox(mButtons[i].first.getBox());
+			buttonBox.setTexture(&textures.get(static_cast<K>(i)));
 			if (mTData[i].iconRect.width == 0)
-				buttonShape.setTextureRect(sf::IntRect(0, 0, buttonShape.getTexture()->getSize().x, buttonShape.getTexture()->getSize().y));
+				buttonBox.setTextureRect(sf::IntRect(0, 0, buttonBox.getTexture()->getSize().x, buttonBox.getTexture()->getSize().y));
 			else
-				buttonShape.setTextureRect(mTData[i].iconRect);
-			buttonShape.setOutlineThickness(thickness);
-			buttonShape.setOutlineColor(sf::Color::Black);
+				buttonBox.setTextureRect(mTData[i].iconRect);
+			buttonBox.setOutlineThickness(thickness);
+			buttonBox.setOutlineColor(sf::Color::Black);
+
+			const sf::Vector2f& buttonPos(mButtons[i].first.getPosition());
+			const sf::Vector2f halfSize(buttonSize / 2.f);
+			sf::VertexArray& overlay(mButtons[i].second);
+			overlay[0].position = buttonPos - halfSize;
+			overlay[1].position = sf::Vector2f(buttonPos.x + halfSize.x, buttonPos.y - halfSize.y);
+			overlay[2].position = buttonPos + halfSize;
+			overlay[3].position = sf::Vector2f(buttonPos.x - halfSize.x, buttonPos.y + halfSize.y);
 		}
 
 		mButtonOverlay[0].position = mButtons.front().second[0].position + sf::Vector2f(-margin, -margin);
@@ -72,8 +83,7 @@ namespace gui
 	void SpawnButtons<T, K>::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		target.draw(mButtonOverlay, &mButtonOverlayTexture);
-		for (auto& button : mButtons)
-		{
+		for (auto& button : mButtons) {
 			target.draw(button.second, states);
 			target.draw(button.first, states);
 		}
@@ -99,8 +109,7 @@ namespace gui
 		if (mousePos.x > mButtonOverlay[0].position.x && mousePos.y > mButtonOverlay[0].position.y
 		 && mousePos.x < mButtonOverlay[2].position.x && mousePos.y < mButtonOverlay[2].position.y)
 			for (unsigned i = 0; i < mButtons.size(); i++)
-				if (mButtons[i].first.hover())
-				{
+				if (mButtons[i].first.hover()) {
 					mStatTooltip->update(i);
 					return;
 				}
@@ -111,8 +120,7 @@ namespace gui
 	template <typename T, typename K>
 	void SpawnButtons<T, K>::updateButtonOverlay(unsigned gold)
 	{
-		for (unsigned i = 0; i < mButtons.size(); i++)
-		{
+		for (unsigned i = 0; i < mButtons.size(); i++) {
 			const sf::Color& color(mTData[i].cost > gold ? mButtonColors.second : mButtonColors.first);
 			for (unsigned j = 0; j < 4; j++)
 				mButtons[i].second[j].color = color;
