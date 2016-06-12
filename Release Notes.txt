@@ -8,6 +8,10 @@ v0.8.1 | 12/06/2016
 
     ~ Fixed a bug that caused the view to not reset after returning to the main menu or restarting the game
 
+    ~ Fixed a bug that rendered the cursor in the multiplayer connect state invisible
+
+    ~ Fixed a bug that improperly aligned the gui elements in the multiplayer connect state
+
 
 
 v0.8.0a | 08/06/2016

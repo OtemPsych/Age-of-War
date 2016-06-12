@@ -9,14 +9,17 @@
 class MultiplayerConnectState : public pyro::State
 {
 private:
-	sf::Font	mFont;
-	sf::Sprite  mBackgroundSprite;
-	sf::Texture mBackgroundTexture;
+	sf::Font	                  mFont;
+	sf::Sprite                    mBackgroundSprite;
+	sf::Texture                   mBackgroundTexture;
 
 	pyro::gui::Textbox            mIpTextbox;
 	pyro::gui::Textbox            mPortTextbox;
 	pyro::gui::ClickableGUIEntity mConnectButton;
 	pyro::gui::ClickableGUIEntity mBackButton;
+
+	sf::Sprite                    mCursor;
+	sf::Texture                   mCursorTexture;
 
 private:
 	void setupGUIEntities();
