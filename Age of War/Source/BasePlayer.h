@@ -38,6 +38,7 @@ public:
 			   std::vector<gStruct::TurretData>& turretData,
 		       pyro::SoundPlayer<Unit::SoundID>& soundPlayer);
 public:
+	void updateGUIPositions();
 	void handleEvent(const sf::Event& event);
 	virtual void update(sf::Time dt) override;
 	virtual void modifyGold(int amount) override;

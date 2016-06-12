@@ -49,16 +49,26 @@ void BasePlayer::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	Base::draw(target, states);
 
-	target.draw(mUnitButtons, states);
-	target.draw(mTurretButtons, states);
-
 	if (mActiveTurretPlacementIndicators) {
 		target.draw(mTurretPlacementIndicators, states.transform * getTransform());
 		target.draw(*mTurretIndicator, states);
 	}
 
+	target.draw(mUnitButtons, states);
+	target.draw(mTurretButtons, states);
+
 	target.draw(mGoldCoinSprite, states);
 	target.draw(mGoldText, states.transform *= mGoldCoinSprite.getTransform());
+}
+
+void BasePlayer::updateGUIPositions()
+{
+	const float viewCenterX = mWindow.getView().getCenter().x;
+	const float halfViewX = mWindow.getView().getSize().x / 2.f;
+
+	mUnitButtons.setPosition(viewCenterX - halfViewX, mUnitButtons.getPosition().y);
+	mTurretButtons.setPosition(viewCenterX - halfViewX, mTurretButtons.getPosition().y);
+	mGoldCoinSprite.setPosition(viewCenterX - halfViewX + 10.f, mGoldCoinSprite.getPosition().y);
 }
 
 void BasePlayer::handleEvent(const sf::Event& event)
@@ -73,6 +83,8 @@ void BasePlayer::handleEvent(const sf::Event& event)
 		mTurretTypeToSpawn = j;
 
 		mTurretIndicator = std::make_unique<sf::RectangleShape>(mTurretButtons.getButtonBox(j));
+		sf::FloatRect lBounds(mTurretIndicator->getLocalBounds());
+		mTurretIndicator->setOrigin(lBounds.width / 3.f, lBounds.height / 3.f);
 		mTurretIndicator->setOutlineThickness(0.f);
 	}
 

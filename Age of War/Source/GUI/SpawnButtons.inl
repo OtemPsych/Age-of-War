@@ -82,7 +82,10 @@ namespace gui
 	template <typename T, typename K>
 	void SpawnButtons<T, K>::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
-		target.draw(mButtonOverlay, &mButtonOverlayTexture);
+		states.transform *= getTransform();
+		sf::RenderStates overlayStates(states);
+		overlayStates.texture = &mButtonOverlayTexture;
+		target.draw(mButtonOverlay, overlayStates);
 		for (auto& button : mButtons) {
 			target.draw(button.second, states);
 			target.draw(button.first, states);
@@ -95,7 +98,7 @@ namespace gui
 	int SpawnButtons<T, K>::handleEvent(const sf::Event& event)
 	{
 		for (unsigned i = 0; i < mButtons.size(); i++)
-			if (mButtons[i].first.clicked(event))
+			if (mButtons[i].first.clicked(event, getTransform()))
 				return i;
 
 		return -1;
@@ -109,7 +112,7 @@ namespace gui
 		if (mousePos.x > mButtonOverlay[0].position.x && mousePos.y > mButtonOverlay[0].position.y
 		 && mousePos.x < mButtonOverlay[2].position.x && mousePos.y < mButtonOverlay[2].position.y)
 			for (unsigned i = 0; i < mButtons.size(); i++)
-				if (mButtons[i].first.hover()) {
+				if (mButtons[i].first.hover(getTransform())) {
 					mStatTooltip->update(i);
 					return;
 				}

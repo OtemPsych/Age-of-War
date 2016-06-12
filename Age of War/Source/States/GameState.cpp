@@ -37,11 +37,12 @@ void GameState::setupBackground()
 	sf::Vector2f winSize(mWindow.getSize());
 	sf::Vector2f textureSize(mBackgroundTexture.getSize());
 
-	mWorldBounds = sf::IntRect(0, 0, static_cast<int>(textureSize.x) * 2, static_cast<int>(textureSize.y));
-
 	mBackgroundTexture.setRepeated(true);
 	mBackground.setTexture(mBackgroundTexture);
-	mBackground.setTextureRect(mWorldBounds);
+	mBackground.scale(1.f, mWindow.getSize().y / textureSize.y);
+	mBackground.setTextureRect(sf::IntRect(0, 0, static_cast<int>(textureSize.x) * 2, static_cast<int>(textureSize.y)));
+
+	mWorldBounds = mBackground.getTextureRect();
 }
 
 void GameState::setupResources()
@@ -114,6 +115,7 @@ bool GameState::update(sf::Time dt)
 				newView.setCenter(mWorldBounds.width - halfViewWidth, viewCenter.y);
 
 			mWindow.setView(newView);
+			mBasePlayer->updateGUIPositions();
 		}
 		else if (coordsX <= viewCenter.x - halfViewWidth + 100.f) {
 			const float totalDisplacement = viewCenter.x - halfViewWidth - movement;
@@ -124,6 +126,7 @@ bool GameState::update(sf::Time dt)
 				newView.setCenter(mWorldBounds.left + halfViewWidth, viewCenter.y);
 
 			mWindow.setView(newView);
+			mBasePlayer->updateGUIPositions();
 		}
 	}
 
