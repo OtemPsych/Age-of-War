@@ -31,6 +31,7 @@ protected:
 	pyro::MusicPlayer<MusicID>		        mMusicPlayer;
 	pyro::SoundPlayer<Unit::SoundID>        mSoundPlayer;
 
+	sf::IntRect                             mWindowBounds;
 	sf::IntRect                             mWorldBounds;
 
 private:

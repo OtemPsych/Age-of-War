@@ -4,6 +4,10 @@ v0.8.1 | 12/06/2016
 
     - Doubled map size
 
+    - The game now pauses if the window loses focus
+
+    - The game's map now only scrolls if the mouse is within the window bounds
+
   Bug Fixes
 
     ~ Fixed a bug that caused the view to not reset after returning to the main menu or restarting the game

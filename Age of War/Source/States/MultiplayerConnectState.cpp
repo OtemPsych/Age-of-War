@@ -34,7 +34,8 @@ void MultiplayerConnectState::setupGUIEntities()
 	pyro::Text& ipText(mIpTextbox.getText());
 	ipBox.setFillColor(sf::Color(143, 177, 189, 150));
 	ipText.setFont(mFont);
-	ipText.setShadowColor(sf::Color::Transparent);
+	ipText.setShadowOffset(2.f, 2.f);
+	ipText.setShadowColor(sf::Color(0, 0, 0, 80));
 	ipText.setOriginFlags(pyro::utils::OriginFlags::Center);
 	ipText.setPosition(ipBox.getSize() / 2.f);
 	mIpTextbox.setOriginFlags(pyro::utils::OriginFlags::Center);
@@ -44,6 +45,7 @@ void MultiplayerConnectState::setupGUIEntities()
 	pyro::Text& portText(mPortTextbox.getText());
 	portBox.setFillColor(ipBox.getFillColor());
 	portText.setFont(mFont);
+	portText.setShadowOffset(ipText.getShadowOffset());
 	portText.setShadowColor(ipText.getShadowColor());
 	portText.setOriginFlags(pyro::utils::OriginFlags::Center);
 	portText.setPosition(portBox.getSize() / 2.f);
@@ -55,6 +57,7 @@ void MultiplayerConnectState::setupGUIEntities()
 	connectBox.setFillColor(ipBox.getFillColor());
 	connectText.setFont(mFont);
 	connectText.setString("Connect");
+	connectText.setShadowOffset(ipText.getShadowOffset());
 	connectText.setShadowColor(ipText.getShadowColor());
 	connectText.setOriginFlags(pyro::utils::OriginFlags::Center);
 	connectText.setPosition(connectBox.getSize() / 2.f);
@@ -66,6 +69,7 @@ void MultiplayerConnectState::setupGUIEntities()
 	backBox.setFillColor(sf::Color(255, 255, 255, 50));
 	backText.setFont(mFont);
 	backText.setString("< Back");
+	backText.setShadowOffset(ipText.getShadowOffset());
 	backText.setShadowColor(ipText.getShadowColor());
 	backText.setOriginFlags(pyro::utils::OriginFlags::Center);
 	backText.setPosition(backBox.getSize() / 2.f);

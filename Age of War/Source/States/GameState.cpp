@@ -8,6 +8,7 @@ GameState::GameState(pyro::StateStack& stack, sf::RenderWindow& window)
 	, mTurretData(std::move(gStruct::initializeTurretData()))
 	, mBasePlayer(nullptr)
 	, mBaseOpponent(nullptr)
+	, mWindowBounds(0, 0, mWindow.getSize().x, mWindow.getSize().y)
 {
 	setupResources();
 	setupBackground();
@@ -71,7 +72,8 @@ bool GameState::handleEvent(const sf::Event& event)
 {
 	if (event.type == sf::Event::Closed)
 		requestStateClear();
-	else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+	else if ((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
+		|| event.type == sf::Event::LostFocus) {
 		requestStatePush(pyro::StateID::Pause);
 		mMusicPlayer.pause(true);
 	}
@@ -96,31 +98,33 @@ bool GameState::update(sf::Time dt)
 	else
 		mBasePlayer->attack(*mBaseOpponent);
 
-	sf::View newView(mWindow.getView());
-	const float coordsX = mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)).x;
-	const float halfViewWidth = newView.getSize().x / 2.f;
-	const sf::Vector2f viewCenter = newView.getCenter();
-	const float movement = 7.f;
-
-	if (coordsX >= viewCenter.x + halfViewWidth - 100.f) {
-		const float totalDisplacement = viewCenter.x + halfViewWidth + movement;
+	if (mWindowBounds.contains(sf::Mouse::getPosition(mWindow)))
+	{
 		sf::View newView(mWindow.getView());
-		if (totalDisplacement < mWorldBounds.width)
-			newView.move(movement, 0.f);
-		else
-			newView.setCenter(mWorldBounds.width - halfViewWidth, viewCenter.y);
+		const float coordsX = mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)).x;
+		const float halfViewWidth = newView.getSize().x / 2.f;
+		const sf::Vector2f viewCenter = newView.getCenter();
+		const float movement = 7.f;
+		if (coordsX >= viewCenter.x + halfViewWidth - 100.f) {
+			const float totalDisplacement = viewCenter.x + halfViewWidth + movement;
+			sf::View newView(mWindow.getView());
+			if (totalDisplacement < mWorldBounds.width)
+				newView.move(movement, 0.f);
+			else
+				newView.setCenter(mWorldBounds.width - halfViewWidth, viewCenter.y);
 
-		mWindow.setView(newView);
-	}
-	else if (coordsX <= viewCenter.x - halfViewWidth + 100.f) {
-		const float totalDisplacement = viewCenter.x - halfViewWidth - movement;
-		sf::View newView(mWindow.getView());
-		if (totalDisplacement > mWorldBounds.left)
-			newView.move(-movement, 0.f);
-		else
-			newView.setCenter(mWorldBounds.left + halfViewWidth, viewCenter.y);
+			mWindow.setView(newView);
+		}
+		else if (coordsX <= viewCenter.x - halfViewWidth + 100.f) {
+			const float totalDisplacement = viewCenter.x - halfViewWidth - movement;
+			sf::View newView(mWindow.getView());
+			if (totalDisplacement > mWorldBounds.left)
+				newView.move(-movement, 0.f);
+			else
+				newView.setCenter(mWorldBounds.left + halfViewWidth, viewCenter.y);
 
-		mWindow.setView(newView);
+			mWindow.setView(newView);
+		}
 	}
 
 	mCursor.setPosition(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)));
