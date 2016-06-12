@@ -71,11 +71,15 @@ bool PauseState::handleEvent(const sf::Event& event)
 	}
 	else if (mButtons[Restart].clicked(event))
 	{
+		mWindow.setView(mWindow.getDefaultView());
+
 		requestStateClear();
 		requestStatePush(pyro::StateID::Game);
 	}
 	else if (mButtons[Quit_Menu].clicked(event))
 	{
+		mWindow.setView(mWindow.getDefaultView());
+
 		requestStateClear();
 		requestStatePush(pyro::StateID::Menu);
 	}

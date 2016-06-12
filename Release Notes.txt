@@ -4,6 +4,10 @@ v0.8.1 | 12/06/2016
 
     - Doubled map size
 
+  Bug Fixes
+
+    ~ Fixed a bug that caused the view to not reset after returning to the main menu or restarting the game
+
 
 
 v0.8.0a | 08/06/2016
