@@ -24,21 +24,21 @@ void MultiplayerConnectState::setupGUIEntities()
 {
 	sf::Vector2f winSize(mWindow.getSize());
 	mIpTextbox.setPosition(winSize.x / 2.f, winSize.y / 2.f);
-	mIpTextbox.getShape().setFillColor(sf::Color(143, 177, 189, 150));
+	mIpTextbox.getBox().setFillColor(sf::Color(143, 177, 189, 150));
 	mIpTextbox.getText().setFont(mFont);
 
 	mPortTextbox.setPosition(mIpTextbox.getPosition().x, mIpTextbox.getPosition().y + mIpTextbox.getGlobalBounds().height * 1.5f);
-	mPortTextbox.getShape().setFillColor(mIpTextbox.getShape().getFillColor());
+	mPortTextbox.getBox().setFillColor(mIpTextbox.getBox().getFillColor());
 	mPortTextbox.getText().setFont(mFont);
 
 	mConnectButton.setPosition(mPortTextbox.getPosition().x, mPortTextbox.getPosition().y + mPortTextbox.getGlobalBounds().height * 3.f);
-	mConnectButton.getShape().setFillColor(mIpTextbox.getShape().getFillColor());
+	mConnectButton.getBox().setFillColor(mIpTextbox.getBox().getFillColor());
 	mConnectButton.getText().setFont(mFont);
 	mConnectButton.getText().setString("Connect");
 
 	sf::FloatRect backGBounds(mBackButton.getGlobalBounds());
 	mBackButton.setPosition(backGBounds.width / 2.f + 15.f, winSize.y - backGBounds.height / 2.f - 15.f);
-	mBackButton.getShape().setFillColor(sf::Color(255, 255, 255, 50));
+	mBackButton.getBox().setFillColor(sf::Color(255, 255, 255, 50));
 	mBackButton.getText().setFont(mFont);
 	mBackButton.getText().setString("< Back");
 }
@@ -77,12 +77,12 @@ bool MultiplayerConnectState::handleEvent(const sf::Event& event)
 bool MultiplayerConnectState::update(sf::Time dt)
 {
 	if (mConnectButton.hover())
-		mConnectButton.getShape().setFillColor(sf::Color(255, 255, 255, 120));
+		mConnectButton.getBox().setFillColor(sf::Color(255, 255, 255, 120));
 	else if (mBackButton.hover())
-		mBackButton.getShape().setFillColor(sf::Color(255, 255, 255, 120));
+		mBackButton.getBox().setFillColor(sf::Color(255, 255, 255, 120));
 	else {
-		mConnectButton.getShape().setFillColor(sf::Color(143, 177, 189, 150));
-		mBackButton.getShape().setFillColor(sf::Color(255, 255, 255, 50));
+		mConnectButton.getBox().setFillColor(sf::Color(143, 177, 189, 150));
+		mBackButton.getBox().setFillColor(sf::Color(255, 255, 255, 50));
 	}
 
 	return true;

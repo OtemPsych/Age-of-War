@@ -22,6 +22,9 @@ private:
 	sf::Font    mFont;
 	Buttons		mButtons;
 
+	sf::Sprite  mCursor;
+	sf::Texture mCursorTexture;
+
 public:
 	MenuState(pyro::StateStack& stack, sf::RenderWindow& window);
 public:

@@ -28,7 +28,7 @@ void BasePlayer::setupGoldGUI()
 	mFont.loadFromFile("Assets/Fonts/Gold.ttf");
 	mGoldText.setFont(mFont);
 	mGoldText.setCharacterSize(45);
-	mGoldText.setColor(sf::Color::Black);
+	mGoldText.setTextColor(sf::Color::Black);
 	updateGoldGUI();
 }
 
@@ -69,7 +69,7 @@ void BasePlayer::handleEvent(const sf::Event& event)
 		mActiveTurretPlacementIndicators = true;
 		mTurretTypeToSpawn = j;
 
-		mTurretIndicator = std::make_unique<sf::RectangleShape>(mTurretButtons.getButtonShape(j));
+		mTurretIndicator = std::make_unique<sf::RectangleShape>(mTurretButtons.getButtonBox(j));
 		mTurretIndicator->setOutlineThickness(0.f);
 	}
 

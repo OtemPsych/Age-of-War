@@ -1,10 +1,17 @@
 #include "MenuState.h"
 
 #include <PYRO/StateStack.h>
+#include <PYRO/Utils.h>
 
 MenuState::MenuState(pyro::StateStack& stack, sf::RenderWindow& window)
 	: State(stack, window)
 {
+	window.setMouseCursorVisible(false);
+
+	mCursorTexture.loadFromFile("Assets/Textures/MouseCursor.png");
+	mCursor.setTexture(mCursorTexture);
+	mCursor.scale(0.9f, 0.9f);
+
 	mBackgroundTexture.loadFromFile("Assets/Textures/MenuBackground.jpg");
 	mBackgroundSprite.setTexture(mBackgroundTexture);
 
@@ -18,9 +25,18 @@ MenuState::MenuState(pyro::StateStack& stack, sf::RenderWindow& window)
 	for (unsigned i = 0; i < TypeCount; i++)
 	{
 		mButtons.emplace_back(pyro::gui::ClickableGUIEntity(window, buttonSize));
+		sf::RectangleShape& box(mButtons.back().getBox());
+		pyro::Text& text(mButtons.back().getText());
+
+		box.setFillColor(sf::Color(0, 0, 0, 150));
+		text.setFont(mFont);
+		text.setTextColor(sf::Color::White);
+		text.setShadowOffset(2.f, 2.f);
+		text.setShadowColor(sf::Color(255, 255, 255, 50));
+		text.setOriginFlags(pyro::utils::OriginFlags::Center);
+		text.setPosition(box.getSize() / 2.f);
+		mButtons.back().setOriginFlags(pyro::utils::OriginFlags::Center);
 		mButtons.back().setPosition(winSize.x / 2.f, winSize.y / 2.f + (buttonSize.y + margin) * i);
-		mButtons.back().getText().setFont(mFont);
-		mButtons.back().getShape().setFillColor(sf::Color(0, 0, 0, 150));
 	}
 
 	mButtons[Play].getText().setString("Play");
@@ -50,11 +66,13 @@ bool MenuState::update(sf::Time dt)
 {
 	for (auto& button : mButtons)
 		if (button.hover()) {
-			button.getShape().setFillColor(sf::Color(255, 255, 255, 120));
+			button.getBox().setFillColor(sf::Color(255, 255, 255, 120));
 			break;
 		}
 		else
-			button.getShape().setFillColor(sf::Color(0, 0, 0, 150));
+			button.getBox().setFillColor(sf::Color(0, 0, 0, 150));
+
+	mCursor.setPosition(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)));
 
 	return true;
 }
@@ -65,4 +83,6 @@ void MenuState::draw()
 
 	for (const auto& button : mButtons)
 		mWindow.draw(button);
+
+	mWindow.draw(mCursor);
 }

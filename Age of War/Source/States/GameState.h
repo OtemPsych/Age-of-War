@@ -13,8 +13,11 @@ class GameState : public pyro::State
 protected:
 	enum class MusicID { Soundtrack };
 private:
-	sf::VertexArray				            mBackground;
+	sf::Sprite			                    mBackground;
 	sf::Texture					            mBackgroundTexture;
+
+	sf::Sprite                              mCursor;
+	sf::Texture                             mCursorTexture;
 protected:							  	    
 	pyro::TextureHolder<Unit::UnitType>     mUnitTextures;
 	pyro::TextureHolder<Turret::TurretType> mTurretTextures;
@@ -27,6 +30,8 @@ protected:
 									        
 	pyro::MusicPlayer<MusicID>		        mMusicPlayer;
 	pyro::SoundPlayer<Unit::SoundID>        mSoundPlayer;
+
+	sf::IntRect                             mWorldBounds;
 
 private:
 	void setupBackground();

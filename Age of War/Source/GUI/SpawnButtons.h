@@ -38,7 +38,7 @@ namespace gui
 		void update();
 		void updateButtonOverlay(unsigned gold);
 
-		const sf::RectangleShape& getButtonShape(unsigned i);
+		const sf::RectangleShape& getButtonBox(unsigned i);
 	};
 }
 #include "SpawnButtons.inl"

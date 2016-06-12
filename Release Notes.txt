@@ -1,3 +1,19 @@
+v0.8.1 | 12/06/2016
+
+  Updates
+
+    - Doubled map size
+
+
+
+v0.8.0a | 08/06/2016
+
+  Features
+
+    * Added a new mouse cursor
+
+
+
 v0.8.0 | 07/06/2016
 
   Features

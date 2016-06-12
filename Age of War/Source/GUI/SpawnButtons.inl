@@ -1,6 +1,7 @@
 #include "../Unit.h"
 
 #include <SFML/Graphics/RenderStates.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
 
 namespace gui
 {
@@ -34,9 +35,10 @@ namespace gui
 		for (unsigned i = 0; i < mTData.size(); i++)
 		{
 			mButtons.emplace_back(std::make_pair(pyro::gui::ClickableGUIEntity(mWindow, buttonSize), sf::VertexArray(sf::Quads, 4)));
-			mButtons[i].first.setPosition(buttonPos.x + totalButtonSizeX * (i + 0.5f), buttonPos.y);
 
-			sf::RectangleShape& buttonShape(mButtons[i].first.getShape());
+			mButtons[i].first.setPosition(buttonPos.x + totalButtonSizeX * (i + 0.5f), buttonPos.y);
+			
+			sf::RectangleShape& buttonShape(mButtons[i].first.getBox());
 			buttonShape.setTexture(&textures.get(static_cast<K>(i)));
 			if (mTData[i].iconRect.width == 0)
 				buttonShape.setTextureRect(sf::IntRect(0, 0, buttonShape.getTexture()->getSize().x, buttonShape.getTexture()->getSize().y));
@@ -44,16 +46,6 @@ namespace gui
 				buttonShape.setTextureRect(mTData[i].iconRect);
 			buttonShape.setOutlineThickness(thickness);
 			buttonShape.setOutlineColor(sf::Color::Black);
-
-			sf::Vector2f buttonPos(mButtons[i].first.getPosition());
-			sf::Vector2f halfSize(buttonSize / 2.f);
-			mButtons[i].second[0].position = buttonPos - halfSize;
-			mButtons[i].second[1].position = sf::Vector2f(buttonPos.x + halfSize.x, buttonPos.y - halfSize.y);
-			mButtons[i].second[2].position = buttonPos + halfSize;
-			mButtons[i].second[3].position = sf::Vector2f(buttonPos.x - halfSize.x, buttonPos.y + halfSize.y);
-
-			for (unsigned j = 0; j < 4; j++)
-				mButtons[i].second[j].color = mButtonColors.first;
 		}
 
 		mButtonOverlay[0].position = mButtons.front().second[0].position + sf::Vector2f(-margin, -margin);
@@ -80,7 +72,7 @@ namespace gui
 	void SpawnButtons<T, K>::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		target.draw(mButtonOverlay, &mButtonOverlayTexture);
-		for (const auto& button : mButtons)
+		for (auto& button : mButtons)
 		{
 			target.draw(button.second, states);
 			target.draw(button.first, states);
@@ -128,8 +120,8 @@ namespace gui
 	}
 
 	template <typename T, typename K>
-	const sf::RectangleShape& SpawnButtons<T, K>::getButtonShape(unsigned i)
+	const sf::RectangleShape& SpawnButtons<T, K>::getButtonBox(unsigned i)
 	{
-		return mButtons[i].first.getShape();
+		return mButtons[i].first.getBox();
 	}
 }

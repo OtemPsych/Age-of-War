@@ -26,12 +26,12 @@
 		mTTitle.setFont(mFont);
 		mTTitle.setCharacterSize(20);
 		mTTitle.setStyle(sf::Text::Bold);
-		mTTitle.setColor(sf::Color(0, 204, 255));
+		mTTitle.setTextColor(sf::Color(0, 204, 255));
 
 		mTCost.setFont(mFont);
 		mTCost.setCharacterSize(18);
 		mTCost.setStyle(sf::Text::Bold);
-		mTCost.setColor(sf::Color(255, 255, 77));
+		mTCost.setTextColor(sf::Color(255, 255, 77));
 
 		mTStats.second.setFont(mFont);
 		mTStats.second.setCharacterSize(14);
@@ -40,7 +40,7 @@
 			mTStats.first.emplace_back(pyro::Text());
 			mTStats.first.back().setFont(mFont);
 			mTStats.first.back().setCharacterSize(14);
-			mTStats.first.back().setColor(sf::Color(102, 255, 102));
+			mTStats.first.back().setTextColor(sf::Color(102, 255, 102));
 		}
 	}
 

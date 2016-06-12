@@ -10,7 +10,7 @@ int main()
 	srand(static_cast<unsigned>(time(0)));
 
 	pyro::Application app(sf::VideoMode(1280, 720), "Age of War",
-						  sf::Style::Titlebar | sf::Style::Close);
+						  sf::Style::Titlebar | sf::Style::Close, sf::ContextSettings(0, 0, 8));
 	app.setFPS(144);
 	app.registerState<MenuState>(pyro::StateID::Menu);
 	app.registerState<MultiplayerConnectState>(pyro::StateID::MultiplayerConnect);

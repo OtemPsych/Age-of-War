@@ -12,7 +12,8 @@ BaseAI::BaseAI(Side side, sf::IntRect worldBounds, const sf::Texture& baseTextur
 
 void BaseAI::update(sf::Time dt)
 {
-	handleTurretSpawn(Turret::TurretType::LaserTurret, 0);
-	//handleUnitSpawn(static_cast<Unit::UnitType>(rand() % Unit::UnitType::TypeCount));
+	handleTurretSpawn(static_cast<Turret::TurretType>(rand() % Turret::TurretType::TypeCount), rand() % 3);
+	handleUnitSpawn(static_cast<Unit::UnitType>(rand() % Unit::UnitType::TypeCount));
+
 	Base::update(dt);
 }

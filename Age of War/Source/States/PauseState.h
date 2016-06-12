@@ -4,6 +4,8 @@
 #include <PYRO/State.h>
 #include <PYRO/GUI/Textbox.h>
 
+#include <SFML/Graphics/Sprite.hpp>
+
 class PauseState : public pyro::State
 {
 private:
@@ -15,6 +17,9 @@ private:
 
 	sf::VertexArray mBackgroundBlur;
 	sf::VertexArray mBackground;
+
+	sf::Sprite      mCursor;
+	sf::Texture     mCursorTexture;
 
 public:
 	PauseState(pyro::StateStack& stack, sf::RenderWindow& window);
