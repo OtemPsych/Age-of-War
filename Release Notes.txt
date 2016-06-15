@@ -1,3 +1,29 @@
+v0.8.2b | 16/06/2016
+
+  Updates
+
+    - Unit Stat Changes
+        - Destroyer
+            - Reduced damage to 50 (from 70)
+
+
+
+v0.8.2a | 13/06/2016
+
+  Updates
+
+    - Slightly optimized the pause screen
+
+    - Slightly optimized the multiplayer connection screen
+
+    - Slightly optimized the menu screen
+
+    - Turret Stat Changes
+        - Laser Turret
+            - Increased range to 380 (from 220)
+
+
+
 v0.8.2 | 12/06/2016
 
   Updates
@@ -16,7 +42,7 @@ v0.8.2 | 12/06/2016
 
     ~ Fixed a bug that improperly aligned the gui elements in the multiplayer connect state
 
-    ~ Fixed a bug that caused the game's gui elements to not scroll with when the player was scrolling the map
+    ~ Fixed a bug that caused the game's gui elements to not scroll when the player was scrolling the map
 
 
 

@@ -11,16 +11,14 @@ MultiplayerConnectState::MultiplayerConnectState(pyro::StateStack& stack, sf::Re
 	, mConnectButton(window, sf::Vector2f(125.f, 30.f))
 	, mBackButton(window, sf::Vector2f(125.f, 30.f))
 {
-	mCursorTexture.loadFromFile("Assets/Textures/MouseCursor.png");
+	setupResources();
+
 	mCursor.setTexture(mCursorTexture);
 	mCursor.scale(0.9f, 0.9f);
 
-	setupResources();
-
+	const sf::Vector2f winSize(mWindow.getSize());
+	const sf::Vector2f textureSize(mBackgroundTexture.getSize());
 	mBackgroundSprite.setTexture(mBackgroundTexture);
-
-	sf::Vector2f winSize(mWindow.getSize());
-	sf::Vector2f textureSize(mBackgroundTexture.getSize());
 	mBackgroundSprite.scale(winSize.x / textureSize.x, winSize.y / textureSize.y);
 
 	setupGUIEntities();
@@ -80,6 +78,7 @@ void MultiplayerConnectState::setupGUIEntities()
 
 void MultiplayerConnectState::setupResources()
 {
+	mCursorTexture.loadFromFile("Assets/Textures/MouseCursor.png");
 	mBackgroundTexture.loadFromFile("Assets/Textures/MenuBackground.jpg");
 
 	mFont.loadFromFile("Assets/Fonts/Menu.ttf");
@@ -87,7 +86,10 @@ void MultiplayerConnectState::setupResources()
 
 bool MultiplayerConnectState::handleEvent(const sf::Event& event)
 {
-	if (event.type == sf::Event::Closed) {
+	if (event.type == sf::Event::MouseMoved) {
+		mCursor.setPosition(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)));
+	}
+	else if (event.type == sf::Event::Closed) {
 		requestStateClear();
 		return false;
 	}
@@ -100,8 +102,7 @@ bool MultiplayerConnectState::handleEvent(const sf::Event& event)
 
 	mIpTextbox.handleEvent(event);
 	mPortTextbox.handleEvent(event);
-	if (mConnectButton.clicked(event))
-	{
+	if (mConnectButton.clicked(event)) {
 		requestStatePush(pyro::StateID::Multiplayer);
 		return false;
 	}
@@ -111,16 +112,16 @@ bool MultiplayerConnectState::handleEvent(const sf::Event& event)
 
 bool MultiplayerConnectState::update(sf::Time dt)
 {
-	if (mConnectButton.hover())
+	if (mConnectButton.hover()) {
 		mConnectButton.getBox().setFillColor(sf::Color(255, 255, 255, 120));
-	else if (mBackButton.hover())
+	}
+	else if (mBackButton.hover()) {
 		mBackButton.getBox().setFillColor(sf::Color(255, 255, 255, 120));
+	}
 	else {
 		mConnectButton.getBox().setFillColor(sf::Color(143, 177, 189, 150));
 		mBackButton.getBox().setFillColor(sf::Color(255, 255, 255, 50));
 	}
-
-	mCursor.setPosition(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)));
 
 	return true;
 }
@@ -136,12 +137,12 @@ void MultiplayerConnectState::draw()
 	mWindow.draw(mCursor);
 }
 
-std::string MultiplayerConnectState::getHostIP()
+const std::string MultiplayerConnectState::getHostIP()
 {
-	return mIpTextbox.getText().getString();
+	return static_cast<const std::string>(mIpTextbox.getText().getString());
 }
 
-std::string MultiplayerConnectState::getHostPort()
+const std::string MultiplayerConnectState::getHostPort()
 {
-	return mPortTextbox.getText().getString();
+	return static_cast<const std::string>(mPortTextbox.getText().getString());
 }

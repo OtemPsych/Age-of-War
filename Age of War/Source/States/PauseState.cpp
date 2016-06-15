@@ -12,6 +12,7 @@ PauseState::PauseState(pyro::StateStack& stack, sf::RenderWindow& window)
 	mCursorTexture.loadFromFile("Assets/Textures/MouseCursor.png");
 	mCursor.setTexture(mCursorTexture);
 	mCursor.scale(0.9f, 0.9f);
+	mCursor.setPosition(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)));
 
 	mFont.loadFromFile("Assets/Fonts/Menu.ttf");
 
@@ -64,27 +65,28 @@ PauseState::PauseState(pyro::StateStack& stack, sf::RenderWindow& window)
 
 bool PauseState::handleEvent(const sf::Event& event)
 {
-	if (mButtons[Resume].clicked(event) || (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape))
-	{
+	if (event.type == sf::Event::MouseMoved) {
+		mCursor.setPosition(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)));
+	}
+	else if (mButtons[Resume].clicked(event) || (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)) {
 		requestStatePop();
 		const_cast<GameState*>(dynamic_cast<const GameState*>(mStack.getState(pyro::StateID::Game)))->unpauseMusic();
-	}
-	else if (mButtons[Restart].clicked(event))
-	{
+	} 
+	else if (mButtons[Restart].clicked(event)) {
 		mWindow.setView(mWindow.getDefaultView());
 
 		requestStateClear();
 		requestStatePush(pyro::StateID::Game);
-	}
-	else if (mButtons[Quit_Menu].clicked(event))
-	{
+	} 
+	else if (mButtons[Quit_Menu].clicked(event)) {
 		mWindow.setView(mWindow.getDefaultView());
 
 		requestStateClear();
 		requestStatePush(pyro::StateID::Menu);
-	}
-	else if (event.type == sf::Event::Closed || mButtons[Quit_Desktop].clicked(event))
+	} 
+	else if (event.type == sf::Event::Closed || mButtons[Quit_Desktop].clicked(event)) {
 		requestStateClear();
+	}
 
 	return false;
 }
@@ -95,11 +97,10 @@ bool PauseState::update(sf::Time dt)
 		if (button.hover()) {
 			button.getText().setTextColor(sf::Color(255, 255, 255, 255));
 			break;
-		}
-		else
+		} 
+		else {
 			button.getText().setTextColor(sf::Color(255, 255, 255, 150));
-
-	mCursor.setPosition(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)));
+		}
 
 	return false;
 }

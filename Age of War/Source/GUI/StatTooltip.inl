@@ -69,10 +69,8 @@
 	template <typename T>
 	void StatTooltip<T>::update(int TType)
 	{
-		if (TType != -1)
-		{
-			if (mTData[TType].name != mTTitle.getString())
-			{
+		if (TType != -1) {
+			if (mTData[TType].name != mTTitle.getString()) {
 				const auto& data = mTData[TType];
 				const float padding = 6.f;
 
@@ -97,8 +95,7 @@
 
 							// Find Largest Width
 				float largestWidth = mTStats.first.front().getGlobalBounds().width;
-				for (unsigned i = 1; i < mTStats.first.size(); i++)
-				{
+				for (unsigned i = 1; i < mTStats.first.size(); i++) {
 					float newWidth = mTStats.first[i].getGlobalBounds().width;
 					if (newWidth > largestWidth)
 						largestWidth = newWidth;
@@ -106,8 +103,7 @@
 
 							// Set Text Positions
 				float previousHeight = mTTitle.getPosition().y + titleGBounds.height / 2.f;
-				for (auto& text : mTStats.first)
-				{
+				for (auto& text : mTStats.first) {
 					sf::FloatRect textGBounds(text.getGlobalBounds());
 					text.setPosition(largestWidth - textGBounds.width / 2.f + padding,
 						textGBounds.height / 2.f + previousHeight + padding);

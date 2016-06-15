@@ -19,12 +19,10 @@ MultiplayerGameState::MultiplayerGameState(pyro::StateStack& stack, sf::RenderWi
 												   mTurretTextures, mTurretData, mSoundPlayer));
 
 	auto* connectState = const_cast<MultiplayerConnectState*>(dynamic_cast<const MultiplayerConnectState*>(stack.getState(pyro::StateID::MultiplayerConnect)));
-	if (connectState) 
-	{
+	if (connectState) {
 		mHost = connectState->getHostIP().empty() || connectState->getHostPort().empty();
 
-		if (!mHost) 
-		{
+		if (!mHost) {
 			mOpponentIP = connectState->getHostIP();
 			mOpponentPort = static_cast<sf::Uint16>(std::stoi(connectState->getHostPort()));
 		}
@@ -35,14 +33,12 @@ MultiplayerGameState::MultiplayerGameState(pyro::StateStack& stack, sf::RenderWi
 
 void MultiplayerGameState::packetHandling()
 {
-	if (mHost)
-	{
+	if (mHost) {
 		sf::TcpListener listener;
 		if (listener.listen(53000) == sf::Socket::Status::Done)
 			listener.accept(mSocket);
 	}
-	else if (mSocket.connect(mOpponentIP, mOpponentPort) != sf::Socket::Done)
-	{
+	else if (mSocket.connect(mOpponentIP, mOpponentPort) != sf::Socket::Done) {
 		requestStateClear();
 		return;
 	}
@@ -50,10 +46,8 @@ void MultiplayerGameState::packetHandling()
 	//mStack.removeState(pyro::StateID::MultiplayerConnect);
 	mMusicPlayer.pause(false);
 		
-	while (true)
-	{
-		if (mHost)
-		{
+	while (true) {
+		if (mHost) {
 			// RECEIVE
 			sf::Packet	  clientPacket;
 			if (mSocket.receive(clientPacket) == sf::Socket::Done)
@@ -64,8 +58,7 @@ void MultiplayerGameState::packetHandling()
 			assert(hostPacket << *mBasePlayer);
 			mSocket.send(hostPacket);
 		}
-		else
-		{
+		else {
 			// SEND
 			sf::Packet clientPacket;
 			assert(clientPacket << *mBasePlayer);
@@ -83,14 +76,12 @@ void MultiplayerGameState::packetHandling()
 
 bool MultiplayerGameState::handleEvent(const sf::Event& event)
 {
-	if (event.type == sf::Event::Closed)
-	{
+	if (event.type == sf::Event::Closed) {
 		mThread.terminate();
 		requestStateClear();
 	}
 
-	if (mSocket.getRemoteAddress() != sf::IpAddress::None)
-	{
+	if (mSocket.getRemoteAddress() != sf::IpAddress::None) {
 		mBasePlayer->handleEvent(event);
 		return true;
 	}

@@ -84,7 +84,7 @@ gStruct::UnitData::TextureData readTextureData(const std::string& unitName, cons
 		fin.close();
 	}
 	else
-		std::cout << "Unable to open file: " << unitName << "Data.json" << std::endl;
+		std::cerr << "Unable to open file: " << unitName << "Data.json" << std::endl;
 
 	return std::move(data);
 }

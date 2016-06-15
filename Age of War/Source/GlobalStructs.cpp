@@ -92,7 +92,7 @@ namespace gStruct
 		data[Unit::Destroyer].unitType        = Unit::Destroyer;
 		data[Unit::Destroyer].name            = "Destroyer";
 		data[Unit::Destroyer].health          = 500;
-		data[Unit::Destroyer].damage          = 70;
+		data[Unit::Destroyer].damage          = 50;
 		data[Unit::Destroyer].range           = 60.f;
 		data[Unit::Destroyer].rate            = sf::seconds(0.7f);
 		data[Unit::Destroyer].speed           = 50.f;
@@ -149,7 +149,7 @@ namespace gStruct
 		data[Turret::LaserTurret].name            = "Laser Turret";
 		data[Turret::LaserTurret].health          = 0;
 		data[Turret::LaserTurret].damage          = 8;
-		data[Turret::LaserTurret].range           = 220.f;
+		data[Turret::LaserTurret].range           = 380.f;
 		data[Turret::LaserTurret].spawn           = sf::seconds(0.f);
 		data[Turret::LaserTurret].rate            = sf::seconds(0.75f);
 		data[Turret::LaserTurret].cost            = 215;

@@ -98,8 +98,9 @@ namespace gui
 
 	void TurretPlacementIndicators::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
-		if (mHoverLayer)
+		if (mHoverLayer) {
 			target.draw(*mHoverLayer, states);
+		}
 		target.draw(mIndicators, states);
 	}
 

@@ -78,8 +78,10 @@ void Base::spawnUnit()
 	else
 		mUnits.emplace_back(new RangedUnit(mSide, mUnitData[type], mUnitTextures, mSoundPlayer));
 
-	mUnits.back()->setPosition(getPosition().x,
-		getPosition().y + getGlobalBounds().height / 2.f - mUnits.back()->getGlobalBounds().height / 2.f);
+	const sf::Vector2f& pos(getPosition());
+	const sf::FloatRect gBounds(getGlobalBounds());
+	mUnits.back()->setPosition(mSide == Side::Ally ? pos.x + gBounds.width / 2.f : pos.x - gBounds.width / 2.f,
+		pos.y + gBounds.height / 2.f - mUnits.back()->getGlobalBounds().height / 2.f);
 }
 
 void Base::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -138,8 +140,6 @@ void Base::update(sf::Time dt)
 		{
 			sf::FloatRect itrGBounds((*itr)->getGlobalBounds());
 			sf::FloatRect nextItrGBounds((*nextItr)->getGlobalBounds());
-			itrGBounds.width *= 1.5f;
-			nextItrGBounds.width *= 1.5f;
 			(*nextItr)->startMovement(!itrGBounds.intersects(nextItrGBounds));
 		}
 	}

@@ -13,8 +13,6 @@ GameState::GameState(pyro::StateStack& stack, sf::RenderWindow& window)
 	setupResources();
 	setupBackground();
 
-	mCursorTexture.loadFromFile("Assets/Textures/MouseCursor.png");
-	mCursorTexture.setSmooth(true);
 	mCursor.setTexture(mCursorTexture);
 	mCursor.scale(0.9f, 0.9f);
 
@@ -56,6 +54,8 @@ void GameState::setupResources()
 
 	mTurretTextures.load(Turret::LaserTurret, "Assets/Textures/LaserTurret.png");
 
+	mCursorTexture.loadFromFile("Assets/Textures/MouseCursor.png");
+	mCursorTexture.setSmooth(true);
 	mBackgroundTexture.loadFromFile("Assets/Textures/Background.png");
 	mBaseTexture.loadFromFile("Assets/Textures/Base.png");
 
@@ -67,16 +67,18 @@ void GameState::setupResources()
 void GameState::unpauseMusic()
 {
 	mMusicPlayer.pause(false);
+	mCursor.setPosition(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)));
 }
 
 bool GameState::handleEvent(const sf::Event& event)
 {
-	if (event.type == sf::Event::Closed)
-		requestStateClear();
-	else if ((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
+	if ((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
 		|| event.type == sf::Event::LostFocus) {
 		requestStatePush(pyro::StateID::Pause);
 		mMusicPlayer.pause(true);
+	}
+	else if (event.type == sf::Event::Closed) {
+		requestStateClear();
 	}
 
 	mBasePlayer->handleEvent(event);

@@ -10,6 +10,7 @@ MenuState::MenuState(pyro::StateStack& stack, sf::RenderWindow& window)
 
 	mCursorTexture.loadFromFile("Assets/Textures/MouseCursor.png");
 	mCursor.setTexture(mCursorTexture);
+	mCursor.setPosition(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)));
 	mCursor.scale(0.9f, 0.9f);
 
 	mBackgroundTexture.loadFromFile("Assets/Textures/MenuBackground.jpg");
@@ -46,18 +47,20 @@ MenuState::MenuState(pyro::StateStack& stack, sf::RenderWindow& window)
 
 bool MenuState::handleEvent(const sf::Event& event)
 {
-	if (mButtons[Play].clicked(event)) 
-	{
+	if (event.type == sf::Event::MouseMoved) {
+		mCursor.setPosition(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)));
+	}
+	else if (mButtons[Play].clicked(event)) {
 		requestStatePop();
 		requestStatePush(pyro::StateID::Game);
 	} 
-	else if (mButtons[Multiplayer].clicked(event)) 
-	{
+	else if (mButtons[Multiplayer].clicked(event)) {
 		requestStatePop();
 		requestStatePush(pyro::StateID::MultiplayerConnect);
 	} 
-	else if (event.type == sf::Event::Closed || mButtons[Quit].clicked(event))
+	else if (event.type == sf::Event::Closed || mButtons[Quit].clicked(event)) {
 		requestStateClear();
+	}
 
 	return true;
 }
@@ -69,10 +72,9 @@ bool MenuState::update(sf::Time dt)
 			button.getBox().setFillColor(sf::Color(255, 255, 255, 120));
 			break;
 		}
-		else
+		else {
 			button.getBox().setFillColor(sf::Color(0, 0, 0, 150));
-
-	mCursor.setPosition(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)));
+		}
 
 	return true;
 }
@@ -81,8 +83,9 @@ void MenuState::draw()
 {
 	mWindow.draw(mBackgroundSprite);
 
-	for (const auto& button : mButtons)
+	for (const auto& button : mButtons) {
 		mWindow.draw(button);
+	}
 
 	mWindow.draw(mCursor);
 }

@@ -21,8 +21,7 @@ namespace gui
 			unsigned short idPos = mQueue.size() - 1;
 			mIdentifiers[idPos].setFillColor(sf::Color(179, 89, 0));
 		} 
-		else if (!mQueue.empty())
-		{
+		else if (!mQueue.empty()) {
 			unsigned short idPos = mQueue.size();
 			mIdentifiers[idPos].setFillColor(sf::Color(51, 51, 51));
 		}

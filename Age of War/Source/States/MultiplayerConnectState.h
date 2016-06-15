@@ -31,7 +31,7 @@ public:
 	virtual bool update(sf::Time dt) override;
 	virtual void draw() override;
 
-	std::string getHostIP();
-	std::string getHostPort();
+	const std::string getHostIP();
+	const std::string getHostPort();
 };
 #endif
