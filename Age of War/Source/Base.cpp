@@ -21,9 +21,9 @@ Base::Base(Side side, sf::IntRect worldBounds, const sf::Texture& baseTexture,
 	, mTurretData(turretData)
 	, mGold(200)
 {
-	if (side == Side::Ally)
+	if (side == Side::Ally) {
 		setPosition(getGlobalBounds().width / 2.f + 20.f, 0.7f * worldBounds.height);
-	else {
+	} else {
 		setPosition(worldBounds.width - getGlobalBounds().width / 2.f - 20.f, 0.7f * worldBounds.height);
 		mSpawnBar.scale(-1.f, 1.f);
 	}

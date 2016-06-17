@@ -1,4 +1,7 @@
 #include "GameState.h"
+#include "GameOverState.h"
+
+#include <PYRO/StateStack.h>
 
 #include <SFML/Window/Event.hpp>
 
@@ -38,7 +41,7 @@ void GameState::setupBackground()
 	mBackgroundTexture.setRepeated(true);
 	mBackground.setTexture(mBackgroundTexture);
 	mBackground.scale(1.f, mWindow.getSize().y / textureSize.y);
-	mBackground.setTextureRect(sf::IntRect(0, 0, static_cast<int>(textureSize.x) * 2, static_cast<int>(textureSize.y)));
+	mBackground.setTextureRect(sf::IntRect(0, 0, static_cast<int>(textureSize.x * 1.5), static_cast<int>(textureSize.y)));
 
 	mWorldBounds = mBackground.getTextureRect();
 }
@@ -93,13 +96,33 @@ bool GameState::update(sf::Time dt)
 
 	if (mBasePlayer->hasUnits())
 		mBaseOpponent->attack(mBasePlayer->getFirstUnit());
-	else
+	else {
 		mBaseOpponent->attack(*mBasePlayer);
+		if (mBasePlayer->isDestroyable()) {
+			auto* gameOverState = const_cast<GameOverState*>(dynamic_cast<const GameOverState*>(mStack.getState(pyro::StateID::Other1)));
+			if (gameOverState) {
+				gameOverState->setGameOverType(GameOverState::GameOverType::Defeat);
+			} else {
+				requestStatePush(pyro::StateID::Other1);
+				mMusicPlayer.stop();
+			}
+		}
+	}
 
 	if (mBaseOpponent->hasUnits())
 		mBasePlayer->attack(mBaseOpponent->getFirstUnit());
-	else
+	else {
 		mBasePlayer->attack(*mBaseOpponent);
+		if (mBaseOpponent->isDestroyable()) {
+			auto* gameOverState = const_cast<GameOverState*>(dynamic_cast<const GameOverState*>(mStack.getState(pyro::StateID::Other1)));
+			if (gameOverState) {
+				gameOverState->setGameOverType(GameOverState::GameOverType::Victory);
+			} else {
+				requestStatePush(pyro::StateID::Other1);
+				mMusicPlayer.stop();
+			}
+		}
+	}
 
 	if (mWindowBounds.contains(sf::Mouse::getPosition(mWindow)))
 	{

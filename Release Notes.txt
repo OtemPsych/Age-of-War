@@ -1,3 +1,11 @@
+v0.8.2c | 17/06/2016
+
+  Features
+
+    * Added a victory/defeat screen
+
+
+
 v0.8.2b | 16/06/2016
 
   Updates
