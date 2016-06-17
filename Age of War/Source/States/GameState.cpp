@@ -41,7 +41,7 @@ void GameState::setupBackground()
 	mBackgroundTexture.setRepeated(true);
 	mBackground.setTexture(mBackgroundTexture);
 	mBackground.scale(1.f, mWindow.getSize().y / textureSize.y);
-	mBackground.setTextureRect(sf::IntRect(0, 0, static_cast<int>(textureSize.x * 1.5), static_cast<int>(textureSize.y)));
+	mBackground.setTextureRect(sf::IntRect(0, 0, static_cast<int>(textureSize.x * 1.5f), static_cast<int>(textureSize.y)));
 
 	mWorldBounds = mBackground.getTextureRect();
 }

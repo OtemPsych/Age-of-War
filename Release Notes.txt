@@ -4,6 +4,10 @@ v0.8.2c | 17/06/2016
 
     * Added a victory/defeat screen
 
+  Updates
+
+    - Reduced map size by 25%
+
 
 
 v0.8.2b | 16/06/2016
