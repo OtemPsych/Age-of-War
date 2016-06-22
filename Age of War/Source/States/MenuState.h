@@ -21,6 +21,7 @@ private:
 
 	sf::Font    mFont;
 	Buttons		mButtons;
+	sf::Texture mButtonTexture;
 
 	sf::Sprite  mCursor;
 	sf::Texture mCursorTexture;

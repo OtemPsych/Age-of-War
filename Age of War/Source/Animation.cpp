@@ -1,6 +1,6 @@
 #include "Animation.h"
 
-Animation::Animation(sf::Sprite& sprite, gStruct::UnitData::TextureData& textureRects,
+Animation::Animation(sf::Sprite& sprite, gStruct::TextureData& textureRects,
 					 sf::Time duration, bool repeat)
 	: mSprite(sprite)
 	, mTextureRects(textureRects)

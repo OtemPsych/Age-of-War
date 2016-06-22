@@ -4,9 +4,9 @@
 #include <iostream>
 #include <string>
 
-gStruct::UnitData::TextureData readTextureData(const std::string& unitName, const std::string& animType)
+gStruct::TextureData readTextureData(const std::string& unitName, const std::string& animType)
 {
-	gStruct::UnitData::TextureData data;
+	gStruct::TextureData data;
 
 	std::ifstream fin("TextureData/" + unitName + "Data.json", std::ios::in);
 	if (fin.is_open()) 

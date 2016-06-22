@@ -12,17 +12,17 @@
 class Animation
 {
 private:
-	sf::Sprite&				       mSprite;
-	gStruct::UnitData::TextureData mTextureRects;
-	unsigned				       mCurrentRect;
-	sf::Time				       mTimePerRect;
-	sf::Time				       mElapsedTime;
-	const bool				       mRepeat;
-							       
-	bool					       mAnimationOngoing;
+	sf::Sprite&		     mSprite;
+	gStruct::TextureData mTextureRects;
+	unsigned		     mCurrentRect;
+	sf::Time		     mTimePerRect;
+	sf::Time		     mElapsedTime;
+	const bool		     mRepeat;
+					     
+	bool			     mAnimationOngoing;
 
 public:
-	Animation(sf::Sprite& sprite, gStruct::UnitData::TextureData& textureRects,
+	Animation(sf::Sprite& sprite, gStruct::TextureData& textureRects,
 			  sf::Time duration, bool repeat = false);
 public:
 	void update(sf::Time dt);

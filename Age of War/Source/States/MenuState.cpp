@@ -21,7 +21,8 @@ MenuState::MenuState(pyro::StateStack& stack, sf::RenderWindow& window)
 	mBackgroundSprite.scale(winSize.x / textureSize.x, winSize.y / textureSize.y);
 
 	mFont.loadFromFile("Assets/Fonts/Menu.ttf");
-	const sf::Vector2f buttonSize(150.f, 50.f);
+	mButtonTexture.loadFromFile("Assets/Textures/MenuButton.png");
+	const sf::Vector2f buttonSize(185.f, 50.f);
 	const float margin = 15.f;
 	for (unsigned i = 0; i < TypeCount; i++)
 	{
@@ -30,6 +31,7 @@ MenuState::MenuState(pyro::StateStack& stack, sf::RenderWindow& window)
 		pyro::Text& text(mButtons.back().getText());
 
 		box.setFillColor(sf::Color(0, 0, 0, 150));
+		box.setTexture(&mButtonTexture);
 		text.setFont(mFont);
 		text.setTextColor(sf::Color::White);
 		text.setShadowOffset(2.f, 2.f);

@@ -12,9 +12,10 @@ private:
 	using TurretSpawnButtons = gui::SpawnButtons<gStruct::TurretData, Turret::TurretType>;
 private:
 	sf::Font                            mFont;
-	pyro::Text		                    mGoldText;
-	sf::Texture		                    mGoldCoinTexture;
-	sf::Sprite		                    mGoldCoinSprite;
+	pyro::Text		                    mCoinText;
+	sf::Texture		                    mCoinTexture;
+	sf::Sprite		                    mCoinSprite;
+	Animation                           mCoinRotateAnimation;
 					                    
 	UnitSpawnButtons                    mUnitButtons;
 	TurretSpawnButtons                  mTurretButtons;

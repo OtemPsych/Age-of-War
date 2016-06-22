@@ -1,4 +1,5 @@
 #include "BasePlayer.h"
+#include "Tools/TextureDataReader.h"
 
 BasePlayer::BasePlayer(sf::RenderWindow& window, sf::IntRect worldBounds, const sf::Texture& baseTexture,
 	                   const pyro::TextureHolder<Unit::UnitType>& unitTextures,
@@ -7,6 +8,7 @@ BasePlayer::BasePlayer(sf::RenderWindow& window, sf::IntRect worldBounds, const 
 	                   std::vector<gStruct::TurretData>& turretData,
 	                   pyro::SoundPlayer<Unit::SoundID>& soundPlayer)
 	: Base(Side::Ally, worldBounds, baseTexture, unitTextures, unitData, turretTextures, turretData, soundPlayer)
+	, mCoinRotateAnimation(mCoinSprite, readTextureData("Coin", "Rotate"), sf::seconds(0.8f), true)
 	, mUnitButtons(unitData, window, unitTextures, sf::Vector2f(55.f, 60.f))
 	, mTurretButtons(turretData, window, turretTextures, sf::Vector2f(55.f, 25.f))
 	, mActiveTurretPlacementIndicators(false)
@@ -21,17 +23,18 @@ BasePlayer::BasePlayer(sf::RenderWindow& window, sf::IntRect worldBounds, const 
 
 void BasePlayer::setupGoldGUI()
 {
-	mGoldCoinTexture.loadFromFile("Assets/Textures/GoldCoin.png");
-	mGoldCoinSprite.setTexture(mGoldCoinTexture);
-	mGoldCoinSprite.setPosition(10.f, 10.f);
+	mCoinTexture.loadFromFile("Assets/Textures/Coin.png");
+	mCoinSprite.setTexture(mCoinTexture);
+	mCoinSprite.setPosition(30.f, 30.f);
 
 	mFont.loadFromFile("Assets/Fonts/Gold.ttf");
-	mGoldText.setFont(mFont);
-	mGoldText.setCharacterSize(45);
-	mGoldText.setTextColor(sf::Color::Black);
-	mGoldText.setShadowOffset(3.f, 2.f);
-	mGoldText.setShadowColor(sf::Color::White);
-	mGoldText.setOriginFlags(pyro::utils::OriginFlags::Center);
+	mCoinText.setFont(mFont);
+	mCoinText.setCharacterSize(45);
+	mCoinText.setTextColor(sf::Color::Black);
+	mCoinText.setShadowOffset(3.f, 2.f);
+	mCoinText.setShadowColor(sf::Color::White);
+	mCoinText.setOriginFlags(pyro::utils::OriginFlags::Left | pyro::utils::OriginFlags::CenterY);
+	mCoinText.setPosition(60.f, mCoinSprite.getPosition().y);
 	updateGoldGUI();
 }
 
@@ -40,9 +43,7 @@ void BasePlayer::updateGoldGUI()
 	mUnitButtons.updateButtonOverlay(mGold);
 	mTurretButtons.updateButtonOverlay(mGold);
 
-	mGoldText.setString(std::to_string(mGold));
-	mGoldText.setPosition(mGoldCoinSprite.getGlobalBounds().width + mGoldText.getGlobalBounds().width / 2.f + 15.f,
-		                  mGoldCoinSprite.getGlobalBounds().height / 2.f);
+	mCoinText.setString(std::to_string(mGold));
 }
 
 void BasePlayer::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -57,8 +58,8 @@ void BasePlayer::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	target.draw(mUnitButtons, states);
 	target.draw(mTurretButtons, states);
 
-	target.draw(mGoldCoinSprite, states);
-	target.draw(mGoldText, states.transform *= mGoldCoinSprite.getTransform());
+	target.draw(mCoinSprite, states);
+	target.draw(mCoinText, states);
 }
 
 void BasePlayer::updateGUIPositions()
@@ -68,7 +69,8 @@ void BasePlayer::updateGUIPositions()
 
 	mUnitButtons.setPosition(viewCenterX - halfViewX, mUnitButtons.getPosition().y);
 	mTurretButtons.setPosition(viewCenterX - halfViewX, mTurretButtons.getPosition().y);
-	mGoldCoinSprite.setPosition(viewCenterX - halfViewX + 10.f, mGoldCoinSprite.getPosition().y);
+	mCoinSprite.setPosition(viewCenterX - halfViewX + 30.f, mCoinSprite.getPosition().y);
+	mCoinText.setPosition(viewCenterX - halfViewX + 60.f, mCoinSprite.getPosition().y);
 }
 
 void BasePlayer::handleEvent(const sf::Event& event)
@@ -114,6 +116,8 @@ void BasePlayer::update(sf::Time dt)
 		mTurretPlacementIndicators.update();
 		mTurretIndicator->setPosition(static_cast<sf::Vector2f>(sf::Mouse::getPosition(mWindow)));
 	}
+
+	mCoinRotateAnimation.update(dt);
 }
 
 void BasePlayer::modifyGold(int amount)

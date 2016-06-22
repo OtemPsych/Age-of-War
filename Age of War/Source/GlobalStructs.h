@@ -24,6 +24,8 @@ namespace gStruct
 		}
 	};
 
+	using TextureData = std::vector<std::pair<sf::IntRect, sf::Vector2f>>;
+
 	struct RangedUnitData
 	{
 		using SpawnProjectileFunction = std::function<void(std::vector<sf::VertexArray>&, sf::Vector2f unitSize)>;
@@ -33,8 +35,6 @@ namespace gStruct
 	};
 	struct UnitData
 	{
-		using TextureData = std::vector<std::pair<sf::IntRect, sf::Vector2f>>;
-
 		unsigned short                  generalUnitType;
 		unsigned short                  unitType;
 		std::string                     name;

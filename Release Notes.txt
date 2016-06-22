@@ -1,3 +1,21 @@
+v0.8.3 | 22/06/2016
+
+  Features
+
+    * Gold coin gui now has an animation
+
+  Updates
+
+    - Changed the gold coin gui icon
+
+    - Changed the main menu buttons
+
+  Bug Fixes
+
+    ~ Fixed a bug that caused the gold gui to reset to its default position if gold was spent and the camera had already scrolled
+
+
+
 v0.8.2c | 17/06/2016
 
   Features
