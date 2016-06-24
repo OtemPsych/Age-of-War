@@ -25,7 +25,7 @@ GameState::GameState(pyro::StateStack& stack, sf::RenderWindow& window)
 	mBaseOpponent = std::unique_ptr<Base>(new BaseAI(Entity::Side::Enemy, mWorldBounds, mBaseTexture,
 		                                             mUnitTextures, mUnitData, mTurretTextures, mTurretData, mSoundPlayer));
 
-	mMusicPlayer.setVolume(50.f);
+	mMusicPlayer.setVolume(100.f);
 	mMusicPlayer.play(MusicID::Soundtrack);
 }
 

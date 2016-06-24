@@ -27,24 +27,23 @@ MenuState::MenuState(pyro::StateStack& stack, sf::RenderWindow& window)
 	for (unsigned i = 0; i < TypeCount; i++)
 	{
 		mButtons.emplace_back(pyro::gui::ClickableGUIEntity(window, buttonSize));
-		sf::RectangleShape& box(mButtons.back().getBox());
-		pyro::Text& text(mButtons.back().getText());
+		mButtons.back().activateText(true);
+		pyro::Text* text = mButtons.back().getText();
 
-		box.setFillColor(sf::Color(0, 0, 0, 150));
-		box.setTexture(&mButtonTexture);
-		text.setFont(mFont);
-		text.setTextColor(sf::Color::White);
-		text.setShadowOffset(2.f, 2.f);
-		text.setShadowColor(sf::Color(255, 255, 255, 50));
-		text.setOriginFlags(pyro::utils::OriginFlags::Center);
-		text.setPosition(box.getSize() / 2.f);
-		mButtons.back().setOriginFlags(pyro::utils::OriginFlags::Center);
-		mButtons.back().setPosition(winSize.x / 2.f, winSize.y / 2.f + (buttonSize.y + margin) * i);
+		mButtons.back().setFillColor(sf::Color(0, 0, 0, 150));
+		mButtons.back().setTexture(&mButtonTexture);
+		text->setFont(mFont);
+		text->setTextColor(sf::Color::White);
+		text->setShadowOffset(2.f, 2.f);
+		text->setShadowColor(sf::Color(255, 255, 255, 50));
+		text->setOriginFlags(pyro::utils::OriginFlags::Center);
+		text->setPosition(mButtons.back().getSize() / 2.f);
+		mButtons.back().setPosition(winSize.x / 2.f - buttonSize.x / 2.f, winSize.y / 2.f + (buttonSize.y + margin) * i - buttonSize.y / 2.f);
 	}
 
-	mButtons[Play].getText().setString("Play");
-	mButtons[Multiplayer].getText().setString("Multiplayer");
-	mButtons[Quit].getText().setString("Quit");
+	mButtons[Play].getText()->setString("Play");
+	mButtons[Multiplayer].getText()->setString("Multiplayer");
+	mButtons[Quit].getText()->setString("Quit");
 }
 
 bool MenuState::handleEvent(const sf::Event& event)
@@ -71,11 +70,11 @@ bool MenuState::update(sf::Time dt)
 {
 	for (auto& button : mButtons)
 		if (button.hover()) {
-			button.getBox().setFillColor(sf::Color(255, 255, 255, 120));
+			button.setFillColor(sf::Color(255, 255, 255, 120));
 			break;
 		}
 		else {
-			button.getBox().setFillColor(sf::Color(0, 0, 0, 150));
+			button.setFillColor(sf::Color(0, 0, 0, 150));
 		}
 
 	return true;

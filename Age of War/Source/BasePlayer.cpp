@@ -31,8 +31,9 @@ void BasePlayer::setupGoldGUI()
 	mCoinText.setFont(mFont);
 	mCoinText.setCharacterSize(45);
 	mCoinText.setTextColor(sf::Color::Black);
+	mCoinText.activateShadow(true);
 	mCoinText.setShadowOffset(3.f, 2.f);
-	mCoinText.setShadowColor(sf::Color::White);
+	mCoinText.setShadowColor(sf::Color(255, 255, 255, 150));
 	mCoinText.setOriginFlags(pyro::utils::OriginFlags::Left | pyro::utils::OriginFlags::CenterY);
 	mCoinText.setPosition(60.f, mCoinSprite.getPosition().y);
 	updateGoldGUI();

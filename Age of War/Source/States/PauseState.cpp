@@ -24,24 +24,23 @@ PauseState::PauseState(pyro::StateStack& stack, sf::RenderWindow& window)
 	for (unsigned i = 0; i < TypeCount; i++)
 	{
 		mButtons.emplace_back(pyro::gui::ClickableGUIEntity(window, buttonSize));
-		sf::RectangleShape& box(mButtons.back().getBox());
-		pyro::Text& text(mButtons.back().getText());
+		mButtons.back().activateText(true);
+		pyro::Text* text = mButtons.back().getText();
 
-		text.setFont(mFont);
-		text.setShadowOffset(2.f, 2.f);
-		text.setShadowColor(sf::Color(255, 255, 255, 45));
-		text.setOriginFlags(pyro::utils::OriginFlags::Center);
-		text.setTextColor(sf::Color(255, 255, 255, 150));
-		text.setPosition(box.getSize() / 2.f);
-		box.setFillColor(sf::Color::Transparent);
-		mButtons.back().setPosition(viewCenter.x, viewCenter.y + (buttonSize.y + margin) * i);
-		mButtons.back().setOriginFlags(pyro::utils::OriginFlags::Center);
+		text->setFont(mFont);
+		text->setShadowOffset(2.f, 2.f);
+		text->setShadowColor(sf::Color(255, 255, 255, 45));
+		text->setOriginFlags(pyro::utils::OriginFlags::Center);
+		text->setTextColor(sf::Color(255, 255, 255, 150));
+		text->setPosition(mButtons.back().getSize() / 2.f);
+		mButtons.back().setFillColor(sf::Color::Transparent);
+		mButtons.back().setPosition(viewCenter.x - buttonSize.x / 2.f, viewCenter.y + (buttonSize.y + margin) * i - buttonSize.y / 2.f);
 	}
 
-	mButtons[Resume].getText().setString("Resume");
-	mButtons[Restart].getText().setString("Restart");
-	mButtons[Quit_Menu].getText().setString("Quit to Main Menu");
-	mButtons[Quit_Desktop].getText().setString("Quit to Desktop");
+	mButtons[Resume].getText()->setString("Resume");
+	mButtons[Restart].getText()->setString("Restart");
+	mButtons[Quit_Menu].getText()->setString("Quit to Main Menu");
+	mButtons[Quit_Desktop].getText()->setString("Quit to Desktop");
 
 	mBackgroundBlur[0].position = sf::Vector2f(view.left, view.top);
 	mBackgroundBlur[1].position = sf::Vector2f(view.left + view.width, view.top);
@@ -51,8 +50,8 @@ PauseState::PauseState(pyro::StateStack& stack, sf::RenderWindow& window)
 	for (unsigned i = 0; i < 4; i++)
 		mBackgroundBlur[i].color = sf::Color(0, 0, 0, 150);
 
-	const float topPosY = mButtons.front().getPosition().y - buttonSize.y / 2.f - margin;
-	const float botPosY = mButtons.back().getPosition().y + buttonSize.y / 2.f + margin;
+	const float topPosY = mButtons.front().getPosition().y - margin;
+	const float botPosY = mButtons.back().getPosition().y + buttonSize.y + margin;
 
 	mBackground[0].position = sf::Vector2f(view.left, topPosY);
 	mBackground[1].position = sf::Vector2f(view.left + view.width, topPosY);
@@ -95,11 +94,11 @@ bool PauseState::update(sf::Time dt)
 {
 	for (auto& button : mButtons)
 		if (button.hover()) {
-			button.getText().setTextColor(sf::Color(255, 255, 255, 255));
+			button.getText()->setTextColor(sf::Color(255, 255, 255, 255));
 			break;
 		} 
 		else {
-			button.getText().setTextColor(sf::Color(255, 255, 255, 150));
+			button.getText()->setTextColor(sf::Color(255, 255, 255, 150));
 		}
 
 	return false;

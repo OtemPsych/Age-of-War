@@ -10,7 +10,8 @@ namespace gui
 	template <typename T, typename K>
 	SpawnButtons<T, K>::SpawnButtons(const TData& data, sf::RenderWindow& window,
 		                             const pyro::TextureHolder<K>& textures, sf::Vector2f buttonSize)
-		: mButtonColors(std::make_pair(sf::Color(0, 128, 255), sf::Color(140, 140, 140)))
+		: mButtonOutlines(sf::Quads)
+		, mButtonColors(std::make_pair(sf::Color(0, 128, 255), sf::Color(140, 140, 140)))
 		, mButtonOverlay(sf::Quads, 4)
 		, mStatTooltip(nullptr)
 		, mTData(data)
@@ -29,34 +30,37 @@ namespace gui
 		sf::Vector2f buttonPos;
 		if (std::is_same<K, Unit::UnitType>::value)
 			buttonPos = sf::Vector2f(mWindow.getSize().x / 2.f - mTData.size() / 2.f * totalButtonSizeX,
-			                         buttonSize.y / 2.f + margin);
+			                         margin);
 		else
 			buttonPos = sf::Vector2f(mWindow.getSize().x / 4.f - mTData.size() / 2.f * totalButtonSizeX,
-			                         buttonSize.y / 2.f + margin);
+			                         margin);
 
 		for (unsigned i = 0; i < mTData.size(); i++)
 		{
 			mButtons.emplace_back(std::make_pair(pyro::gui::ClickableGUIEntity(mWindow, buttonSize), sf::VertexArray(sf::Quads, 4)));
 
-			mButtons[i].first.setOriginFlags(pyro::utils::OriginFlags::Center);
 			mButtons[i].first.setPosition(buttonPos.x + totalButtonSizeX * (i + 0.5f), buttonPos.y);
-			
-			sf::RectangleShape& buttonBox(mButtons[i].first.getBox());
-			buttonBox.setTexture(&textures.get(static_cast<K>(i)));
-			if (mTData[i].iconRect.width == 0)
-				buttonBox.setTextureRect(sf::IntRect(0, 0, buttonBox.getTexture()->getSize().x, buttonBox.getTexture()->getSize().y));
-			else
-				buttonBox.setTextureRect(mTData[i].iconRect);
-			buttonBox.setOutlineThickness(thickness);
-			buttonBox.setOutlineColor(sf::Color::Black);
 
-			const sf::Vector2f& buttonPos(mButtons[i].first.getPosition());
-			const sf::Vector2f halfSize(buttonSize / 2.f);
-			sf::VertexArray& overlay(mButtons[i].second);
-			overlay[0].position = buttonPos - halfSize;
-			overlay[1].position = sf::Vector2f(buttonPos.x + halfSize.x, buttonPos.y - halfSize.y);
-			overlay[2].position = buttonPos + halfSize;
-			overlay[3].position = sf::Vector2f(buttonPos.x - halfSize.x, buttonPos.y + halfSize.y);
+			mButtonOutlines.append(sf::Vertex(mButtons.back().first.getPosition() + sf::Vector2f(-thickness,               -thickness),               sf::Color::Black));
+			mButtonOutlines.append(sf::Vertex(mButtons.back().first.getPosition() + sf::Vector2f(buttonSize.x + thickness, -thickness),               sf::Color::Black));
+			mButtonOutlines.append(sf::Vertex(mButtons.back().first.getPosition() + sf::Vector2f(buttonSize.x + thickness, buttonSize.y + thickness), sf::Color::Black));
+			mButtonOutlines.append(sf::Vertex(mButtons.back().first.getPosition() + sf::Vector2f(-thickness,               buttonSize.y + thickness), sf::Color::Black));
+			
+			mButtons[i].first.setTexture(&textures.get(static_cast<K>(i)));
+			if (mTData[i].iconRect.width == 0) {
+				const sf::Vector2f textureSize(static_cast<sf::Vector2f>(mButtons[i].first.getTexture()->getSize()));
+				mButtons[i].first.setTextureRect(sf::FloatRect(0.f, 0.f, textureSize.x, textureSize.y));
+			}
+			else {
+				mButtons[i].first.setTextureRect(static_cast<sf::FloatRect>(mTData[i].iconRect));
+			}
+
+			const sf::Vector2f& buttonPos = mButtons[i].first.getPosition();
+			sf::VertexArray& overlay = mButtons[i].second;
+			overlay[0].position = buttonPos;
+			overlay[1].position = sf::Vector2f(buttonPos.x + buttonSize.x, buttonPos.y);
+			overlay[2].position = buttonPos + buttonSize;
+			overlay[3].position = sf::Vector2f(buttonPos.x, buttonPos.y + buttonSize.y);
 		}
 
 		mButtonOverlay[0].position = mButtons.front().second[0].position + sf::Vector2f(-margin, -margin);
@@ -86,7 +90,9 @@ namespace gui
 		sf::RenderStates overlayStates(states);
 		overlayStates.texture = &mButtonOverlayTexture;
 		target.draw(mButtonOverlay, overlayStates);
-		for (auto& button : mButtons) {
+
+		target.draw(mButtonOutlines, states);
+		for (const auto& button : mButtons) {
 			target.draw(button.second, states);
 			target.draw(button.first, states);
 		}
@@ -131,8 +137,13 @@ namespace gui
 	}
 
 	template <typename T, typename K>
-	const sf::RectangleShape& SpawnButtons<T, K>::getButtonBox(unsigned i)
+	sf::RectangleShape SpawnButtons<T, K>::getButtonBox(unsigned i)
 	{
-		return mButtons[i].first.getBox();
+		sf::RectangleShape box(mButtons[i].first.getSize());
+		box.setTexture(mButtons[i].first.getTexture());
+		box.setFillColor(mButtons[i].first.getVertices()[0].color);
+		box.setPosition(mButtons[i].first.getVertices()[0].position);
+
+		return std::move(box);
 	}
 }

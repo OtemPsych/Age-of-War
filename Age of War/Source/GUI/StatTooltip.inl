@@ -35,19 +35,19 @@
 		mTCost.setCharacterSize(18);
 		mTCost.setStyle(sf::Text::Bold);
 		mTCost.setTextColor(sf::Color(255, 255, 77));
-		mTCost.setShadowColor(mTTitle.getShadowColor());
+		mTCost.setShadowColor(*mTTitle.getShadowColor());
 
 		mTStats.second.setOriginFlags(mTTitle.getOriginFlags());
 		mTStats.second.setFont(mFont);
 		mTStats.second.setCharacterSize(14);
-		mTStats.second.setShadowColor(mTTitle.getShadowColor());
+		mTStats.second.setShadowColor(*mTTitle.getShadowColor());
 		for (unsigned i = 0; i < 5; i++) {
 			mTStats.first.emplace_back(pyro::Text());
 			mTStats.first.back().setOriginFlags(mTStats.second.getOriginFlags());
 			mTStats.first.back().setFont(mFont);
 			mTStats.first.back().setCharacterSize(14);
 			mTStats.first.back().setTextColor(sf::Color(102, 255, 102));
-			mTStats.first.back().setShadowColor(mTStats.second.getShadowColor());
+			mTStats.first.back().setShadowColor(*mTStats.second.getShadowColor());
 		}
 	}
 

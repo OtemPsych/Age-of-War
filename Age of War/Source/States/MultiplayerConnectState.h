@@ -16,6 +16,7 @@ private:
 	pyro::gui::Textbox            mIpTextbox;
 	pyro::gui::Textbox            mPortTextbox;
 	pyro::gui::ClickableGUIEntity mConnectButton;
+	sf::Texture                   mConnectButtonTexture;
 	pyro::gui::ClickableGUIEntity mBackButton;
 
 	sf::Sprite                    mCursor;

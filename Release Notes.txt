@@ -1,8 +1,8 @@
-v0.8.3 | 22/06/2016
+v0.8.3 | 22/06/2016, 23/06/2016
 
   Features
 
-    * Gold coin gui now has an animation
+    * Added an animation for the gold coin gui
 
   Updates
 
@@ -10,9 +10,13 @@ v0.8.3 | 22/06/2016
 
     - Changed the main menu buttons
 
+    - Changed the buttons and textboxes in the multiplayer connection screen
+
   Bug Fixes
 
     ~ Fixed a bug that caused the gold gui to reset to its default position if gold was spent and the camera had already scrolled
+
+    ~ Fixed a bug that caused the mouse to move to the top left part of the window in the multiplayer connection screen
 
 
 
@@ -380,4 +384,3 @@ v0.1.0 | 30/03/2016 - 31/03/2016
   Updates
  
     - Improved the mage's walking animation
-  

@@ -25,14 +25,13 @@ GameOverState::GameOverState(pyro::StateStack& stack, sf::RenderWindow& window)
 	mBackgroundTint.append(sf::Vertex(sf::Vector2f(view.left + view.width, view.top + view.height)));
 	mBackgroundTint.append(sf::Vertex(sf::Vector2f(view.left, view.top + view.height)));
 
-	sf::RectangleShape& continueBox = mContinueButton.getBox();
-	pyro::Text& continueText = mContinueButton.getText();
-	continueText.setFont(mFont);
-	continueText.setOriginFlags(pyro::utils::OriginFlags::Center);
-	continueText.setString("Continue");
-	continueText.setPosition(continueBox.getSize() / 2.f);
-	continueText.setShadowColor(sf::Color::Transparent);
-	mContinueButton.setOriginFlags(pyro::utils::OriginFlags::Center);
+	mContinueButton.activateText(true);
+	pyro::Text* continueText = mContinueButton.getText();
+	continueText->setFont(mFont);
+	continueText->setOriginFlags(pyro::utils::OriginFlags::Center);
+	continueText->setString("Continue");
+	continueText->setPosition(mContinueButton.getSize() / 2.f);
+	continueText->setShadowColor(sf::Color::Transparent);
 }
 
 void GameOverState::setupResources()
@@ -51,7 +50,7 @@ void GameOverState::setGameOverType(GameOverState::GameOverType type)
 		mBackgroundTint[1].color =
 		mBackgroundTint[2].color =
 		mBackgroundTint[3].color = sf::Color(51, 153, 255, 50);
-		mContinueButton.getBox().setFillColor(sf::Color(51, 153, 255, 200));
+		mContinueButton.setFillColor(sf::Color(51, 153, 255, 200));
 
 		mSpriteTexture.loadFromFile("Assets/Textures/DisplayVictory.png");
 	} else {
@@ -59,7 +58,7 @@ void GameOverState::setGameOverType(GameOverState::GameOverType type)
 		mBackgroundTint[1].color =
 		mBackgroundTint[2].color =
 		mBackgroundTint[3].color = sf::Color(153, 0, 0, 50);
-		mContinueButton.getBox().setFillColor(sf::Color(153, 0, 0, 225));
+		mContinueButton.setFillColor(sf::Color(153, 0, 0, 225));
 
 		mSpriteTexture.loadFromFile("Assets/Textures/DisplayDefeat.png");
 	}
@@ -101,7 +100,7 @@ bool GameOverState::update(sf::Time dt)
 		standardColor = sf::Color(153, 0, 0, 225);
 		hoverColor = sf::Color(204, 0, 0, 225);
 	}
-	mContinueButton.getBox().setFillColor(mContinueButton.hover() ? hoverColor : standardColor);
+	mContinueButton.setFillColor(mContinueButton.hover() ? hoverColor : standardColor);
 
 	return mGameOverType == GameOverType::None;
 }

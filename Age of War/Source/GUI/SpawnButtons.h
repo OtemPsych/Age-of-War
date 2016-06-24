@@ -18,6 +18,7 @@ namespace gui
 		using StatTooltipPtr = std::unique_ptr<StatTooltip<T>>;
 	private:
 		Buttons           mButtons;
+		sf::VertexArray   mButtonOutlines;
 		ButtonColors      mButtonColors;
 		sf::VertexArray   mButtonOverlay;
 		sf::Texture       mButtonOverlayTexture;
@@ -38,7 +39,7 @@ namespace gui
 		void update();
 		void updateButtonOverlay(unsigned gold);
 
-		const sf::RectangleShape& getButtonBox(unsigned i);
+		sf::RectangleShape     getButtonBox(unsigned i);
 	};
 }
 #include "SpawnButtons.inl"
