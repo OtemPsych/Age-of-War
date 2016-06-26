@@ -4,11 +4,13 @@
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
-Turret::Turret(Side side, sf::Vector2f baseSize, sf::Font& font, gStruct::TurretData& data,
+Turret::Turret(Side side, sf::Vector2f baseSize, gStruct::TurretData& data,
 	const pyro::TextureHolder<TurretType>& textures)
-	: AttackEntity(side, EntityType::Turret, data.range, data.rate, data.damage, font,
-	               textures.get(static_cast<TurretType>(data.turretType)))
+	: Entity(side, EntityType::Turret, textures.get(static_cast<TurretType>(data.turretType)))
 	, mTurretType(static_cast<TurretType>(data.turretType))
+	, mDamage(data.damage)
+	, mRange(data.range)
+	, mAttackRate(data.rate)
 	, mProjectileSpeed(data.projectileSpeed)
 {
 	scale(data.scale, data.scale);
@@ -34,21 +36,21 @@ void Turret::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	for (const auto& projectile : mProjectiles)
 		target.draw(projectile, projState);
 
-	AttackEntity::draw(target, states);
+	Entity::draw(target, states);
 }
 
-void Turret::attack(HealthEntity& enemy)
+void Turret::attack(Unit& unit)
 {
 	if (mAttackRate.current >= mAttackRate.original)
 	{
 		if (mSide == Side::Ally)
 		{
 			float turretStartPoint = getPosition().x + getGlobalBounds().width / 2.f;
-			float unitStartPoint = enemy.getPosition().x - enemy.getGlobalBounds().width / 2.f;
+			float unitStartPoint = unit.getPosition().x - unit.getGlobalBounds().width / 2.f;
 
-			if (turretStartPoint + mAttackRange >= unitStartPoint)
+			if (turretStartPoint + mRange >= unitStartPoint)
 			{
-				sf::Vector2f distanceVec(enemy.getPosition() - getPosition());
+				sf::Vector2f distanceVec(unit.getPosition() - getPosition());
 				mSprite.setRotation(pyro::math::toDegrees(std::atan2(distanceVec.y, distanceVec.x)));
 
 				spawnProjectile();
@@ -57,11 +59,11 @@ void Turret::attack(HealthEntity& enemy)
 		}
 		else {
 			float turretStartPoint = getPosition().x - getGlobalBounds().width / 2.f;
-			float unitStartPoint = enemy.getPosition().x + enemy.getGlobalBounds().width / 2.f;
+			float unitStartPoint = unit.getPosition().x + unit.getGlobalBounds().width / 2.f;
 
-			if (turretStartPoint - mAttackRange <= unitStartPoint)
+			if (turretStartPoint - mRange <= unitStartPoint)
 			{
-				sf::Vector2f distanceVec(getPosition() - enemy.getPosition());
+				sf::Vector2f distanceVec(getPosition() - unit.getPosition());
 				mSprite.setRotation(-pyro::math::toDegrees(std::atan2(distanceVec.y, distanceVec.x)));
 
 				spawnProjectile();
@@ -70,13 +72,13 @@ void Turret::attack(HealthEntity& enemy)
 		}
 	}
 
-	if (!mProjectiles.empty() && enemy.getGlobalBounds().contains(getTransform().transformPoint(mProjectiles.front()[0].position)))
+	if (!mProjectiles.empty() && unit.getGlobalBounds().contains(getTransform().transformPoint(mProjectiles.front()[0].position)))
 	{
-		enemy.receiveDamage(mDamage);
+		unit.receiveDamage(mDamage);
 		mProjectiles.erase(mProjectiles.begin());
 	}
 
-	mEnemyPosition = enemy.getPosition();
+	mEnemyPosition = unit.getPosition();
 }
 
 void Turret::update(sf::Time dt)
@@ -97,6 +99,6 @@ void Turret::update(sf::Time dt)
 			projectile[i].position += velocity;
 	}
 
-	if (!mProjectiles.empty() && pyro::math::getHypotenuse(mProjectiles.front()[0].position) > mAttackRange * 1.5f)
+	if (!mProjectiles.empty() && pyro::math::getHypotenuse(mProjectiles.front()[0].position) > mRange * 1.5f)
 		mProjectiles.erase(mProjectiles.begin());
 }

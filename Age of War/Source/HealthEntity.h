@@ -7,7 +7,7 @@
 #include "GlobalStructs.h"
 #include "GUI/Bar.h"
 
-class HealthEntity : public virtual Entity
+class HealthEntity : public Entity
 {
 private:
 	gStruct::Resource<unsigned short> mHealth;
@@ -15,7 +15,7 @@ private:
 	bool                              mIsDestroyable;
 
 protected:
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override = 0;
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 public:
 	HealthEntity(Side side, EntityType entityType, unsigned short health, const sf::Texture& texture);
 	HealthEntity(Side side, EntityType entityType, unsigned short health, const sf::Texture& texture, sf::IntRect rect);

@@ -52,7 +52,7 @@ void Base::handleTurretSpawn(Turret::TurretType type, int turretIndicator)
 
 		modifyGold(-mTurretData[type].cost);
 		mTurrets.emplace_back(std::make_pair(Turret(mSide, sf::Vector2f(getGlobalBounds().width, getGlobalBounds().height),
-			                                 mDisplayDamageFont, mTurretData[type], mTurretTextures), turretIndicator));
+			                                 mTurretData[type], mTurretTextures), turretIndicator));
 		mTurrets.back().first.setPosition(getPosition().x + mTurretWindowRects[turretIndicator].left + mTurretWindowRects[turretIndicator].width / 2.f,
 			                              getPosition().y + mTurretWindowRects[turretIndicator].top + mTurretWindowRects[turretIndicator].height / 2.f);
 
