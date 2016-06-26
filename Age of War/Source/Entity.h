@@ -20,6 +20,7 @@ private:
 protected:
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 public:
+	Entity() = default;
 	Entity(Side side, EntityType entityType, const sf::Texture& texture);
 	Entity(Side side, EntityType entityType, const sf::Texture& texture, sf::IntRect rect);
 	virtual ~Entity();
