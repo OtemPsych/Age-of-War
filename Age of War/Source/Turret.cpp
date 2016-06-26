@@ -4,7 +4,7 @@
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
-Turret::Turret(Side side, sf::Vector2f baseSize, gStruct::TurretData& data,
+Turret::Turret(Side side, sf::Font& damageDisplayFont, sf::Vector2f baseSize, gStruct::TurretData& data,
 	const pyro::TextureHolder<TurretType>& textures)
 	: Entity(side, EntityType::Turret, textures.get(static_cast<TurretType>(data.turretType)))
 	, mTurretType(static_cast<TurretType>(data.turretType))
@@ -12,6 +12,7 @@ Turret::Turret(Side side, sf::Vector2f baseSize, gStruct::TurretData& data,
 	, mRange(data.range)
 	, mAttackRate(data.rate)
 	, mProjectileSpeed(data.projectileSpeed)
+	, mDamageDisplays(sf::Vector2f(0.f, 30.f), sf::Vector2f(0.f, -1.8f), sf::seconds(0.75f), damageDisplayFont)
 {
 	scale(data.scale, data.scale);
 }
@@ -37,6 +38,11 @@ void Turret::draw(sf::RenderTarget& target, sf::RenderStates states) const
 		target.draw(projectile, projState);
 
 	Entity::draw(target, states);
+}
+
+void Turret::drawDamageDisplays(sf::RenderTarget& target, sf::RenderStates states) const
+{
+	target.draw(mDamageDisplays, states);
 }
 
 void Turret::attack(Unit& unit)
@@ -75,6 +81,7 @@ void Turret::attack(Unit& unit)
 	if (!mProjectiles.empty() && unit.getGlobalBounds().contains(getTransform().transformPoint(mProjectiles.front()[0].position)))
 	{
 		unit.receiveDamage(mDamage);
+		mDamageDisplays.addValueDisplay(getGlobalBounds(), unit.getGlobalBounds(), mDamage);
 		mProjectiles.erase(mProjectiles.begin());
 	}
 
@@ -101,4 +108,6 @@ void Turret::update(sf::Time dt)
 
 	if (!mProjectiles.empty() && pyro::math::getHypotenuse(mProjectiles.front()[0].position) > mRange * 1.5f)
 		mProjectiles.erase(mProjectiles.begin());
+
+	mDamageDisplays.update(dt);
 }

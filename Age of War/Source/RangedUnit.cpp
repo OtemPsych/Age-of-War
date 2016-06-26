@@ -43,7 +43,7 @@ void RangedUnit::attack(HealthEntity& enemy)
 		if (enemy.getGlobalBounds().contains(getTransform().transformPoint(mProjectiles[i][0].position)))
 		{
 			enemy.receiveDamage(mDamage);
-			mDamageDisplays.emplace_back(DamageDisplay(enemy.getGlobalBounds(), mDamageDisplayFont, mDamage, mSide == Side::Ally));
+			mDamageDisplays.addValueDisplay(getGlobalBounds(), enemy.getGlobalBounds(), mDamage);
 			mProjectiles.erase(mProjectiles.begin() + i);
 		}
 

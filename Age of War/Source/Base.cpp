@@ -51,7 +51,7 @@ void Base::handleTurretSpawn(Turret::TurretType type, int turretIndicator)
 				return;
 
 		modifyGold(-mTurretData[type].cost);
-		mTurrets.emplace_back(std::make_pair(Turret(mSide, sf::Vector2f(getGlobalBounds().width, getGlobalBounds().height),
+		mTurrets.emplace_back(std::make_pair(Turret(mSide, mDisplayDamageFont, sf::Vector2f(getGlobalBounds().width, getGlobalBounds().height),
 			                                 mTurretData[type], mTurretTextures), turretIndicator));
 		mTurrets.back().first.setPosition(getPosition().x + mTurretWindowRects[turretIndicator].left + mTurretWindowRects[turretIndicator].width / 2.f,
 			                              getPosition().y + mTurretWindowRects[turretIndicator].top + mTurretWindowRects[turretIndicator].height / 2.f);
@@ -102,6 +102,9 @@ void Base::drawUnitDamageDisplays(sf::RenderTarget& target, sf::RenderStates sta
 {
 	for (const auto& unit : mUnits)
 		unit->drawDamageDisplays(target, states);
+
+	for (const auto& turret : mTurrets)
+		turret.first.drawDamageDisplays(target, states);
 }
 
 void Base::attack(Unit& enemyUnit)

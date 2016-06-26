@@ -18,13 +18,16 @@ private:
 
 	sf::Vector2f                 mEnemyPosition;
 
+	ValueDisplays                mDamageDisplays;
+
 private:
 	void spawnProjectile();
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 public:
-	Turret(Side side, sf::Vector2f baseSize, gStruct::TurretData& data,
+	Turret(Side side, sf::Font& damageDisplayFont, sf::Vector2f baseSize, gStruct::TurretData& data,
 		   const pyro::TextureHolder<TurretType>& textures);
 public:
+	void drawDamageDisplays(sf::RenderTarget& target, sf::RenderStates states) const;
 	void attack(Unit& unit);
 	virtual void update(sf::Time dt) override;
 };
