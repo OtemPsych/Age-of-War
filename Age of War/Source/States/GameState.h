@@ -18,6 +18,7 @@ private:
 
 	sf::Sprite                              mCursor;
 	sf::Texture                             mCursorTexture;
+
 protected:							  	    
 	pyro::TextureHolder<Unit::UnitType>     mUnitTextures;
 	pyro::TextureHolder<Turret::TurretType> mTurretTextures;
@@ -31,6 +32,8 @@ protected:
 	pyro::MusicPlayer<MusicID>		        mMusicPlayer;
 	pyro::SoundPlayer<Unit::SoundID>        mSoundPlayer;
 
+	sf::Font                                mDisplayDamageFont;
+
 	sf::IntRect                             mWindowBounds;
 	sf::IntRect                             mWorldBounds;
 
@@ -42,6 +45,8 @@ public:
 	virtual ~GameState();
 public:
 	void unpauseMusic();
+
+	void updateCamera();
 
 	virtual bool handleEvent(const sf::Event& event) override;
 	virtual bool update(sf::Time dt) override;

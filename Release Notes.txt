@@ -1,3 +1,21 @@
+v0.8.4 | 26/04/2016
+
+  Features
+
+    * Damage dealt is now displayed
+
+
+
+v0.8.3a | 24/06/2016
+
+  Updates
+
+    - Unit Stat Changes
+        - Mage
+            - Increased range to 95 (from 70)
+
+
+
 v0.8.3 | 22/06/2016, 23/06/2016
 
   Features

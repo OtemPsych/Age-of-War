@@ -3,16 +3,17 @@
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
-Base::Base(Side side, sf::IntRect worldBounds, const sf::Texture& baseTexture,
+Base::Base(Side side, sf::IntRect worldBounds, sf::Font& font, const sf::Texture& baseTexture,
 	       const pyro::TextureHolder<Unit::UnitType>& unitTextures,
 	       std::vector<gStruct::UnitData>& unitData,
 		   const pyro::TextureHolder<Turret::TurretType>& turretTextures,
 		   std::vector<gStruct::TurretData>& turretData,
 	       pyro::SoundPlayer<Unit::SoundID>& soundPlayer)
 	: HealthEntity(side, EntityType::Base, 1500, baseTexture)
-	, mSpawnBar(getGlobalBounds(), true, sf::Color(153, 77, 0))
+	, mSpawnBar(getGlobalBounds(), true)
 	, mMPUnitType(-1)
 	, mMPTurretInfo(std::make_pair(-1, -1))
+	, mDisplayDamageFont(font)
 	, mTurretTypeToSpawn(-1)
 	, mUnitTextures(unitTextures)
 	, mSoundPlayer(soundPlayer)
@@ -74,9 +75,9 @@ void Base::spawnUnit()
 {
 	Unit::UnitType type(mSpawnBar.getUnitTypeSpawning());
 	if (mUnitData[type].generalUnitType == Unit::GeneralUnitType::Melee)
-		mUnits.emplace_back(new Unit(mSide, mUnitData[type], mUnitTextures, mSoundPlayer));
+		mUnits.emplace_back(new Unit(mSide, mDisplayDamageFont, mUnitData[type], mUnitTextures, mSoundPlayer));
 	else
-		mUnits.emplace_back(new RangedUnit(mSide, mUnitData[type], mUnitTextures, mSoundPlayer));
+		mUnits.emplace_back(new RangedUnit(mSide, mDisplayDamageFont, mUnitData[type], mUnitTextures, mSoundPlayer));
 
 	const sf::Vector2f& pos(getPosition());
 	const sf::FloatRect gBounds(getGlobalBounds());
@@ -97,6 +98,12 @@ void Base::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	target.draw(mSpawnBar, states.transform *= getTransform());
 }
 
+void Base::drawUnitDamageDisplays(sf::RenderTarget& target, sf::RenderStates states) const
+{
+	for (const auto& unit : mUnits)
+		unit->drawDamageDisplays(target, states);
+}
+
 void Base::attack(Unit& enemyUnit)
 {
 	for (auto& itr = mUnits.begin(); itr != mUnits.end(); itr++)
@@ -106,16 +113,14 @@ void Base::attack(Unit& enemyUnit)
 				break;
 		}
 
-	for (auto& turret : mTurrets)
-	{
+	for (auto& turret : mTurrets) {
 		turret.first.attack(enemyUnit);
 		if (enemyUnit.isDestroyable())
 			break;
 	}
 
-	if (enemyUnit.isDestroyable())
-	{
-		modifyGold(enemyUnit.getGoldReward());
+	if (enemyUnit.isDestroyable()) {
+		modifyGold(125u * mUnitData[enemyUnit.getUnitType()].cost / 100u);
 		for (auto& unit : mUnits)
 			unit->stopAttacking();
 	}

@@ -4,19 +4,20 @@
 
 namespace gui
 {
-	SpawnBar::SpawnBar(sf::FloatRect unitBounds, bool horizontal, const sf::Color& color)
-		: Bar(unitBounds, horizontal, color)
+	SpawnBar::SpawnBar(sf::FloatRect unitBounds, bool horizontal)
+		: Bar(unitBounds, horizontal, sf::Color(153, 77, 0))
 		, mSpawning(false)
 		, mUnitSpawnTime(sf::Time::Zero)
 		, mElapsedTime(sf::Time::Zero)
 		, mUnitQueue(getGlobalBounds())
 	{
+		mVertices[1].color =
+		mVertices[2].color = sf::Color(179, 89, 0);
 	}
 
 	void SpawnBar::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
-		if (mSpawning) 
-		{
+		if (mSpawning) {
 			Bar::draw(target, states);
 			target.draw(mUnitQueue, states.transform *= getTransform());
 		}

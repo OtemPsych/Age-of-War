@@ -18,7 +18,7 @@ int main()
 	app.registerState<MultiplayerGameState>(pyro::StateID::Multiplayer);
 	app.registerState<GameState>(pyro::StateID::Game);
 	app.registerState<PauseState>(pyro::StateID::Pause);
-	app.registerState<GameOverState>(pyro::StateID::Other1);
+	app.registerState<GameOverState>(pyro::StateID::GameOver);
 	app.pushState(pyro::StateID::Menu);
 	app.run();
 

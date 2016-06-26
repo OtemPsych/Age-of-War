@@ -4,9 +4,9 @@
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
-RangedUnit::RangedUnit(Side side, gStruct::UnitData& data, const pyro::TextureHolder<UnitType>& textures,
-	                   pyro::SoundPlayer<SoundID>& soundPlayer)
-	: Unit(side, data, textures, soundPlayer)
+RangedUnit::RangedUnit(Side side, sf::Font& font, gStruct::UnitData& data,
+	                   const pyro::TextureHolder<UnitType>& textures, pyro::SoundPlayer<SoundID>& soundPlayer)
+	: Unit(side, font, data, textures, soundPlayer)
 	, mProjectileSpeed(data.rangedData->projectileSpeed)
 	, mSpawnProjectile(data.rangedData->spawnProjectile)
 {
@@ -43,6 +43,7 @@ void RangedUnit::attack(HealthEntity& enemy)
 		if (enemy.getGlobalBounds().contains(getTransform().transformPoint(mProjectiles[i][0].position)))
 		{
 			enemy.receiveDamage(mDamage);
+			mDamageDisplays.emplace_back(DamageDisplay(enemy.getGlobalBounds(), mDamageDisplayFont, mDamage, mSide == Side::Ally));
 			mProjectiles.erase(mProjectiles.begin() + i);
 		}
 

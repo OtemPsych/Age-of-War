@@ -14,7 +14,7 @@ MultiplayerGameState::MultiplayerGameState(pyro::StateStack& stack, sf::RenderWi
 	mMusicPlayer.pause(true);
 
 	sf::Vector2u winSize(mWindow.getSize());
-	mBaseOpponent = std::unique_ptr<Base>(new Base(Entity::Side::Enemy, mWorldBounds, mBaseTexture, mUnitTextures,
+	mBaseOpponent = std::unique_ptr<Base>(new Base(Entity::Side::Enemy, mWorldBounds, mDisplayDamageFont, mBaseTexture, mUnitTextures,
 		                                           mUnitData, mTurretTextures, mTurretData, mSoundPlayer));
 
 	auto* connectState = const_cast<MultiplayerConnectState*>(dynamic_cast<const MultiplayerConnectState*>(stack.getState(pyro::StateID::MultiplayerConnect)));

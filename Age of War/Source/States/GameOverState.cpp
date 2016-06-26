@@ -8,7 +8,7 @@ GameOverState::GameOverState(pyro::StateStack& stack, sf::RenderWindow& window)
 	: State(stack, window)
 	, mGameOverType(GameOverType::None)
 	, mBackgroundTint(sf::Quads)
-	, mContinueButton(window, sf::Vector2f(120.f, 40.f))
+	, mContinueButton(window)
 {
 	setupResources();
 
@@ -25,12 +25,20 @@ GameOverState::GameOverState(pyro::StateStack& stack, sf::RenderWindow& window)
 	mBackgroundTint.append(sf::Vertex(sf::Vector2f(view.left + view.width, view.top + view.height)));
 	mBackgroundTint.append(sf::Vertex(sf::Vector2f(view.left, view.top + view.height)));
 
+
+	// Continue Button
+	sf::VertexArray& continueVertices = mContinueButton.getVertices();
+	continueVertices.append(sf::Vertex(sf::Vector2f(0.f,   0.f)));
+	continueVertices.append(sf::Vertex(sf::Vector2f(180.f, 0.f)));
+	continueVertices.append(sf::Vertex(sf::Vector2f(165.f, 40.f)));
+	continueVertices.append(sf::Vertex(sf::Vector2f(15.f,  40.f)));
+
 	mContinueButton.activateText(true);
 	pyro::Text* continueText = mContinueButton.getText();
 	continueText->setFont(mFont);
 	continueText->setOriginFlags(pyro::utils::OriginFlags::Center);
 	continueText->setString("Continue");
-	continueText->setPosition(mContinueButton.getSize() / 2.f);
+	continueText->setPosition(continueVertices[1].position.x / 2.f, continueVertices[2].position.y / 2.f);
 	continueText->setShadowColor(sf::Color::Transparent);
 }
 
@@ -68,7 +76,8 @@ void GameOverState::setGameOverType(GameOverState::GameOverType type)
 	sf::FloatRect lBounds(mSprite.getLocalBounds());
 	mSprite.setOrigin(lBounds.width / 2.f, 0.f);
 	mSprite.setPosition(mWindow.getView().getCenter().x, 0.f);
-	mContinueButton.setPosition(mWindow.getView().getCenter().x, mSprite.getGlobalBounds().height - 50.f);
+	mContinueButton.setPosition(mWindow.getView().getCenter().x - mContinueButton.getGlobalBounds().width / 2.f,
+		                        mSprite.getGlobalBounds().height - 50.f);
 }
 
 bool GameOverState::handleEvent(const sf::Event& event)

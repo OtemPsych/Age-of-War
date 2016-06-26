@@ -11,7 +11,7 @@ private:
 	using UnitSpawnButtons = gui::SpawnButtons<gStruct::UnitData, Unit::UnitType>;
 	using TurretSpawnButtons = gui::SpawnButtons<gStruct::TurretData, Turret::TurretType>;
 private:
-	sf::Font                            mFont;
+	sf::Font                            mCoinFont;
 	pyro::Text		                    mCoinText;
 	sf::Texture		                    mCoinTexture;
 	sf::Sprite		                    mCoinSprite;
@@ -32,7 +32,7 @@ private:
 	void updateGoldGUI();
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 public:
-	BasePlayer(sf::RenderWindow& window, sf::IntRect worldBounds, const sf::Texture& baseTexture,
+	BasePlayer(sf::RenderWindow& window, sf::IntRect worldBounds, sf::Font& font, const sf::Texture& baseTexture,
 		       const pyro::TextureHolder<Unit::UnitType>& unitTextures,
 		       std::vector<gStruct::UnitData>& unitData,
 			   const pyro::TextureHolder<Turret::TurretType>& turretTextures,

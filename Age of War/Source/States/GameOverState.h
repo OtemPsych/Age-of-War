@@ -16,7 +16,7 @@ private:
 	GameOverType                  mGameOverType;
 	sf::Sprite                    mCursor;
 	sf::Texture                   mCursorTexture;
-protected:			              
+
 	sf::VertexArray               mBackgroundTint;
 	sf::Sprite                    mSprite;
 	sf::Texture                   mSpriteTexture;

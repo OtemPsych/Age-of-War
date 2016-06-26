@@ -21,7 +21,7 @@ namespace gui
 	private:
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	public:
-		SpawnBar(sf::FloatRect unitBounds, bool horizontal, const sf::Color& color);
+		SpawnBar(sf::FloatRect unitBounds, bool horizontal);
 	public:
 		bool update(sf::Time dt);
 		bool spawnNewUnit(const UnitQueue::UnitData& data);

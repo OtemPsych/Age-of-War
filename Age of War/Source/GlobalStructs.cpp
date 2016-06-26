@@ -15,7 +15,7 @@ namespace gStruct
 		data[Unit::Mage].name            = "Mage";
 		data[Unit::Mage].health          = 75;
 		data[Unit::Mage].damage          = 15;
-		data[Unit::Mage].range           = 70.f;
+		data[Unit::Mage].range           = 95.f;
 		data[Unit::Mage].rate            = sf::seconds(0.7f);
 		data[Unit::Mage].speed           = 50.f;
 		data[Unit::Mage].spawn           = sf::seconds(2.f);

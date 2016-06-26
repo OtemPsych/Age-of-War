@@ -1,6 +1,8 @@
 #ifndef HealthEntity_H_
 #define HealthEntity_H_
 
+#include <PYRO/Text.h>
+
 #include "Entity.h"
 #include "GlobalStructs.h"
 #include "GUI/Bar.h"

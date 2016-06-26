@@ -6,7 +6,7 @@
 class BaseAI : public Base
 {
 public:
-	BaseAI(Side side, sf::IntRect worldBounds, const sf::Texture& baseTexture,
+	BaseAI(Side side, sf::IntRect worldBounds, sf::Font& font, const sf::Texture& baseTexture,
 		   const pyro::TextureHolder<Unit::UnitType>& unitTextures,
 		   std::vector<gStruct::UnitData>& unitData,
 		   const pyro::TextureHolder<Turret::TurretType>& turretTextures,

@@ -12,6 +12,8 @@ namespace gui
 
 	UnitQueue::UnitQueue(sf::FloatRect spawnBarBounds)
 	{
+		setOrigin(-spawnBarBounds.width / 2.f, getOrigin().y);
+
 		setupIdentifiers(spawnBarBounds);
 	}
 

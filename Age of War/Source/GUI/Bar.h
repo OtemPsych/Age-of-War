@@ -8,11 +8,10 @@ namespace gui
 	class Bar : public sf::Transformable, public sf::Drawable
 	{
 	private:
-		sf::RectangleShape mShape;
 		sf::RectangleShape mOutline;
+	protected:
+		sf::VertexArray    mVertices;
 
-	private:
-		void centerOrigin();
 	protected:
 		sf::FloatRect getGlobalBounds() const;
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

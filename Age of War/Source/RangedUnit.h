@@ -22,8 +22,8 @@ private:
 	virtual void handleAttackAnimation(HealthEntity& enemy) override;
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 public:
-	RangedUnit(Side side, gStruct::UnitData& data, const pyro::TextureHolder<UnitType>& textures,
-		       pyro::SoundPlayer<SoundID>& soundPlayer);
+	RangedUnit(Side side, sf::Font& font, gStruct::UnitData& data,
+		       const pyro::TextureHolder<UnitType>& textures, pyro::SoundPlayer<SoundID>& soundPlayer);
 public:
 	virtual void attack(HealthEntity& enemy) override;
 	virtual void update(sf::Time dt) override;

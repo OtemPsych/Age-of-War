@@ -1,13 +1,13 @@
 #include "BasePlayer.h"
 #include "Tools/TextureDataReader.h"
 
-BasePlayer::BasePlayer(sf::RenderWindow& window, sf::IntRect worldBounds, const sf::Texture& baseTexture,
+BasePlayer::BasePlayer(sf::RenderWindow& window, sf::IntRect worldBounds, sf::Font& font, const sf::Texture& baseTexture,
 	                   const pyro::TextureHolder<Unit::UnitType>& unitTextures,
 	                   std::vector<gStruct::UnitData>& unitData,
 	                   const pyro::TextureHolder<Turret::TurretType>& turretTextures,
 	                   std::vector<gStruct::TurretData>& turretData,
 	                   pyro::SoundPlayer<Unit::SoundID>& soundPlayer)
-	: Base(Side::Ally, worldBounds, baseTexture, unitTextures, unitData, turretTextures, turretData, soundPlayer)
+	: Base(Side::Ally, worldBounds, font, baseTexture, unitTextures, unitData, turretTextures, turretData, soundPlayer)
 	, mCoinRotateAnimation(mCoinSprite, readTextureData("Coin", "Rotate"), sf::seconds(0.8f), true)
 	, mUnitButtons(unitData, window, unitTextures, sf::Vector2f(55.f, 60.f))
 	, mTurretButtons(turretData, window, turretTextures, sf::Vector2f(55.f, 25.f))
@@ -27,8 +27,8 @@ void BasePlayer::setupGoldGUI()
 	mCoinSprite.setTexture(mCoinTexture);
 	mCoinSprite.setPosition(30.f, 30.f);
 
-	mFont.loadFromFile("Assets/Fonts/Gold.ttf");
-	mCoinText.setFont(mFont);
+	mCoinFont.loadFromFile("Assets/Fonts/Gold.ttf");
+	mCoinText.setFont(mCoinFont);
 	mCoinText.setCharacterSize(45);
 	mCoinText.setTextColor(sf::Color::Black);
 	mCoinText.activateShadow(true);

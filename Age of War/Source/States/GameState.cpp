@@ -20,9 +20,9 @@ GameState::GameState(pyro::StateStack& stack, sf::RenderWindow& window)
 	mCursor.scale(0.9f, 0.9f);
 
 	sf::Vector2u winSize(mWindow.getSize());
-	mBasePlayer = std::unique_ptr<BasePlayer>(new BasePlayer(mWindow, mWorldBounds, mBaseTexture,
+	mBasePlayer = std::unique_ptr<BasePlayer>(new BasePlayer(mWindow, mWorldBounds, mDisplayDamageFont, mBaseTexture,
 		                                                     mUnitTextures, mUnitData, mTurretTextures, mTurretData, mSoundPlayer));
-	mBaseOpponent = std::unique_ptr<Base>(new BaseAI(Entity::Side::Enemy, mWorldBounds, mBaseTexture,
+	mBaseOpponent = std::unique_ptr<Base>(new BaseAI(Entity::Side::Enemy, mWorldBounds, mDisplayDamageFont, mBaseTexture,
 		                                             mUnitTextures, mUnitData, mTurretTextures, mTurretData, mSoundPlayer));
 
 	mMusicPlayer.setVolume(100.f);
@@ -62,6 +62,8 @@ void GameState::setupResources()
 	mBackgroundTexture.loadFromFile("Assets/Textures/Background.png");
 	mBaseTexture.loadFromFile("Assets/Textures/Base.png");
 
+	mDisplayDamageFont.loadFromFile("Assets/Fonts/Zombie.ttf");
+
 	mMusicPlayer.loadTheme(MusicID::Soundtrack, "Assets/Music/Soundtrack.ogg");
 	mSoundPlayer.loadEffect(Unit::SoundID::MageAttack, "Assets/Sounds/MageAttack.ogg");
 	mSoundPlayer.loadEffect(Unit::SoundID::KnightAttack, "Assets/Sounds/KnightAttack.ogg");
@@ -71,6 +73,41 @@ void GameState::unpauseMusic()
 {
 	mMusicPlayer.pause(false);
 	mCursor.setPosition(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)));
+}
+
+void GameState::updateCamera()
+{
+	if (mWindowBounds.contains(sf::Mouse::getPosition(mWindow)))
+	{
+		sf::View newView(mWindow.getView());
+		const sf::Vector2f viewCenter = newView.getCenter();
+		const float coordsX = mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)).x;
+		const float halfViewWidth = newView.getSize().x / 2.f;
+		const float movement = 7.f;
+
+		if (coordsX >= viewCenter.x + halfViewWidth - 100.f) {
+			const float totalDisplacement = viewCenter.x + halfViewWidth + movement;
+			sf::View newView(mWindow.getView());
+			if (totalDisplacement < mWorldBounds.width)
+				newView.move(movement, 0.f);
+			else
+				newView.setCenter(mWorldBounds.width - halfViewWidth, viewCenter.y);
+
+			mWindow.setView(newView);
+			mBasePlayer->updateGUIPositions();
+		}
+		else if (coordsX <= viewCenter.x - halfViewWidth + 100.f) {
+			const float totalDisplacement = viewCenter.x - halfViewWidth - movement;
+			sf::View newView(mWindow.getView());
+			if (totalDisplacement > mWorldBounds.left)
+				newView.move(-movement, 0.f);
+			else
+				newView.setCenter(mWorldBounds.left + halfViewWidth, viewCenter.y);
+
+			mWindow.setView(newView);
+			mBasePlayer->updateGUIPositions();
+		}
+	}
 }
 
 bool GameState::handleEvent(const sf::Event& event)
@@ -99,11 +136,11 @@ bool GameState::update(sf::Time dt)
 	else {
 		mBaseOpponent->attack(*mBasePlayer);
 		if (mBasePlayer->isDestroyable()) {
-			auto* gameOverState = const_cast<GameOverState*>(dynamic_cast<const GameOverState*>(mStack.getState(pyro::StateID::Other1)));
+			auto* gameOverState = const_cast<GameOverState*>(dynamic_cast<const GameOverState*>(mStack.getState(pyro::StateID::GameOver)));
 			if (gameOverState) {
 				gameOverState->setGameOverType(GameOverState::GameOverType::Defeat);
 			} else {
-				requestStatePush(pyro::StateID::Other1);
+				requestStatePush(pyro::StateID::GameOver);
 				mMusicPlayer.stop();
 			}
 		}
@@ -114,47 +151,17 @@ bool GameState::update(sf::Time dt)
 	else {
 		mBasePlayer->attack(*mBaseOpponent);
 		if (mBaseOpponent->isDestroyable()) {
-			auto* gameOverState = const_cast<GameOverState*>(dynamic_cast<const GameOverState*>(mStack.getState(pyro::StateID::Other1)));
+			auto* gameOverState = const_cast<GameOverState*>(dynamic_cast<const GameOverState*>(mStack.getState(pyro::StateID::GameOver)));
 			if (gameOverState) {
 				gameOverState->setGameOverType(GameOverState::GameOverType::Victory);
 			} else {
-				requestStatePush(pyro::StateID::Other1);
+				requestStatePush(pyro::StateID::GameOver);
 				mMusicPlayer.stop();
 			}
 		}
 	}
 
-	if (mWindowBounds.contains(sf::Mouse::getPosition(mWindow)))
-	{
-		sf::View newView(mWindow.getView());
-		const float coordsX = mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)).x;
-		const float halfViewWidth = newView.getSize().x / 2.f;
-		const sf::Vector2f viewCenter = newView.getCenter();
-		const float movement = 7.f;
-		if (coordsX >= viewCenter.x + halfViewWidth - 100.f) {
-			const float totalDisplacement = viewCenter.x + halfViewWidth + movement;
-			sf::View newView(mWindow.getView());
-			if (totalDisplacement < mWorldBounds.width)
-				newView.move(movement, 0.f);
-			else
-				newView.setCenter(mWorldBounds.width - halfViewWidth, viewCenter.y);
-
-			mWindow.setView(newView);
-			mBasePlayer->updateGUIPositions();
-		}
-		else if (coordsX <= viewCenter.x - halfViewWidth + 100.f) {
-			const float totalDisplacement = viewCenter.x - halfViewWidth - movement;
-			sf::View newView(mWindow.getView());
-			if (totalDisplacement > mWorldBounds.left)
-				newView.move(-movement, 0.f);
-			else
-				newView.setCenter(mWorldBounds.left + halfViewWidth, viewCenter.y);
-
-			mWindow.setView(newView);
-			mBasePlayer->updateGUIPositions();
-		}
-	}
-
+	updateCamera();
 	mCursor.setPosition(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)));
 
 	return true;
@@ -165,6 +172,9 @@ void GameState::draw()
 	mWindow.draw(mBackground, &mBackgroundTexture);
 	mWindow.draw(*mBasePlayer);
 	mWindow.draw(*mBaseOpponent);
+
+	mBasePlayer->drawUnitDamageDisplays(mWindow, sf::RenderStates::Default);
+	mBaseOpponent->drawUnitDamageDisplays(mWindow, sf::RenderStates::Default);
 
 	mWindow.draw(mCursor);
 }

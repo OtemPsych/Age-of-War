@@ -16,6 +16,8 @@ private:
 									               
 	sf::Int16                                      mMPUnitType;
 	std::pair<sf::Int16, sf::Int8>                 mMPTurretInfo;
+
+	sf::Font&                                      mDisplayDamageFont;
 protected:									       
 	const pyro::TextureHolder<Unit::UnitType>&     mUnitTextures;
 	std::vector<gStruct::UnitData>&                mUnitData;
@@ -36,7 +38,7 @@ protected:
 	void spawnUnit();
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 public:
-	Base(Side side, sf::IntRect worldBounds, const sf::Texture& baseTexture,
+	Base(Side side, sf::IntRect worldBounds, sf::Font& font, const sf::Texture& baseTexture,
 		 const pyro::TextureHolder<Unit::UnitType>& unitTextures,
 		 std::vector<gStruct::UnitData>& unitData,
 		 const pyro::TextureHolder<Turret::TurretType>& turretTextures,
@@ -44,6 +46,8 @@ public:
 		 pyro::SoundPlayer<Unit::SoundID>& soundPlayer);
 	virtual ~Base();
 public:
+	void drawUnitDamageDisplays(sf::RenderTarget& target, sf::RenderStates states) const;
+
 	void attack(Unit& enemyUnit);
 	void attack(Base& enemyBase);
 	virtual void update(sf::Time dt) override;
