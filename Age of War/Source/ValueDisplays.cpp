@@ -24,8 +24,9 @@ ValueDisplays::ValueDisplay::ValueDisplay(ValueDisplays* owner, sf::FloatRect gB
 	text.activateShadow(true);
 	text.setShadowOffset(1.5f, 1.5f);
 	text.setShadowColor(sf::Color::Black);
-	text.setOriginFlags(pyro::utils::Center);
-	text.setPosition(enemyGBounds.left + enemyGBounds.width / 2.f, std::max(gBounds.top, enemyGBounds.top));
+	text.setOriginFlags(pyro::utils::CenterX | pyro::utils::Bottom);
+	text.setPosition(enemyGBounds.left + enemyGBounds.width / 2.f,
+		             std::max(gBounds.top, enemyGBounds.top));
 }
 
 void ValueDisplays::ValueDisplay::operator=(const ValueDisplay& copy)

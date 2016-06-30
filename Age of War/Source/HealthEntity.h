@@ -9,8 +9,9 @@
 
 class HealthEntity : public Entity
 {
-private:
+protected:
 	gStruct::Resource<unsigned short> mHealth;
+private:
 	gui::Bar                          mHealthBar;
 	bool                              mIsDestroyable;
 

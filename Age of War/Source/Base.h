@@ -3,6 +3,7 @@
 
 #include "Turret.h"
 #include "GUI/SpawnBar.h"
+#include "SmokeSystem.h"
 
 #include <SFML/Network/Packet.hpp>
 
@@ -16,6 +17,8 @@ private:
 									               
 	sf::Int16                                      mMPUnitType;
 	std::pair<sf::Int16, sf::Int8>                 mMPTurretInfo;
+
+	SmokeSystem                                    mSmokeSystem;
 
 	sf::Font&                                      mDisplayDamageFont;
 protected:									       

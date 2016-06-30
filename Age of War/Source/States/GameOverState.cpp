@@ -2,8 +2,6 @@
 
 #include <PYRO/Utils.h>
 
-#include <SFML/Graphics/Shader.hpp>
-
 GameOverState::GameOverState(pyro::StateStack& stack, sf::RenderWindow& window)
 	: State(stack, window)
 	, mGameOverType(GameOverType::None)

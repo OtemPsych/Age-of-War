@@ -1,3 +1,15 @@
+v0.8.5 | 27/06/2016
+
+  Features
+
+    * Added smoke that appears when the base is damaged
+
+  Bug Fixes
+
+    ~ Fixed a bug that caused the stat tooltip's info to display in inconsistent heights
+
+
+
 v0.8.4 | 26/04/2016
 
   Features
@@ -173,8 +185,8 @@ v0.7.2 | 04/06/2016, 05/06/2016
             - Reduced damage to 25 (from 40)
             - Reduced range to 15 (from 25)
             - Reduced speed to 70 (from 90)
-
             - Reduced size
+
         - Destroyer
             - Increased health to 500 (from 400)
             - Increased spawn time to 5s (from 4.5s)

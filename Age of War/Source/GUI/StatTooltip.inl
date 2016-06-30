@@ -12,57 +12,58 @@
 	template <typename T>
 	void StatTooltip<T>::setup(sf::FloatRect overlayRect)
 	{
-		sf::FloatRect shapeLBounds(mShape.getLocalBounds());
-		mShape.setOrigin(shapeLBounds.width / 2.f, shapeLBounds.height / 2.f);
-		sf::FloatRect shapeGBounds(mShape.getGlobalBounds());
+		using namespace pyro::utils;
+
+		setOriginFlags(mShape, OriginFlags::CenterX | OriginFlags::Top);
 		mShape.setPosition(overlayRect.left + overlayRect.width / 2.f,
-			               overlayRect.top + overlayRect.height + shapeGBounds.height / 2.f + 10.f);
+			               overlayRect.top + overlayRect.height + 10.f);
 		mShape.setFillColor(sf::Color(0, 0, 0, 200));
 		mShape.setOutlineThickness(2.f);
 		mShape.setOutlineColor(sf::Color(153, 153, 153));
 
 		mFont.loadFromFile("Assets/Fonts/Menu.ttf");
 
-		mTTitle.setOriginFlags(pyro::utils::OriginFlags::Center);
+		mTTitle.setOriginFlags(OriginFlags::Left | OriginFlags::Top);
 		mTTitle.setFont(mFont);
 		mTTitle.setCharacterSize(20);
 		mTTitle.setStyle(sf::Text::Bold);
 		mTTitle.setTextColor(sf::Color(0, 204, 255));
-		mTTitle.setShadowColor(sf::Color::Transparent);
 
-		mTCost.setOriginFlags(mTTitle.getOriginFlags());
+		mTCost.setOriginFlags(OriginFlags::Right | OriginFlags::Top);
 		mTCost.setFont(mFont);
 		mTCost.setCharacterSize(18);
 		mTCost.setStyle(sf::Text::Bold);
 		mTCost.setTextColor(sf::Color(255, 255, 77));
-		mTCost.setShadowColor(*mTTitle.getShadowColor());
 
-		mTStats.second.setOriginFlags(mTTitle.getOriginFlags());
-		mTStats.second.setFont(mFont);
-		mTStats.second.setCharacterSize(14);
-		mTStats.second.setShadowColor(*mTTitle.getShadowColor());
 		for (unsigned i = 0; i < 5; i++) {
-			mTStats.first.emplace_back(pyro::Text());
-			mTStats.first.back().setOriginFlags(mTStats.second.getOriginFlags());
-			mTStats.first.back().setFont(mFont);
-			mTStats.first.back().setCharacterSize(14);
-			mTStats.first.back().setTextColor(sf::Color(102, 255, 102));
-			mTStats.first.back().setShadowColor(*mTStats.second.getShadowColor());
+			mTStats.emplace_back();
+			mTStats.back().second.setOriginFlags(OriginFlags::Left | OriginFlags::CenterY);
+			mTStats.back().second.setFont(mFont);
+			mTStats.back().second.setCharacterSize(14);
+			mTStats.back().first.setOriginFlags(OriginFlags::Right | OriginFlags::CenterY);
+			mTStats.back().first.setFont(mFont);
+			mTStats.back().first.setCharacterSize(14);
+			mTStats.back().first.setTextColor(sf::Color(102, 255, 102));
 		}
+
+		mTStats[0].second.setString("Health");
+		mTStats[1].second.setString("Damage");
+		mTStats[2].second.setString("Range");
+		mTStats[3].second.setString("Rate");
+		mTStats[4].second.setString("Spawn Time");
 	}
 
 	template <typename T>
 	void StatTooltip<T>::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
-		if (!mTTitle.getString().isEmpty())
-		{
-			states.transform *= getTransform();
-			target.draw(mShape, states);
+		if (!mTTitle.getString().isEmpty()) {
+			target.draw(mShape, states.transform *= getTransform());
 			target.draw(mTTitle, states.transform *= mShape.getTransform());
 			target.draw(mTCost, states);
-			target.draw(mTStats.second, states);
-			for (const auto& text : mTStats.first)
-				target.draw(text, states);
+			for (const auto& text : mTStats) {
+				target.draw(text.first, states);
+				target.draw(text.second, states);
+			}
 		}
 	}
 
@@ -76,46 +77,36 @@
 
 				// TTitle
 				mTTitle.setString(data.name);
-				sf::FloatRect titleGBounds(mTTitle.getGlobalBounds());
-				mTTitle.setPosition(titleGBounds.width / 2.f + padding, titleGBounds.height / 2.f + padding);
+				mTTitle.setPosition(padding, padding);
 
 				// TCost
 				mTCost.setString(std::to_string(data.cost) + "g");
-				sf::FloatRect costGBounds(mTCost.getGlobalBounds());
-				mTCost.setPosition(mShape.getSize().x - costGBounds.width / 2.f - padding, costGBounds.height / 2.f + padding);
+				mTCost.setPosition(mShape.getSize().x - padding, padding);
 
 				// TStats
-					// First
-							// Setup Texts
-				mTStats.first[0].setString(data.health == 0 ? "/" : std::to_string(data.health));
-				mTStats.first[1].setString(std::to_string(data.damage));
-				mTStats.first[2].setString(std::to_string(static_cast<int>(data.range)));
-				mTStats.first[3].setString(strFunc::getPrecisionString(data.rate.asSeconds(), 1) + "s");
-				mTStats.first[4].setString(strFunc::getPrecisionString(data.spawn.asSeconds(), 1) + "s");
+						// Setup Texts
+				mTStats[0].first.setString(data.health == 0 ? "/" : std::to_string(data.health));
+				mTStats[1].first.setString(std::to_string(data.damage));
+				mTStats[2].first.setString(std::to_string(static_cast<int>(data.range)));
+				mTStats[3].first.setString(strFunc::getPrecisionString(data.rate.asSeconds(), 1) + "s");
+				mTStats[4].first.setString(strFunc::getPrecisionString(data.spawn.asSeconds(), 1) + "s");
 
-							// Find Largest Width
-				float largestWidth = mTStats.first.front().getGlobalBounds().width;
-				for (unsigned i = 1; i < mTStats.first.size(); i++) {
-					float newWidth = mTStats.first[i].getGlobalBounds().width;
+						// Find Largest Width
+				float largestWidth = mTStats.front().first.getGlobalBounds().width;
+				for (unsigned i = 1; i < mTStats.size(); i++) {
+					float newWidth = mTStats[i].first.getGlobalBounds().width;
 					if (newWidth > largestWidth)
 						largestWidth = newWidth;
 				}
 
-							// Set Text Positions
-				float previousHeight = mTTitle.getPosition().y + titleGBounds.height / 2.f;
-				for (auto& text : mTStats.first) {
-					sf::FloatRect textGBounds(text.getGlobalBounds());
-					text.setPosition(largestWidth - textGBounds.width / 2.f + padding,
-						textGBounds.height / 2.f + previousHeight + padding);
-
-					previousHeight = text.getPosition().y + textGBounds.height / 2.f;
+						// Set Text Positions
+				float previousHeight = 25.f;
+				for (auto& text : mTStats) {
+					float textHeight = text.first.getGlobalBounds().height;
+					text.first.setPosition(largestWidth + padding, textHeight / 2.f + previousHeight + padding);
+					text.second.setPosition(largestWidth + padding + 6.f, textHeight / 2.f + previousHeight + padding);
+					previousHeight = text.first.getPosition().y + textHeight / 2.f;
 				}
-
-					// Second
-				mTStats.second.setString("Health\nDamage\nRange\nAttack Rate\nSpawn Time");
-				sf::FloatRect descGBounds(mTStats.second.getGlobalBounds());
-				mTStats.second.setPosition(largestWidth + descGBounds.width / 2.f + padding * 2,
-					mTStats.first.front().getPosition().y + descGBounds.height / 2.f - mTStats.first.front().getGlobalBounds().height / 2.f);
 			}
 		}
 		else

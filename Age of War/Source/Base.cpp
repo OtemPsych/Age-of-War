@@ -1,6 +1,8 @@
 #include "Base.h"
 #include "RangedUnit.h"
 
+#include <PYRO/Math.h>
+
 #include <SFML/Graphics/RenderTarget.hpp>
 
 Base::Base(Side side, sf::IntRect worldBounds, sf::Font& font, const sf::Texture& baseTexture,
@@ -95,7 +97,8 @@ void Base::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	for (const auto& unit : mUnits)
 		target.draw(*unit, states);
 
-	target.draw(mSpawnBar, states.transform *= getTransform());
+	target.draw(mSmokeSystem, states.transform *= getTransform());
+	target.draw(mSpawnBar, states);
 }
 
 void Base::drawUnitDamageDisplays(sf::RenderTarget& target, sf::RenderStates states) const
@@ -163,6 +166,21 @@ void Base::update(sf::Time dt)
 
 	if (!mUnits.empty() && mUnits.front()->isDestroyable())
 		mUnits.erase(mUnits.begin());
+
+	if (mHealth.current <= 15 * mHealth.original / 100) {
+		mSmokeSystem.addEmitterPosition(sf::Vector2f(-36.f, -33.f));
+	}
+	else if (mHealth.current <= 32 * mHealth.original / 100) {
+		mSmokeSystem.addEmitterPosition(sf::Vector2f(64.f, -69.f));
+	}
+	else if (mHealth.current <= 55 * mHealth.original / 100) {
+		mSmokeSystem.addEmitterPosition(sf::Vector2f(55.f, 87.f));
+	}
+	else if (mHealth.current <= 80 * mHealth.original / 100) {
+		mSmokeSystem.addEmitterPosition(sf::Vector2f(-57.f, 57.f));
+	}
+
+	mSmokeSystem.update(dt);
 }
 
 void Base::modifyGold(int amount)

@@ -11,7 +11,7 @@ namespace gui
 	class StatTooltip : public sf::Transformable, public sf::Drawable, private sf::NonCopyable
 	{
 	private:
-		using Stats = std::pair<std::vector<pyro::Text>, pyro::Text>;
+		using Stats = std::vector<std::pair<pyro::Text, pyro::Text>>;
 		using TData = std::vector<T>;
 	private:
 		sf::RectangleShape mShape;
