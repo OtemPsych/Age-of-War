@@ -40,8 +40,7 @@ void RangedUnit::attack(HealthEntity& enemy)
 	Unit::attack(enemy);
 
 	for (unsigned i = 0; i < mProjectiles.size(); i++)
-		if (enemy.getGlobalBounds().contains(getTransform().transformPoint(mProjectiles[i][0].position)))
-		{
+		if (enemy.getGlobalBounds().contains(getTransform().transformPoint(mProjectiles[i][0].position))) {
 			enemy.receiveDamage(mDamage);
 			mDamageDisplays.addValueDisplay(getGlobalBounds(), enemy.getGlobalBounds(), mDamage);
 			mProjectiles.erase(mProjectiles.begin() + i);
@@ -52,19 +51,21 @@ void RangedUnit::attack(HealthEntity& enemy)
 
 void RangedUnit::update(sf::Time dt)
 {
-	for (auto& projectile : mProjectiles)
-	{
-		sf::Vector2f pos(getPosition());
-		float distance = pyro::math::getHypotenuse(mEnemyPosition - pos);
+	for (auto& projectile : mProjectiles) {
+		sf::Vector2f projPos(getTransform().transformPoint(projectile[0].position));
+		float distance = pyro::math::getHypotenuse(mEnemyPosition - projPos);
 
-		sf::Vector2f velocity(mProjectileSpeed * (mEnemyPosition.x - pos.x) / distance * dt.asSeconds(),
-			                  mProjectileSpeed * (mEnemyPosition.y - pos.y) / distance * dt.asSeconds());
+		sf::Vector2f velocity(mProjectileSpeed * (mEnemyPosition.x - projPos.x) / distance * dt.asSeconds(),
+			                  mProjectileSpeed * (mEnemyPosition.y - projPos.y) / distance * dt.asSeconds());
 		if (mSide == Side::Enemy)
 			velocity = sf::Vector2f(-velocity.x, velocity.y);
 
 		for (unsigned i = 0; i < projectile.getVertexCount(); i++)
 			projectile[i].position += velocity;
 	}
+
+	if (!mProjectiles.empty() && pyro::math::getHypotenuse(mProjectiles.front()[0].position) > mAttackRange * 1.5f)
+		mProjectiles.erase(mProjectiles.begin());
 
 	Unit::update(dt);
 }

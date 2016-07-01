@@ -190,13 +190,15 @@ void Base::modifyGold(int amount)
 
 sf::Packet& operator<<(sf::Packet& packet, Base& base)
 {
+	// New Unit
 	if (base.mMPUnitType > -1) {
-		assert(packet << static_cast<sf::Uint8>(Base::PacketTypeID::Unit));
+		assert(packet << static_cast<sf::Uint8>(Base::PacketTypeID::NewUnit));
 		assert(packet << base.mMPUnitType);
 		base.mMPUnitType = -1;
 	}
+	// New Turret
 	if (base.mMPTurretInfo.first > -1) {
-		assert(packet << static_cast<sf::Uint8>(Base::PacketTypeID::Turret));
+		assert(packet << static_cast<sf::Uint8>(Base::PacketTypeID::NewTurret));
 		assert(packet << base.mMPTurretInfo.first);
 
 		switch (base.mMPTurretInfo.second) {
@@ -222,11 +224,14 @@ sf::Packet& operator>>(sf::Packet& packet, Base& base)
 	if (!packet.endOfPacket()) {
 		sf::Uint8 packetTypeID;
 		assert(packet >> packetTypeID);
-		if (static_cast<Base::PacketTypeID>(packetTypeID) == Base::PacketTypeID::Unit) {
+
+		Base::PacketTypeID packetTypeIDCast = static_cast<Base::PacketTypeID>(packetTypeID);
+		if (packetTypeIDCast == Base::PacketTypeID::NewUnit) {
 			assert(packet >> base.mMPUnitType);
 			base.handleUnitSpawn(static_cast<Unit::UnitType>(base.mMPUnitType));
 		}
-		else {
+
+		if (packetTypeIDCast == Base::PacketTypeID::NewTurret) {
 			assert(packet >> base.mMPTurretInfo.first);
 			assert(packet >> base.mMPTurretInfo.second);
 			base.handleTurretSpawn(static_cast<Turret::TurretType>(base.mMPTurretInfo.first), base.mMPTurretInfo.second);

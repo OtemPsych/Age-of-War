@@ -10,7 +10,7 @@
 class Base : public HealthEntity, private sf::NonCopyable
 {
 private:
-	enum class PacketTypeID { Unit, Turret };
+	enum class PacketTypeID { NewUnit, NewTurret };
 private:
 	pyro::SoundPlayer<Unit::SoundID>&              mSoundPlayer;
 	gui::SpawnBar                                  mSpawnBar;

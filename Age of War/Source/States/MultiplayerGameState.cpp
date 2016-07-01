@@ -74,7 +74,7 @@ void MultiplayerGameState::packetHandling()
 			assert(hostPacket >> *mBaseOpponent);
 		}
 
-		sf::sleep(sf::milliseconds(40));
+		sf::sleep(sf::milliseconds(10));
 	}
 }
 

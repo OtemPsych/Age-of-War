@@ -15,7 +15,6 @@ public:
 	enum UnitType { Mage, Knight, Samurai, Shadow, Destroyer, Executioner, TypeCount };
 	enum class SoundID { MageAttack, KnightAttack, TypeCount };
 private:
-	const float                 mAttackRange;
 	gStruct::Resource<sf::Time> mAttackRate;
 	const float                 mSpeed;
 
@@ -24,6 +23,7 @@ private:
 protected:
 	GeneralUnitType             mGeneralUnitType;
 	UnitType                    mUnitType;
+	const float                 mAttackRange;
 	const unsigned short        mDamage;
 	pyro::SoundPlayer<SoundID>& mSoundPlayer;
 

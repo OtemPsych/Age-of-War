@@ -106,15 +106,16 @@ namespace gStruct
 		data[Unit::Destroyer].rangedData->spawnProjectile =
 			RangedUnitData::SpawnProjectileFunction([](std::vector<sf::VertexArray>& projs, sf::Vector2f unitSize)
 		{
-			int i = rand() % 2;
 			const sf::Vector2f size(15.f, 5.f);
-			const sf::Vector2f startingPos(i == 0 ? 0.f : unitSize.x + size.x, i == 0 ? size.y : 0.f);
+			int i = rand() % 2;
+			sf::Vector2f startingPos(i == 0 ? sf::Vector2f(size.x, unitSize.y / 4.f + size.y) 
+				                            : sf::Vector2f(unitSize.x / 2.f + size.x * 2.f, unitSize.y / 4.f - size.y));
 
 			projs.emplace_back(sf::VertexArray(sf::Quads, 4));
-			projs.back()[0].position = sf::Vector2f(0.f, 0.f);
-			projs.back()[1].position = sf::Vector2f(size.x, 0.f);
-			projs.back()[2].position = size;
-			projs.back()[3].position = sf::Vector2f(0.f, size.y);
+			projs.back()[0].position = startingPos;
+			projs.back()[1].position = sf::Vector2f(startingPos.x + size.x, startingPos.y);
+			projs.back()[2].position = startingPos + size;
+			projs.back()[3].position = sf::Vector2f(startingPos.x, startingPos.y + size.y);
 			
 			projs.back()[0].color =
 			projs.back()[1].color =
