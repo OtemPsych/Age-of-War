@@ -8,9 +8,7 @@ class BaseAI : public Base
 public:
 	BaseAI(Side side, sf::IntRect worldBounds, sf::Font& font, const sf::Texture& baseTexture,
 		   const pyro::TextureHolder<Unit::UnitType>& unitTextures,
-		   std::vector<gStruct::UnitData>& unitData,
 		   const pyro::TextureHolder<Turret::TurretType>& turretTextures,
-		   std::vector<gStruct::TurretData>& turretData,
 		   pyro::SoundPlayer<Unit::SoundID>& soundPlayer);
 public:
 	virtual void update(sf::Time dt) override;

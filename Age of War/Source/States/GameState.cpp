@@ -7,8 +7,6 @@
 
 GameState::GameState(pyro::StateStack& stack, sf::RenderWindow& window)
 	: State(stack, window)
-	, mUnitData(std::move(gStruct::initializeUnitData()))
-	, mTurretData(std::move(gStruct::initializeTurretData()))
 	, mBasePlayer(nullptr)
 	, mBaseOpponent(nullptr)
 	, mWindowBounds(0, 0, mWindow.getSize().x, mWindow.getSize().y)
@@ -21,9 +19,9 @@ GameState::GameState(pyro::StateStack& stack, sf::RenderWindow& window)
 
 	sf::Vector2u winSize(mWindow.getSize());
 	mBasePlayer = std::unique_ptr<BasePlayer>(new BasePlayer(mWindow, mWorldBounds, mDisplayDamageFont, mBaseTexture,
-		                                                     mUnitTextures, mUnitData, mTurretTextures, mTurretData, mSoundPlayer));
+		                                                     mUnitTextures, mTurretTextures, mSoundPlayer));
 	mBaseOpponent = std::unique_ptr<Base>(new BaseAI(Entity::Side::Enemy, mWorldBounds, mDisplayDamageFont, mBaseTexture,
-		                                             mUnitTextures, mUnitData, mTurretTextures, mTurretData, mSoundPlayer));
+		                                             mUnitTextures, mTurretTextures, mSoundPlayer));
 
 	mMusicPlayer.setVolume(75.f);
 	mMusicPlayer.play(MusicID::Soundtrack);
@@ -81,26 +79,28 @@ void GameState::updateCamera()
 	{
 		sf::View newView(mWindow.getView());
 		const sf::Vector2f viewCenter = newView.getCenter();
-		const float coordsX = mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)).x;
+		const sf::Vector2i mousePos = sf::Mouse::getPosition(mWindow);
+		const float coordsX = mWindow.mapPixelToCoords(mousePos).x;
 		const float halfViewWidth = newView.getSize().x / 2.f;
 		const float movement = 7.f;
+		const float scrollEdge = 100.f;
 
-		if (coordsX >= viewCenter.x + halfViewWidth - 100.f) {
+		if (coordsX >= viewCenter.x + halfViewWidth - scrollEdge) {
 			const float totalDisplacement = viewCenter.x + halfViewWidth + movement;
 			sf::View newView(mWindow.getView());
 			if (totalDisplacement < mWorldBounds.width)
-				newView.move(movement, 0.f);
+				newView.move(-(mWindowBounds.width - mousePos.x - scrollEdge) * movement / 100.f, 0.f);
 			else
 				newView.setCenter(mWorldBounds.width - halfViewWidth, viewCenter.y);
 
 			mWindow.setView(newView);
 			mBasePlayer->updateGUIPositions();
 		}
-		else if (coordsX <= viewCenter.x - halfViewWidth + 100.f) {
+		else if (coordsX <= viewCenter.x - halfViewWidth + scrollEdge) {
 			const float totalDisplacement = viewCenter.x - halfViewWidth - movement;
 			sf::View newView(mWindow.getView());
 			if (totalDisplacement > mWorldBounds.left)
-				newView.move(-movement, 0.f);
+				newView.move(-(scrollEdge - mousePos.x) * movement / 100.f, 0.f);
 			else
 				newView.setCenter(mWorldBounds.left + halfViewWidth, viewCenter.y);
 

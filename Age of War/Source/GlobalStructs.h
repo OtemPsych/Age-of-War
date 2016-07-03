@@ -35,20 +35,34 @@ namespace gStruct
 	};
 	struct UnitData
 	{
-		unsigned short                  generalUnitType;
-		unsigned short                  unitType;
-		std::string                     name;
-		unsigned short                  health;
-		unsigned short                  damage;
-		float		                    range;
-		sf::Time	                    rate;
-		float		                    speed;
-		sf::Time	                    spawn;
-		unsigned short                  cost;
-		float		                    scale;
-		TextureData                     walkRects;
-		TextureData                     attackRects;
-		sf::IntRect                     iconRect;
+		unsigned short generalUnitType;
+		unsigned short unitType;
+		std::string    name;
+
+		unsigned short health;
+		unsigned short healthUpgradePercentage;
+		unsigned short healthUpgradeCost;
+
+		unsigned short damage;
+		unsigned short damageUpgradePercentage;
+		unsigned short damageUpgradeCost;
+
+		float		   range;
+		unsigned short rangeUpgradePercentage;
+		unsigned short rangeUpgradeCost;
+
+		sf::Time	   rate;
+		unsigned short rateUpgradePercentage;
+		unsigned short rateUpgradeCost;
+
+		float		   speed;
+		sf::Time	   spawn;
+		unsigned short cost;
+		float		   scale;
+
+		TextureData    walkRects;
+		TextureData    attackRects;
+		sf::IntRect    iconRect;
 
 		std::unique_ptr<RangedUnitData> rangedData;
 	};
@@ -58,13 +72,24 @@ namespace gStruct
 		unsigned short turretType;
 		std::string    name;
 		unsigned short health;
+
 		unsigned short damage;
+		unsigned short damageUpgradePercentage;
+		unsigned short damageUpgradeCost;
+
 		float          range;
+		unsigned short rangeUpgradePercentage;
+		unsigned short rangeUpgradeCost;
+
 		sf::Time       rate;
+		unsigned short rateUpgradePercentage;
+		unsigned short rateUpgradeCost;
+
 		sf::Time	   spawn;
 		unsigned short cost;
 		float          scale;
 		float          projectileSpeed;
+
 		sf::IntRect    iconRect;
 	};
 

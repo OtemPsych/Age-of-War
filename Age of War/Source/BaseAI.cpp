@@ -2,11 +2,9 @@
 
 BaseAI::BaseAI(Side side, sf::IntRect worldBounds, sf::Font& font, const sf::Texture& baseTexture,
 	           const pyro::TextureHolder<Unit::UnitType>& unitTextures,
-	           std::vector<gStruct::UnitData>& unitData,
 	           const pyro::TextureHolder<Turret::TurretType>& turretTextures,
-	           std::vector<gStruct::TurretData>& turretData,
 	           pyro::SoundPlayer<Unit::SoundID>& soundPlayer)
-	: Base(side, worldBounds, font, baseTexture, unitTextures, unitData, turretTextures, turretData, soundPlayer)
+	: Base(side, worldBounds, font, baseTexture, unitTextures, turretTextures, soundPlayer)
 {
 }
 

@@ -10,20 +10,22 @@ namespace gStruct
 	{
 		std::vector<UnitData> data(Unit::UnitType::TypeCount);
 
-		data[Unit::Mage].generalUnitType = Unit::GeneralUnitType::Ranged;
-		data[Unit::Mage].unitType        = Unit::Mage;
-		data[Unit::Mage].name            = "Mage";
-		data[Unit::Mage].health          = 75;
-		data[Unit::Mage].damage          = 15;
-		data[Unit::Mage].range           = 95.f;
-		data[Unit::Mage].rate            = sf::seconds(0.7f);
-		data[Unit::Mage].speed           = 50.f;
-		data[Unit::Mage].spawn           = sf::seconds(2.f);
-		data[Unit::Mage].cost            = 25;
-		data[Unit::Mage].scale           = 0.5f;
+		data[Unit::Mage].generalUnitType         = Unit::GeneralUnitType::Ranged;
+		data[Unit::Mage].unitType                = Unit::Mage;
+		data[Unit::Mage].name                    = "Mage";
+		data[Unit::Mage].health                  = 75;
+		data[Unit::Mage].damage                  = 15;
+		data[Unit::Mage].damageUpgradePercentage = 25;
+		data[Unit::Mage].damageUpgradeCost       = 150;
+		data[Unit::Mage].range                   = 95.f;
+		data[Unit::Mage].rate                    = sf::seconds(0.7f);
+		data[Unit::Mage].speed                   = 50.f;
+		data[Unit::Mage].spawn                   = sf::seconds(2.f);
+		data[Unit::Mage].cost                    = 25;
+		data[Unit::Mage].scale                   = 0.5f;
 		setupAnimation(data[Unit::Mage], true, true);
 		data[Unit::Mage].iconRect = data[Unit::Mage].walkRects.front().first;
-		data[Unit::Mage].rangedData = std::unique_ptr<RangedUnitData>(new RangedUnitData());
+		data[Unit::Mage].rangedData = std::make_unique<RangedUnitData>();
 		data[Unit::Mage].rangedData->projectileSpeed = 500.f;
 		data[Unit::Mage].rangedData->spawnProjectile = 
 			RangedUnitData::SpawnProjectileFunction([](std::vector<sf::VertexArray>& projs, sf::Vector2f unitSize)
@@ -56,7 +58,7 @@ namespace gStruct
 		data[Unit::Knight].scale           = 0.5f;
 		setupAnimation(data[Unit::Knight], true, true);
 		data[Unit::Knight].iconRect = data[Unit::Knight].walkRects.front().first;
-		data[Unit::Knight].rangedData = nullptr;
+		data[Unit::Knight].rangedData.reset();
 
 		data[Unit::Samurai].generalUnitType = Unit::GeneralUnitType::Melee;
 		data[Unit::Samurai].unitType = Unit::Samurai;
@@ -71,7 +73,7 @@ namespace gStruct
 		data[Unit::Samurai].scale = 0.25f;
 		setupAnimation(data[Unit::Samurai], false, false);
 		data[Unit::Samurai].iconRect = data[Unit::Samurai].walkRects.front().first;
-		data[Unit::Samurai].rangedData = nullptr;
+		data[Unit::Samurai].rangedData.reset();
 
 		data[Unit::Shadow].generalUnitType = Unit::GeneralUnitType::Melee;
 		data[Unit::Shadow].unitType = Unit::Shadow;
@@ -86,7 +88,7 @@ namespace gStruct
 		data[Unit::Shadow].scale = 0.5f;
 		setupAnimation(data[Unit::Shadow], false, false);
 		data[Unit::Shadow].iconRect = data[Unit::Shadow].walkRects.front().first;
-		data[Unit::Shadow].rangedData = nullptr;
+		data[Unit::Shadow].rangedData.reset();
 
 		data[Unit::Destroyer].generalUnitType = Unit::GeneralUnitType::Ranged;
 		data[Unit::Destroyer].unitType        = Unit::Destroyer;
@@ -101,7 +103,7 @@ namespace gStruct
 		data[Unit::Destroyer].scale           = 0.85f;
 		setupAnimation(data[Unit::Destroyer], true, true);
 		data[Unit::Destroyer].iconRect = data[Unit::Destroyer].walkRects.front().first;
-		data[Unit::Destroyer].rangedData = std::unique_ptr<RangedUnitData>(new RangedUnitData());
+		data[Unit::Destroyer].rangedData = std::make_unique<RangedUnitData>();
 		data[Unit::Destroyer].rangedData->projectileSpeed = 500.f;
 		data[Unit::Destroyer].rangedData->spawnProjectile =
 			RangedUnitData::SpawnProjectileFunction([](std::vector<sf::VertexArray>& projs, sf::Vector2f unitSize)
@@ -136,7 +138,7 @@ namespace gStruct
 		data[Unit::Executioner].scale           = 0.9f;
 		setupAnimation(data[Unit::Executioner], true, true);
 		data[Unit::Executioner].iconRect = data[Unit::Executioner].attackRects.front().first;
-		data[Unit::Executioner].rangedData = nullptr;
+		data[Unit::Executioner].rangedData.reset();
 
 
 		return std::move(data);

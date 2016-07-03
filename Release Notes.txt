@@ -1,12 +1,27 @@
-v0.8.5 | 27/06/2016
+v0.9.0 | 27/06/2016 - 03/07/2016
 
   Features
 
     * Added smoke that appears when the base is damaged
 
+  Updates
+
+    - Improved multiplayer desynchronization
+
+    - Reduced default music volume to 70% (from 100%)
+
+    - Improved projectile accuracy
+
+    - The camera scroll distance is now dependant on the distance of the mouse from the edge of the window
+
   Bug Fixes
 
     ~ Fixed a bug that caused the stat tooltip's info to display in inconsistent heights
+
+    ~ Fixed a bug that caused the Destroyer's projectiles to spawn in incorrect positions
+
+    ~ Fixed a bug that caused ranged units' projectiles that missed their target to remain on the map indefinitely or to hit a target
+      that would normally be out of their range
 
 
 

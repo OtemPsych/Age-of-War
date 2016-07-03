@@ -24,8 +24,6 @@ protected:
 	pyro::TextureHolder<Turret::TurretType> mTurretTextures;
 	sf::Texture						        mBaseTexture;
 									        
-	std::vector<gStruct::UnitData>	        mUnitData;
-	std::vector<gStruct::TurretData>        mTurretData;
 	std::unique_ptr<BasePlayer>		        mBasePlayer;
 	std::unique_ptr<Base>		            mBaseOpponent;
 									        

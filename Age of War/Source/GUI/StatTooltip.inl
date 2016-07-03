@@ -86,10 +86,10 @@
 				// TStats
 						// Setup Texts
 				mTStats[0].first.setString(data.health == 0 ? "/" : std::to_string(data.health));
-				mTStats[1].first.setString(std::to_string(data.damage));
-				mTStats[2].first.setString(std::to_string(static_cast<int>(data.range)));
-				mTStats[3].first.setString(strFunc::getPrecisionString(data.rate.asSeconds(), 1) + "s");
-				mTStats[4].first.setString(strFunc::getPrecisionString(data.spawn.asSeconds(), 1) + "s");
+				mTStats[1].first.setString(data.damage == 0 ? "/" : std::to_string(data.damage));
+				mTStats[2].first.setString(data.range == 0.f ? "/" :  std::to_string(static_cast<int>(data.range)));
+				mTStats[3].first.setString(data.rate == sf::Time::Zero ? "/" : strFunc::getPrecisionString(data.rate.asSeconds(), 1) + "s");
+				mTStats[4].first.setString(data.spawn == sf::Time::Zero ? "/" : strFunc::getPrecisionString(data.spawn.asSeconds(), 1) + "s");
 
 						// Find Largest Width
 				float largestWidth = mTStats.front().first.getGlobalBounds().width;

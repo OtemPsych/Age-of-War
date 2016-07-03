@@ -64,7 +64,7 @@ void RangedUnit::update(sf::Time dt)
 			projectile[i].position += velocity;
 	}
 
-	if (!mProjectiles.empty() && pyro::math::getHypotenuse(mProjectiles.front()[0].position) > mAttackRange * 1.5f)
+	if (!mProjectiles.empty() && std::abs(getPosition().x - getTransform().transformPoint(mProjectiles.front()[0].position).x) > mAttackRange * 1.5f)
 		mProjectiles.erase(mProjectiles.begin());
 
 	Unit::update(dt);

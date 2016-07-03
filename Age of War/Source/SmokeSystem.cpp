@@ -41,7 +41,29 @@ void SmokeSystem::addEmitterPosition(const sf::Vector2f& pos)
 		particle.lifetime = sf::seconds(std::rand() / (RAND_MAX / (maxLifetime - minLifetime)) + minLifetime);
 
 		particle.size = sf::Vector2f(25.f, 25.f);
-		particle.color = sf::Color(71, 71, 71);
+
+		sf::Color color;
+		switch (rand() % 6) 
+		{
+		case 0:
+			color = sf::Color(77, 77, 77);
+			break;
+		case 1:
+			color = sf::Color(89, 89, 89);
+			break;
+		case 2:
+			color = sf::Color(102, 102, 102);
+			break;
+		case 3:
+			color = sf::Color(115, 115, 115);
+			break;
+		case 4:
+			color = sf::Color(128, 128, 128);
+			break;
+		case 5:
+			color = sf::Color(140, 140, 140);
+		}
+		particle.color = color;
 
 		return std::move(particle);
 	});

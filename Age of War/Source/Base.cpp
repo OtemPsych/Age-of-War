@@ -7,9 +7,7 @@
 
 Base::Base(Side side, sf::IntRect worldBounds, sf::Font& font, const sf::Texture& baseTexture,
 	       const pyro::TextureHolder<Unit::UnitType>& unitTextures,
-	       std::vector<gStruct::UnitData>& unitData,
 		   const pyro::TextureHolder<Turret::TurretType>& turretTextures,
-		   std::vector<gStruct::TurretData>& turretData,
 	       pyro::SoundPlayer<Unit::SoundID>& soundPlayer)
 	: HealthEntity(side, EntityType::Base, 1500, baseTexture)
 	, mSpawnBar(getGlobalBounds(), true)
@@ -19,9 +17,9 @@ Base::Base(Side side, sf::IntRect worldBounds, sf::Font& font, const sf::Texture
 	, mTurretTypeToSpawn(-1)
 	, mUnitTextures(unitTextures)
 	, mSoundPlayer(soundPlayer)
-	, mUnitData(unitData)
+	, mUnitData(std::move(gStruct::initializeUnitData()))
 	, mTurretTextures(turretTextures)
-	, mTurretData(turretData)
+	, mTurretData(std::move(gStruct::initializeTurretData()))
 	, mGold(200)
 {
 	if (side == Side::Ally) {

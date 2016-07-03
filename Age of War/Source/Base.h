@@ -23,11 +23,11 @@ private:
 	sf::Font&                                      mDisplayDamageFont;
 protected:									       
 	const pyro::TextureHolder<Unit::UnitType>&     mUnitTextures;
-	std::vector<gStruct::UnitData>&                mUnitData;
+	std::vector<gStruct::UnitData>                 mUnitData;
 	std::vector<std::shared_ptr<Unit>>             mUnits;
 
 	const pyro::TextureHolder<Turret::TurretType>& mTurretTextures;
-	std::vector<gStruct::TurretData>&              mTurretData;
+	std::vector<gStruct::TurretData>               mTurretData;
 	std::vector<std::pair<Turret, int>>            mTurrets;
 	sf::Int16                                      mTurretTypeToSpawn;
 
@@ -43,9 +43,7 @@ protected:
 public:
 	Base(Side side, sf::IntRect worldBounds, sf::Font& font, const sf::Texture& baseTexture,
 		 const pyro::TextureHolder<Unit::UnitType>& unitTextures,
-		 std::vector<gStruct::UnitData>& unitData,
 		 const pyro::TextureHolder<Turret::TurretType>& turretTextures,
-		 std::vector<gStruct::TurretData>& turretData,
 		 pyro::SoundPlayer<Unit::SoundID>& soundPlayer);
 	virtual ~Base();
 public:

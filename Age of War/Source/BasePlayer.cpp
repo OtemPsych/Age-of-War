@@ -3,14 +3,12 @@
 
 BasePlayer::BasePlayer(sf::RenderWindow& window, sf::IntRect worldBounds, sf::Font& font, const sf::Texture& baseTexture,
 	                   const pyro::TextureHolder<Unit::UnitType>& unitTextures,
-	                   std::vector<gStruct::UnitData>& unitData,
 	                   const pyro::TextureHolder<Turret::TurretType>& turretTextures,
-	                   std::vector<gStruct::TurretData>& turretData,
 	                   pyro::SoundPlayer<Unit::SoundID>& soundPlayer)
-	: Base(Side::Ally, worldBounds, font, baseTexture, unitTextures, unitData, turretTextures, turretData, soundPlayer)
+	: Base(Side::Ally, worldBounds, font, baseTexture, unitTextures, turretTextures, soundPlayer)
 	, mCoinRotateAnimation(mCoinSprite, readTextureData("Coin", "Rotate"), sf::seconds(0.8f), true)
-	, mUnitButtons(unitData, window, unitTextures, sf::Vector2f(55.f, 60.f))
-	, mTurretButtons(turretData, window, turretTextures, sf::Vector2f(55.f, 25.f))
+	, mUnitButtons(mUnitData, window, unitTextures, sf::Vector2f(55.f, 60.f))
+	, mTurretButtons(mTurretData, window, turretTextures, sf::Vector2f(55.f, 25.f))
 	, mActiveTurretPlacementIndicators(false)
 	, mTurretIndicator(nullptr)
 	, mTurretPlacementIndicators(mTurretWindowRects, window)
