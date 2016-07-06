@@ -1,3 +1,11 @@
+v0.9.1 | 05/07/2016
+
+  Updates
+
+    - Removed unnecessary stats like health and spawn time for turrets
+
+
+
 v0.9.0 | 27/06/2016 - 03/07/2016
 
   Features

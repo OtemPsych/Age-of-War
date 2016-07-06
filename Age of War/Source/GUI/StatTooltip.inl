@@ -1,4 +1,6 @@
-﻿namespace gui
+﻿#include "../UnitTurretData.h"
+
+namespace gui
 {
 	template <typename T>
 	StatTooltip<T>::StatTooltip(const TData& data, sf::RenderWindow& window, sf::FloatRect overlayRect)
@@ -35,7 +37,8 @@
 		mTCost.setStyle(sf::Text::Bold);
 		mTCost.setTextColor(sf::Color(255, 255, 77));
 
-		for (unsigned i = 0; i < 5; i++) {
+		bool isUnitData = std::is_same<T, data::UnitData>::value;
+		for (int i = 0; i < (isUnitData ? 5 : 3); i++) {
 			mTStats.emplace_back();
 			mTStats.back().second.setOriginFlags(OriginFlags::Left | OriginFlags::CenterY);
 			mTStats.back().second.setFont(mFont);
@@ -46,11 +49,14 @@
 			mTStats.back().first.setTextColor(sf::Color(102, 255, 102));
 		}
 
-		mTStats[0].second.setString("Health");
-		mTStats[1].second.setString("Damage");
-		mTStats[2].second.setString("Range");
-		mTStats[3].second.setString("Rate");
-		mTStats[4].second.setString("Spawn Time");
+		int itr = 0;
+		if (isUnitData)
+			mTStats[itr++].second.setString("Health");
+		mTStats[itr++].second.setString("Damage");
+		mTStats[itr++].second.setString("Range");
+		mTStats[itr++].second.setString("Rate");
+		if (isUnitData)
+			mTStats[itr].second.setString("Spawn Time");
 	}
 
 	template <typename T>
@@ -73,6 +79,7 @@
 		if (TType != -1) {
 			if (mTData[TType].name != mTTitle.getString()) {
 				const auto& data = mTData[TType];
+				const data::UnitData* unitData = dynamic_cast<const data::UnitData*>(&data);
 				const float padding = 6.f;
 
 				// TTitle
@@ -85,11 +92,15 @@
 
 				// TStats
 						// Setup Texts
-				mTStats[0].first.setString(data.health == 0 ? "/" : std::to_string(data.health));
-				mTStats[1].first.setString(data.damage == 0 ? "/" : std::to_string(data.damage));
-				mTStats[2].first.setString(data.range == 0.f ? "/" :  std::to_string(static_cast<int>(data.range)));
-				mTStats[3].first.setString(data.rate == sf::Time::Zero ? "/" : strFunc::getPrecisionString(data.rate.asSeconds(), 1) + "s");
-				mTStats[4].first.setString(data.spawn == sf::Time::Zero ? "/" : strFunc::getPrecisionString(data.spawn.asSeconds(), 1) + "s");
+				bool isUnitData = std::is_same<T, data::UnitData>::value;
+				int itr = 0;
+				if (unitData)
+					mTStats[itr++].first.setString(strFunc::getPrecisionString(unitData->health.value.current, 0));
+				mTStats[itr++].first.setString(strFunc::getPrecisionString(data.damage.value.current, 0));
+				mTStats[itr++].first.setString(strFunc::getPrecisionString(data.range.value.current, 0));
+				mTStats[itr++].first.setString(strFunc::getPrecisionString(data.rate.value.current.asSeconds(), 1) + "s");
+				if (unitData)
+					mTStats[itr].first.setString(strFunc::getPrecisionString(unitData->spawn.asSeconds(), 1) + "s");
 
 						// Find Largest Width
 				float largestWidth = mTStats.front().first.getGlobalBounds().width;
@@ -107,6 +118,8 @@
 					text.second.setPosition(largestWidth + padding + 6.f, textHeight / 2.f + previousHeight + padding);
 					previousHeight = text.first.getPosition().y + textHeight / 2.f;
 				}
+
+				mShape.setSize(sf::Vector2f(mShape.getSize().x, previousHeight + padding));
 			}
 		}
 		else

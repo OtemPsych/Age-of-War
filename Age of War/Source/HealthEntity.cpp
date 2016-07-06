@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
-HealthEntity::HealthEntity(Side side, EntityType entityType, unsigned short health, const sf::Texture& texture)
+HealthEntity::HealthEntity(Side side, EntityType entityType, float health, const sf::Texture& texture)
 	: Entity(side, entityType, texture)
 	, mHealth(health)
 	, mHealthBar(getGlobalBounds(), entityType == EntityType::Unit, side == Side::Ally ? sf::Color(0, 230, 0) : sf::Color(179, 0, 0))
@@ -12,7 +12,7 @@ HealthEntity::HealthEntity(Side side, EntityType entityType, unsigned short heal
 		mHealthBar.rotate(180.f);
 }
 
-HealthEntity::HealthEntity(Side side, EntityType entityType, unsigned short health, const sf::Texture& texture, sf::IntRect rect)
+HealthEntity::HealthEntity(Side side, EntityType entityType, float health, const sf::Texture& texture, sf::IntRect rect)
 	: Entity(side, entityType, texture, rect)
 	, mHealth(health)
 	, mHealthBar(getGlobalBounds(), entityType == EntityType::Unit, side == Side::Ally ? sf::Color(0, 230, 0) : sf::Color(179, 0, 0))

@@ -4,7 +4,7 @@
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
-RangedUnit::RangedUnit(Side side, sf::Font& font, gStruct::UnitData& data,
+RangedUnit::RangedUnit(Side side, sf::Font& font, data::UnitData& data,
 	                   const pyro::TextureHolder<UnitType>& textures, pyro::SoundPlayer<SoundID>& soundPlayer)
 	: Unit(side, font, data, textures, soundPlayer)
 	, mProjectileSpeed(data.rangedData->projectileSpeed)
@@ -31,8 +31,9 @@ void RangedUnit::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	Unit::draw(target, states);
 
 	states.transform *= getTransform();
-	for (const auto& projectile : mProjectiles)
+	for (const auto& projectile : mProjectiles) {
 		target.draw(projectile, states);
+	}
 }
 
 void RangedUnit::attack(HealthEntity& enemy)

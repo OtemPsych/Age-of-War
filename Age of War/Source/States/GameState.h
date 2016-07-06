@@ -3,7 +3,6 @@
 
 #include "../BasePlayer.h"
 #include "../BaseAI.h"
-#include "../GlobalStructs.h"
 
 #include <PYRO/State.h>
 #include <PYRO/Audio/MusicPlayer.h>

@@ -4,13 +4,13 @@
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
-Turret::Turret(Side side, sf::Font& damageDisplayFont, sf::Vector2f baseSize, gStruct::TurretData& data,
-	const pyro::TextureHolder<TurretType>& textures)
+Turret::Turret(Side side, sf::Font& damageDisplayFont, sf::Vector2f baseSize, data::TurretData& data,
+	           const pyro::TextureHolder<TurretType>& textures)
 	: Entity(side, EntityType::Turret, textures.get(static_cast<TurretType>(data.turretType)))
 	, mTurretType(static_cast<TurretType>(data.turretType))
-	, mDamage(data.damage)
-	, mRange(data.range)
-	, mAttackRate(data.rate)
+	, mDamage(data.damage.value.current)
+	, mRange(data.range.value.current)
+	, mAttackRate(data.rate.value.current)
 	, mProjectileSpeed(data.projectileSpeed)
 	, mDamageDisplays(sf::Vector2f(0.f, 30.f), sf::Vector2f(0.f, -1.8f), sf::seconds(0.75f), damageDisplayFont)
 {

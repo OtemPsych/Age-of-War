@@ -102,6 +102,24 @@ void BasePlayer::handleEvent(const sf::Event& event)
 			mTurretIndicator.reset();
 		}
 	}
+
+	if (event.type == sf::Event::KeyPressed) {
+		switch (event.key.code)
+		{
+		case sf::Keyboard::Num1:
+			handleUnitUpgrade(Unit::UnitType::Mage, Unit::UnitUpgradeType::Health);
+			break;
+		case sf::Keyboard::Num2:
+			handleUnitUpgrade(Unit::UnitType::Mage, Unit::UnitUpgradeType::Damage);
+			break;
+		case sf::Keyboard::Num3:
+			handleUnitUpgrade(Unit::UnitType::Mage, Unit::UnitUpgradeType::Range);
+			break;
+		case sf::Keyboard::Num4:
+			handleUnitUpgrade(Unit::UnitType::Mage, Unit::UnitUpgradeType::Rate);
+			break;
+		}
+	}
 }
 
 void BasePlayer::update(sf::Time dt)

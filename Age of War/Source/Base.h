@@ -23,11 +23,11 @@ private:
 	sf::Font&                                      mDisplayDamageFont;
 protected:									       
 	const pyro::TextureHolder<Unit::UnitType>&     mUnitTextures;
-	std::vector<gStruct::UnitData>                 mUnitData;
+	std::vector<data::UnitData>                    mUnitData;
 	std::vector<std::shared_ptr<Unit>>             mUnits;
 
 	const pyro::TextureHolder<Turret::TurretType>& mTurretTextures;
-	std::vector<gStruct::TurretData>               mTurretData;
+	std::vector<data::TurretData>                  mTurretData;
 	std::vector<std::pair<Turret, int>>            mTurrets;
 	sf::Int16                                      mTurretTypeToSpawn;
 
@@ -38,6 +38,7 @@ protected:
 protected:
 	void handleTurretSpawn(Turret::TurretType type, int turretIndicator);
 	void handleUnitSpawn(Unit::UnitType type);
+	void handleUnitUpgrade(Unit::UnitType unitType, Unit::UnitUpgradeType upgradeType);
 	void spawnUnit();
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 public:

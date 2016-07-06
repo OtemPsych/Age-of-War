@@ -1,7 +1,7 @@
 #ifndef Animation_H_
 #define Animation_H_
 
-#include "GlobalStructs.h"
+#include "UnitTurretData.h"
 
 #include <SFML/System/Time.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -12,17 +12,17 @@
 class Animation
 {
 private:
-	sf::Sprite&		     mSprite;
-	gStruct::TextureData mTextureRects;
-	unsigned		     mCurrentRect;
-	sf::Time		     mTimePerRect;
-	sf::Time		     mElapsedTime;
-	const bool		     mRepeat;
-					     
-	bool			     mAnimationOngoing;
+	sf::Sprite&		            mSprite;
+	data::UnitData::TextureData mTextureRects;
+	unsigned		            mCurrentRect;
+	sf::Time		            mTimePerRect;
+	sf::Time		            mElapsedTime;
+	const bool		            mRepeat;
+					            
+	bool			            mAnimationOngoing;
 
 public:
-	Animation(sf::Sprite& sprite, gStruct::TextureData& textureRects,
+	Animation(sf::Sprite& sprite, data::UnitData::TextureData& textureRects,
 			  sf::Time duration, bool repeat = false);
 public:
 	void update(sf::Time dt);

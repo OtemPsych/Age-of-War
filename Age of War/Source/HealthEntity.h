@@ -4,22 +4,21 @@
 #include <PYRO/Text.h>
 
 #include "Entity.h"
-#include "GlobalStructs.h"
 #include "GUI/Bar.h"
 
 class HealthEntity : public Entity
 {
 protected:
-	gStruct::Resource<unsigned short> mHealth;
+	pyro::utils::Resource<float> mHealth;
 private:
-	gui::Bar                          mHealthBar;
-	bool                              mIsDestroyable;
+	gui::Bar                     mHealthBar;
+	bool                         mIsDestroyable;
 
 protected:
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 public:
-	HealthEntity(Side side, EntityType entityType, unsigned short health, const sf::Texture& texture);
-	HealthEntity(Side side, EntityType entityType, unsigned short health, const sf::Texture& texture, sf::IntRect rect);
+	HealthEntity(Side side, EntityType entityType, float health, const sf::Texture& texture);
+	HealthEntity(Side side, EntityType entityType, float health, const sf::Texture& texture, sf::IntRect rect);
 	virtual ~HealthEntity();
 public:
 	void receiveDamage(unsigned short damage);

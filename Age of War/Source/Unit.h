@@ -13,30 +13,31 @@ class Unit : public HealthEntity
 public:
 	enum GeneralUnitType { Melee, Ranged };
 	enum UnitType { Mage, Knight, Samurai, Shadow, Destroyer, Executioner, TypeCount };
+	enum class UnitUpgradeType { Health, Damage, Range, Rate, TypeCount};
 	enum class SoundID { MageAttack, KnightAttack, TypeCount };
 private:
-	gStruct::Resource<sf::Time> mAttackRate;
-	const float                 mSpeed;
-
-	bool                        mMoving;
-	Animation                   mWalkingAnimation;
-protected:
-	GeneralUnitType             mGeneralUnitType;
-	UnitType                    mUnitType;
-	const float                 mAttackRange;
-	const unsigned short        mDamage;
-	pyro::SoundPlayer<SoundID>& mSoundPlayer;
-
-	ValueDisplays               mDamageDisplays;
-
-	bool                        mAttacking;
-	Animation                   mAttackAnimation;
+	pyro::utils::Resource<sf::Time> mAttackRate;
+	const float                     mSpeed;
+								    
+	bool                            mMoving;
+	Animation                       mWalkingAnimation;
+protected:						    
+	GeneralUnitType                 mGeneralUnitType;
+	UnitType                        mUnitType;
+	const float                     mAttackRange;
+	const unsigned short            mDamage;
+	pyro::SoundPlayer<SoundID>&     mSoundPlayer;
+								    
+	ValueDisplays                   mDamageDisplays;
+								    
+	bool                            mAttacking;
+	Animation                       mAttackAnimation;
 
 protected:
 	bool enemyInRange(HealthEntity& enemy);
 	virtual void handleAttackAnimation(HealthEntity& enemy);
 public:
-	Unit(Side side, sf::Font& damageDisplayFont, gStruct::UnitData& data,
+	Unit(Side side, sf::Font& damageDisplayFont, data::UnitData& data,
 		 const pyro::TextureHolder<UnitType>& unitTextures, pyro::SoundPlayer<SoundID>& soundPlayer);
 	virtual ~Unit();
 public:

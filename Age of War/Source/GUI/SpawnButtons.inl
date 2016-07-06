@@ -137,6 +137,16 @@ namespace gui
 	}
 
 	template <typename T, typename K>
+	std::vector<sf::Vector2f> SpawnButtons<T, K>::getButtonPositions() const
+	{
+		std::vector<sf::Vector2f> buttonPositions;
+		for (const auto& button : mButtons)
+			buttonPositions.emplace_back(button.first.getPosition());
+
+		return std::move(buttonPositions);
+	}
+
+	template <typename T, typename K>
 	sf::RectangleShape SpawnButtons<T, K>::getButtonBox(unsigned i)
 	{
 		sf::RectangleShape box(mButtons[i].first.getSize());

@@ -5,22 +5,22 @@
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
-Unit::Unit(Side side, sf::Font& damageDisplayFont, gStruct::UnitData& data,
+Unit::Unit(Side side, sf::Font& damageDisplayFont, data::UnitData& data,
 	       const pyro::TextureHolder<UnitType>& unitTextures, pyro::SoundPlayer<SoundID>& soundPlayer)
-	: HealthEntity(side, EntityType::Unit, data.health, unitTextures.get(static_cast<UnitType>(data.unitType)),
+	: HealthEntity(side, EntityType::Unit, data.health.value.current, unitTextures.get(static_cast<UnitType>(data.unitType)),
 			       data.walkRects.front().first)
-	, mAttackRange(data.range)
-	, mAttackRate(data.rate)
+	, mAttackRange(data.range.value.current)
+	, mAttackRate(data.rate.value.current)
 	, mSpeed(data.speed)
 	, mDamageDisplays(sf::Vector2f(0.f, 30.f), sf::Vector2f(0.f, -1.8f), sf::seconds(0.75f), damageDisplayFont)
 	, mMoving(true)
 	, mWalkingAnimation(mSprite, data.walkRects, sf::seconds(0.65f), true)
 	, mGeneralUnitType(static_cast<GeneralUnitType>(data.generalUnitType))
 	, mUnitType(static_cast<UnitType>(data.unitType))
-	, mDamage(data.damage)
+	, mDamage(data.damage.value.current)
 	, mSoundPlayer(soundPlayer)
 	, mAttacking(false)
-	, mAttackAnimation(mSprite, data.attackRects, data.rate, false)
+	, mAttackAnimation(mSprite, data.attackRects, data.rate.value.current, false)
 {
 	scale(data.scale, data.scale);
 }

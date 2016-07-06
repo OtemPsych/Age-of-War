@@ -39,6 +39,7 @@ namespace gui
 		void update();
 		void updateButtonOverlay(unsigned gold);
 
+		std::vector<sf::Vector2f> getButtonPositions() const;
 		sf::RectangleShape getButtonBox(unsigned i);
 	};
 }

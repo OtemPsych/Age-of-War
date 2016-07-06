@@ -17,9 +17,9 @@ Base::Base(Side side, sf::IntRect worldBounds, sf::Font& font, const sf::Texture
 	, mTurretTypeToSpawn(-1)
 	, mUnitTextures(unitTextures)
 	, mSoundPlayer(soundPlayer)
-	, mUnitData(std::move(gStruct::initializeUnitData()))
+	, mUnitData(std::move(data::UnitData::initializeUnitData()))
 	, mTurretTextures(turretTextures)
-	, mTurretData(std::move(gStruct::initializeTurretData()))
+	, mTurretData(std::move(data::TurretData::initializeTurretData()))
 	, mGold(200)
 {
 	if (side == Side::Ally) {
@@ -68,6 +68,42 @@ void Base::handleUnitSpawn(Unit::UnitType type)
 	{
 		modifyGold(-mUnitData[type].cost);
 		mMPUnitType = static_cast<sf::Int16>(type);
+	}
+}
+
+void Base::handleUnitUpgrade(Unit::UnitType unitType, Unit::UnitUpgradeType upgradeType)
+{
+	switch (upgradeType)
+	{
+	case Unit::UnitUpgradeType::Health:
+		if (mGold >= mUnitData[unitType].health.upgradeCost) {
+			modifyGold(-mUnitData[unitType].health.upgradeCost);
+			float currentPercentage = mUnitData[unitType].health.value.current / mUnitData[unitType].health.value.original * 100.f;
+			mUnitData[unitType].health.value.current = (currentPercentage + mUnitData[unitType].health.upgradePercentage) * mUnitData[unitType].health.value.original / 100.f;
+		}
+		break;
+	case Unit::UnitUpgradeType::Damage:
+		if (mGold >= mUnitData[unitType].damage.upgradeCost) {
+			modifyGold(-mUnitData[unitType].damage.upgradeCost);
+			float currentPercentage = mUnitData[unitType].damage.value.current / mUnitData[unitType].damage.value.original * 100.f;
+			mUnitData[unitType].damage.value.current = (currentPercentage + mUnitData[unitType].damage.upgradePercentage) * mUnitData[unitType].damage.value.original / 100.f;
+		}
+		break;
+	case Unit::UnitUpgradeType::Range:
+		if (mGold >= mUnitData[unitType].range.upgradeCost) {
+			modifyGold(-mUnitData[unitType].range.upgradeCost);
+			float currentPercentage = mUnitData[unitType].range.value.current / mUnitData[unitType].range.value.original * 100.f;
+			mUnitData[unitType].range.value.current = (currentPercentage + mUnitData[unitType].range.upgradePercentage) * mUnitData[unitType].range.value.original / 100.f;
+		}
+		break;
+	case Unit::UnitUpgradeType::Rate:
+		if (mGold >= mUnitData[unitType].rate.upgradeCost) {
+			modifyGold(-mUnitData[unitType].rate.upgradeCost);
+			float currentPercentage = mUnitData[unitType].rate.value.current / mUnitData[unitType].rate.value.original * 100.f;
+			mUnitData[unitType].rate.value.current -= sf::seconds((currentPercentage + mUnitData[unitType].rate.upgradePercentage) * mUnitData[unitType].rate.value.original.asSeconds() / 100.f) - mUnitData[unitType].rate.value.current;
+			mUnitData[unitType].rate.value.current = std::max(mUnitData[unitType].rate.value.current, sf::Time::Zero);
+		}
+		break;
 	}
 }
 

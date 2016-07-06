@@ -8,8 +8,8 @@
 class BasePlayer : public Base
 {
 private:
-	using UnitSpawnButtons = gui::SpawnButtons<gStruct::UnitData, Unit::UnitType>;
-	using TurretSpawnButtons = gui::SpawnButtons<gStruct::TurretData, Turret::TurretType>;
+	using UnitSpawnButtons = gui::SpawnButtons<data::UnitData, Unit::UnitType>;
+	using TurretSpawnButtons = gui::SpawnButtons<data::TurretData, Turret::TurretType>;
 private:
 	sf::Font                            mCoinFont;
 	pyro::Text		                    mCoinText;
