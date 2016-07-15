@@ -34,13 +34,13 @@ namespace data
 		data[Unit::Mage].name                     = "Mage";
 		data[Unit::Mage].health.value             = Resource<float>(75.f);
 		data[Unit::Mage].health.upgradePercentage = 25;
-		data[Unit::Mage].health.upgradeCost       = 50;
+		data[Unit::Mage].health.upgradeCost       = 5;
 		data[Unit::Mage].damage.value             = Resource<float>(15.f);
 		data[Unit::Mage].damage.upgradePercentage = 25;
-		data[Unit::Mage].damage.upgradeCost       = 50;
+		data[Unit::Mage].damage.upgradeCost       = 0;
 		data[Unit::Mage].range.value              = Resource<float>(95.f);
 		data[Unit::Mage].range.upgradePercentage  = 25;
-		data[Unit::Mage].range.upgradeCost        = 50;
+		data[Unit::Mage].range.upgradeCost        = 5;
 		data[Unit::Mage].rate.value               = Resource<sf::Time>(sf::seconds(0.7f));
 		data[Unit::Mage].rate.upgradePercentage   = 25;
 		data[Unit::Mage].rate.upgradeCost         = 5;
