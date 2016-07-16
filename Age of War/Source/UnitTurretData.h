@@ -1,14 +1,14 @@
 #ifndef UnitTurretData_H_
 #define UnitTurretData_H_
 
-#include <PYRO/Utils.h>
+#include <vector>
+#include <functional>
+#include <memory>
 
 #include <SFML/System/Time.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 
-#include <vector>
-#include <functional>
-#include <memory>
+#include <PYRO/Utils.h>
 
 namespace data
 {
@@ -19,18 +19,18 @@ namespace data
 		struct UpgradeSystem 
 		{
 			pyro::utils::Resource<T> value;
-			unsigned short           upgradePercentage;
-			unsigned short           upgradeCost;
+			unsigned short           upgrade_percentage;
+			unsigned short           upgrade_cost;
 		};
 	public:
-		std::string             name;
-		UpgradeSystem<float>    damage;
-		UpgradeSystem<float>    range;
-		UpgradeSystem<sf::Time> rate;
-		unsigned short          cost;
+		std::string             name_;
+		UpgradeSystem<float>    damage_;
+		UpgradeSystem<float>    range_;
+		UpgradeSystem<sf::Time> rate_;
+		unsigned short          cost_;
 
-		float                   scale;
-		sf::IntRect             iconRect;
+		float                   scale_;
+		sf::IntRect             icon_rect_;
 
 	public:
 		UnitTurretData() = default;
@@ -44,26 +44,26 @@ namespace data
 	public:
 		struct RangedUnitData
 		{
-			using SpawnProjectileFunction = std::function<void(std::vector<sf::VertexArray>&, sf::Vector2f unitSize)>;
+			using SpawnProjectileFunction = std::function<void(std::vector<sf::VertexArray>&, sf::Vector2f)>;
 
-			float                   projectileSpeed;
+			float                   projectile_speed;
 			SpawnProjectileFunction spawnProjectile;
 		};
 	public:
-		unsigned short                  generalUnitType;
-		unsigned short                  unitType;
+		unsigned short                  general_unit_type_;
+		unsigned short                  unit_type_;
 
-		UpgradeSystem<float>            health;
-		float                           speed;
-		sf::Time                        spawn;
+		UpgradeSystem<float>            health_;
+		float                           speed_;
+		sf::Time                        spawn_;
 
-		TextureData                     walkRects;
-		TextureData                     attackRects;
+		TextureData                     walk_rects_;
+		TextureData                     attack_rects_;
 
-		std::unique_ptr<RangedUnitData> rangedData;
+		std::unique_ptr<RangedUnitData> ranged_data_;
 
 	private:
-		void setupAnimation(bool walkLoopback, bool attackLoopback);
+		void setupAnimation(bool walk_loopback, bool attack_loopback);
 	public:
 		static std::vector<UnitData> initializeUnitData();
 	};
@@ -71,8 +71,8 @@ namespace data
 	class TurretData : public UnitTurretData
 	{
 	public:
-		unsigned short turretType;
-		float          projectileSpeed;
+		unsigned short turret_type_;
+		float          projectile_speed_;
 
 	public:
 		TurretData() = default;

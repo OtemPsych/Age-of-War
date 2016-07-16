@@ -1,14 +1,14 @@
-#include "TextureDataReader.h"
-
 #include <fstream>
 #include <iostream>
 #include <string>
 
-data::UnitData::TextureData readTextureData(const std::string& unitName, const std::string& animType)
+#include "TextureDataReader.h"
+
+data::UnitData::TextureData readTextureData(const std::string& unit_name, const std::string& anim_type)
 {
 	data::UnitData::TextureData data;
 
-	std::ifstream fin("TextureData/" + unitName + "Data.json", std::ios::in);
+	std::ifstream fin("TextureData/" + unit_name + "Data.json", std::ios::in);
 	if (fin.is_open()) 
 	{
 		unsigned short animTypeIndex = 1;
@@ -16,19 +16,19 @@ data::UnitData::TextureData readTextureData(const std::string& unitName, const s
 		while (!fin.eof()) 
 		{
 			fin.seekg(0);
-			std::string strNeeded = unitName + "_" + animType + std::to_string(animTypeIndex++) + ".png";
-			std::string strRead;
+			std::string str_needed = unit_name + "_" + anim_type + std::to_string(animTypeIndex++) + ".png";
+			std::string str_read;
 
 			// Find Filename
 			do {
-				std::getline(fin, strRead);
-			} while (strRead.find(strNeeded) == std::string::npos && !fin.eof());
+				std::getline(fin, str_read);
+			} while (str_read.find(str_needed) == std::string::npos && !fin.eof());
 			if (fin.eof())
 				break;
 
 			// Find Frame
-			std::getline(fin, strRead);
-			fin.seekg((size_t)fin.tellg() - (strRead.length() + 1));
+			std::getline(fin, str_read);
+			fin.seekg((size_t)fin.tellg() - (str_read.length() + 1));
 
 				// Find Rect Start
 			sf::IntRect rect;
@@ -65,8 +65,8 @@ data::UnitData::TextureData readTextureData(const std::string& unitName, const s
 
 			// Find Pivot
 			for (unsigned i = 0; i < 6; i++)
-				std::getline(fin, strRead);
-			fin.seekg((size_t)fin.tellg() - (strRead.length() + 1));
+				std::getline(fin, str_read);
+			fin.seekg((size_t)fin.tellg() - (str_read.length() + 1));
 
 				// Find Origin Start
 			sf::Vector2f origin;
@@ -84,7 +84,7 @@ data::UnitData::TextureData readTextureData(const std::string& unitName, const s
 		fin.close();
 	}
 	else
-		std::cerr << "Unable to open file: " << unitName << "Data.json" << std::endl;
+		std::cerr << "Unable to open file: " << unit_name << "Data.json" << std::endl;
 
 	return std::move(data);
 }
