@@ -5,5 +5,5 @@
 
 #include <SFML/System/NonCopyable.hpp>
 
-data::UnitData::TextureData readTextureData(const std::string& unit_name, const std::string& anim_type);
+data::UnitData::TextureData readTextureData(const std::string& unitName, const std::string& animType);
 #endif
