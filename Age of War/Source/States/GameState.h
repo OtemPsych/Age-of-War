@@ -38,7 +38,7 @@ private:
 	void setupBackground();
 	virtual void setupResources() override;
 public:
-	GameState(pyro::StateStack& stack, sf::RenderWindow& window);
+	GameState(pyro::StateStack* stack, sf::RenderWindow* window);
 	virtual ~GameState();
 public:
 	void unpauseMusic();

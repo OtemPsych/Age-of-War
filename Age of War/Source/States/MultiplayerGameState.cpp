@@ -6,43 +6,42 @@
 #include <SFML/System/Sleep.hpp>
 #include <SFML/Network/TcpListener.hpp>
 
-MultiplayerGameState::MultiplayerGameState(pyro::StateStack& stack, sf::RenderWindow& window)
+MultiplayerGameState::MultiplayerGameState(pyro::StateStack* stack, sf::RenderWindow* window)
 	: GameState(stack, window)
-	, mThread(&MultiplayerGameState::packetHandling, this)
-	, mOpponentPort(0)
+	, thread_(&MultiplayerGameState::packetHandling, this)
+	, opponent_port_(0)
 {
 	mMusicPlayer.pause(true);
 
-	sf::Vector2u winSize(mWindow.getSize());
 	mBaseOpponent = std::unique_ptr<Base>(new Base(Entity::Side::Enemy, mWorldBounds, mDisplayDamageFont,
 		                                           mBaseTexture, mUnitTextures, mTurretTextures, mSoundPlayer));
 
-	auto* connectState = const_cast<MultiplayerConnectState*>(dynamic_cast<const MultiplayerConnectState*>(stack.getState(pyro::StateID::MultiplayerConnect)));
+	auto* connectState = const_cast<MultiplayerConnectState*>(dynamic_cast<const MultiplayerConnectState*>(stack_->getState(pyro::StateID::MultiplayerConnect)));
 	if (connectState) {
-		mHost = connectState->getHostIP().empty() || connectState->getHostPort().empty();
+		host_ = connectState->getHostIP().empty() || connectState->getHostPort().empty();
 
-		if (!mHost) {
-			mOpponentIP = connectState->getHostIP();
-			mOpponentPort = static_cast<sf::Uint16>(std::stoi(connectState->getHostPort()));
+		if (!host_) {
+			opponent_ip_ = connectState->getHostIP();
+			opponent_port_ = static_cast<sf::Uint16>(std::stoi(connectState->getHostPort()));
 		}
 	}
 
-	mThread.launch();
+	thread_.launch();
 }
 
 MultiplayerGameState::~MultiplayerGameState()
 {
-	mThread.terminate();
+	thread_.terminate();
 }
 
 void MultiplayerGameState::packetHandling()
 {
-	if (mHost) {
+	if (host_) {
 		sf::TcpListener listener;
 		if (listener.listen(53000) == sf::Socket::Status::Done)
-			listener.accept(mSocket);
+			listener.accept(socket_);
 	}
-	else if (mSocket.connect(mOpponentIP, mOpponentPort) != sf::Socket::Done) {
+	else if (socket_.connect(opponent_ip_, opponent_port_) != sf::Socket::Done) {
 		requestStateClear();
 		return;
 	}
@@ -51,27 +50,27 @@ void MultiplayerGameState::packetHandling()
 	mMusicPlayer.pause(false);
 		
 	while (true) {
-		if (mHost) {
+		if (host_) {
 			// RECEIVE
-			sf::Packet	  clientPacket;
-			if (mSocket.receive(clientPacket) == sf::Socket::Done)
-				assert(clientPacket >> *mBaseOpponent);
+			sf::Packet	  client_packet;
+			if (socket_.receive(client_packet) == sf::Socket::Done)
+				assert(client_packet >> *mBaseOpponent);
 
 			// SEND
 			sf::Packet hostPacket;
 			assert(hostPacket << *mBasePlayer);
-			mSocket.send(hostPacket);
+			socket_.send(hostPacket);
 		}
 		else {
 			// SEND
-			sf::Packet clientPacket;
-			assert(clientPacket << *mBasePlayer);
-			mSocket.send(clientPacket);
+			sf::Packet client_packet;
+			assert(client_packet << *mBasePlayer);
+			socket_.send(client_packet);
 
 			// RECEIVE
-			sf::Packet hostPacket;
-			mSocket.receive(hostPacket);
-			assert(hostPacket >> *mBaseOpponent);
+			sf::Packet host_packet;
+			socket_.receive(host_packet);
+			assert(host_packet >> *mBaseOpponent);
 		}
 
 		sf::sleep(sf::milliseconds(10));
@@ -84,7 +83,7 @@ bool MultiplayerGameState::handleEvent(const sf::Event& event)
 		requestStateClear();
 	}
 
-	if (mSocket.getRemoteAddress() != sf::IpAddress::None) {
+	if (socket_.getRemoteAddress() != sf::IpAddress::None) {
 		mBasePlayer->handleEvent(event);
 		return true;
 	}
@@ -94,7 +93,7 @@ bool MultiplayerGameState::handleEvent(const sf::Event& event)
 
 bool MultiplayerGameState::update(sf::Time dt)
 {
-	if (mSocket.getRemoteAddress() != sf::IpAddress::None)
+	if (socket_.getRemoteAddress() != sf::IpAddress::None)
 		GameState::update(dt);
 
 	return false;
@@ -102,6 +101,6 @@ bool MultiplayerGameState::update(sf::Time dt)
 
 void MultiplayerGameState::draw()
 {
-	if (mSocket.getRemoteAddress() != sf::IpAddress::None)
+	if (socket_.getRemoteAddress() != sf::IpAddress::None)
 		GameState::draw();
 }

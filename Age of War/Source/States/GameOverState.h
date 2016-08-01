@@ -2,7 +2,7 @@
 #define GameOverState_H_
 
 #include <PYRO/State.h>
-#include <PYRO/GUI/ClickableGUIEntity.h>
+#include <PYRO/GUI/Button.h>
 
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -21,13 +21,13 @@ private:
 	sf::Sprite                    mSprite;
 	sf::Texture                   mSpriteTexture;
 
-	pyro::gui::ClickableGUIEntity mContinueButton;
+	pyro::gui::Button mContinueButton;
 	sf::Font                      mFont;
 
 private:
 	virtual void setupResources() override;
 public:
-	GameOverState(pyro::StateStack& stack, sf::RenderWindow& window);
+	GameOverState(pyro::StateStack* stack, sf::RenderWindow* window);
 public:
 	void setGameOverType(GameOverType type);
 

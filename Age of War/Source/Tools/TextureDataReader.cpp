@@ -4,11 +4,12 @@
 #include <iostream>
 #include <string>
 
-data::UnitData::TextureData readTextureData(const std::string& unitName, const std::string& animType)
+data::UnitData::TextureData readTextureData(const std::string& unit_name,
+	                                        const std::string& anim_type)
 {
 	data::UnitData::TextureData data;
 
-	std::ifstream fin("TextureData/" + unitName + "Data.json", std::ios::in);
+	std::ifstream fin("Assets/TextureData/" + unit_name + "Data.json", std::ios::in);
 	if (fin.is_open()) 
 	{
 		unsigned short animTypeIndex = 1;
@@ -16,7 +17,7 @@ data::UnitData::TextureData readTextureData(const std::string& unitName, const s
 		while (!fin.eof()) 
 		{
 			fin.seekg(0);
-			std::string strNeeded = unitName + "_" + animType + std::to_string(animTypeIndex++) + ".png";
+			std::string strNeeded = unit_name + "_" + anim_type + std::to_string(animTypeIndex++) + ".png";
 			std::string strRead;
 
 			// Find Filename
@@ -84,7 +85,7 @@ data::UnitData::TextureData readTextureData(const std::string& unitName, const s
 		fin.close();
 	}
 	else
-		std::cerr << "Unable to open file: " << unitName << "Data.json" << std::endl;
+		std::cerr << "Unable to open file: " << unit_name << "Data.json" << std::endl;
 
 	return std::move(data);
 }

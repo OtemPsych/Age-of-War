@@ -20,7 +20,7 @@ namespace gui
 
 		unsigned short totalButtons = std::is_same<T, data::UnitData>::value ? 5 : 3;
 		for (unsigned short i = 0; i < totalButtons; i++) {
-			mButtons.emplace_back(std::make_pair(pyro::gui::ClickableGUIEntity(mWindow), sf::VertexArray(sf::TrianglesFan, totalButtonVertices)));
+			mButtons.emplace_back(std::make_pair(pyro::gui::Button(mWindow), sf::VertexArray(sf::TrianglesFan, totalButtonVertices)));
 
 			const sf::Vector2f center(radius + spawnButtonSize.x * (i + 0.5f), spawnButtonSize.y + 25.f);
 

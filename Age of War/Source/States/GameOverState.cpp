@@ -2,7 +2,7 @@
 
 #include <PYRO/Utils.h>
 
-GameOverState::GameOverState(pyro::StateStack& stack, sf::RenderWindow& window)
+GameOverState::GameOverState(pyro::StateStack* stack, sf::RenderWindow* window)
 	: State(stack, window)
 	, mGameOverType(GameOverType::None)
 	, mBackgroundTint(sf::Quads)
@@ -12,10 +12,10 @@ GameOverState::GameOverState(pyro::StateStack& stack, sf::RenderWindow& window)
 
 	mCursor.setTexture(mCursorTexture);
 	mCursor.scale(0.9f, 0.9f);
-	mCursor.setPosition(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)));
+	mCursor.setPosition(window_->mapPixelToCoords(sf::Mouse::getPosition(*window_)));
 
-	const sf::Vector2f viewSize(window.getSize());
-	const sf::Vector2f viewCenter(window.getView().getCenter());
+	const sf::Vector2f viewSize(window_->getSize());
+	const sf::Vector2f viewCenter(window_->getView().getCenter());
 	const sf::FloatRect view(viewCenter - viewSize / 2.f, viewSize);
 
 	mBackgroundTint.append(sf::Vertex(sf::Vector2f(view.left, view.top)));
@@ -34,7 +34,7 @@ GameOverState::GameOverState(pyro::StateStack& stack, sf::RenderWindow& window)
 	mContinueButton.activateText(true);
 	pyro::Text* continueText = mContinueButton.getText();
 	continueText->setFont(mFont);
-	continueText->setOriginFlags(pyro::utils::OriginFlags::Center);
+	continueText->setOriginFlags(pyro::utils::OriginFlag::Center);
 	continueText->setString("Continue");
 	continueText->setPosition(continueVertices[1].position.x / 2.f, continueVertices[2].position.y / 2.f);
 	continueText->setShadowColor(sf::Color::Transparent);
@@ -73,18 +73,18 @@ void GameOverState::setGameOverType(GameOverState::GameOverType type)
 	mSprite.setTexture(mSpriteTexture);
 	sf::FloatRect lBounds(mSprite.getLocalBounds());
 	mSprite.setOrigin(lBounds.width / 2.f, 0.f);
-	mSprite.setPosition(mWindow.getView().getCenter().x, 0.f);
-	mContinueButton.setPosition(mWindow.getView().getCenter().x - mContinueButton.getGlobalBounds().width / 2.f,
+	mSprite.setPosition(window_->getView().getCenter().x, 0.f);
+	mContinueButton.setPosition(window_->getView().getCenter().x - mContinueButton.getGlobalBounds().width / 2.f,
 		                        mSprite.getGlobalBounds().height - 50.f);
 }
 
 bool GameOverState::handleEvent(const sf::Event& event)
 {
 	if (event.type == sf::Event::MouseMoved) {
-		mCursor.setPosition(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)));
+		mCursor.setPosition(window_->mapPixelToCoords(sf::Mouse::getPosition(*window_)));
 	} 
 	else if (mContinueButton.clicked(event)) {
-		mWindow.setView(mWindow.getDefaultView());
+		window_->setView(window_->getDefaultView());
 
 		requestStateClear();
 		requestStatePush(pyro::StateID::Menu);
@@ -115,9 +115,9 @@ bool GameOverState::update(sf::Time dt)
 void GameOverState::draw()
 {
 	if (mGameOverType != GameOverType::None) {
-		mWindow.draw(mBackgroundTint);
-		mWindow.draw(mSprite);
-		mWindow.draw(mContinueButton);
-		mWindow.draw(mCursor);
+		window_->draw(mBackgroundTint);
+		window_->draw(mSprite);
+		window_->draw(mContinueButton);
+		window_->draw(mCursor);
 	}
 }

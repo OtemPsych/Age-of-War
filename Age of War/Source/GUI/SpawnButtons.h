@@ -4,7 +4,7 @@
 #include "StatTooltip.h"
 #include "../Tools/StringFunctions.h"
 
-#include <PYRO/GUI/ClickableGUIEntity.h>
+#include <PYRO/GUI/Button.h>
 
 namespace gui
 {
@@ -12,7 +12,7 @@ namespace gui
 	class SpawnButtons : public sf::Transformable, public sf::Drawable, private sf::NonCopyable
 	{
 	private:
-		using Buttons = std::vector<std::pair<pyro::gui::ClickableGUIEntity, sf::VertexArray>>;
+		using Buttons = std::vector<std::pair<pyro::gui::Button, sf::VertexArray>>;
 		using ButtonColors = std::pair<sf::Color, sf::Color>;
 		using TData = std::vector<T>;
 		using StatTooltipPtr = std::unique_ptr<StatTooltip<T>>;

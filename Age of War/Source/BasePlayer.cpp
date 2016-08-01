@@ -32,7 +32,7 @@ void BasePlayer::setupGoldGUI()
 	mCoinText.activateShadow(true);
 	mCoinText.setShadowOffset(3.f, 2.f);
 	mCoinText.setShadowColor(sf::Color(255, 255, 255, 150));
-	mCoinText.setOriginFlags(pyro::utils::OriginFlags::Left | pyro::utils::OriginFlags::CenterY);
+	mCoinText.setOriginFlags(pyro::utils::OriginFlag::Left | pyro::utils::OriginFlag::CenterY);
 	mCoinText.setPosition(60.f, mCoinSprite.getPosition().y);
 	updateGoldGUI();
 }

@@ -8,21 +8,21 @@
 
 class MultiplayerGameState : public GameState
 {
-private:
-	sf::IpAddress mOpponentIP;
-	sf::Uint16    mOpponentPort;
-	bool		  mHost;
-
-	sf::TcpSocket mSocket;
-	sf::Thread    mThread;
-
 public:
-	MultiplayerGameState(pyro::StateStack& stack, sf::RenderWindow& window);
+	MultiplayerGameState(pyro::StateStack* stack, sf::RenderWindow* window);
 	~MultiplayerGameState();
 public:
 	void packetHandling();
 	virtual bool handleEvent(const sf::Event& event) override;
 	virtual bool update(sf::Time dt) override;
 	virtual void draw() override;
+
+private:
+	sf::IpAddress opponent_ip_;
+	sf::Uint16    opponent_port_;
+	bool		  host_;
+
+	sf::TcpSocket socket_;
+	sf::Thread    thread_;
 };
 #endif

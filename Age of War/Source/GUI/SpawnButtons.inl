@@ -37,7 +37,7 @@ namespace gui
 
 		for (unsigned i = 0; i < mTData.size(); i++)
 		{
-			mButtons.emplace_back(std::make_pair(pyro::gui::ClickableGUIEntity(mWindow, buttonSize), sf::VertexArray(sf::Quads, 4)));
+			mButtons.emplace_back(std::make_pair(pyro::gui::Button(buttonSize, &mWindow), sf::VertexArray(sf::Quads, 4)));
 
 			mButtons[i].first.setPosition(buttonPos.x + totalButtonSizeX * (i + 0.5f), buttonPos.y);
 
@@ -104,7 +104,7 @@ namespace gui
 	int SpawnButtons<T, K>::handleEvent(const sf::Event& event)
 	{
 		for (unsigned i = 0; i < mButtons.size(); i++)
-			if (mButtons[i].first.clicked(event, getTransform()))
+			if (mButtons[i].first.clicked(event))
 				return i;
 
 		return -1;
@@ -118,7 +118,7 @@ namespace gui
 		if (mousePos.x > mButtonOverlay[0].position.x && mousePos.y > mButtonOverlay[0].position.y
 		 && mousePos.x < mButtonOverlay[2].position.x && mousePos.y < mButtonOverlay[2].position.y)
 			for (unsigned i = 0; i < mButtons.size(); i++)
-				if (mButtons[i].first.hover(getTransform())) {
+				if (mButtons[i].first.hover()) {
 					mStatTooltip->update(i);
 					return;
 				}

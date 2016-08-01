@@ -16,7 +16,7 @@ namespace gui
 	{
 		using namespace pyro::utils;
 
-		setOriginFlags(mShape, OriginFlags::CenterX | OriginFlags::Top);
+		setOriginFlags(OriginFlag::CenterX | OriginFlag::Top, &mShape);
 		mShape.setPosition(overlayRect.left + overlayRect.width / 2.f,
 			               overlayRect.top + overlayRect.height + 10.f);
 		mShape.setFillColor(sf::Color(0, 0, 0, 200));
@@ -25,13 +25,13 @@ namespace gui
 
 		mFont.loadFromFile("Assets/Fonts/Menu.ttf");
 
-		mTTitle.setOriginFlags(OriginFlags::Left | OriginFlags::Top);
+		mTTitle.setOriginFlags(OriginFlag::Left | OriginFlag::Top);
 		mTTitle.setFont(mFont);
 		mTTitle.setCharacterSize(20);
 		mTTitle.setStyle(sf::Text::Bold);
 		mTTitle.setTextColor(sf::Color(0, 204, 255));
 
-		mTCost.setOriginFlags(OriginFlags::Right | OriginFlags::Top);
+		mTCost.setOriginFlags(OriginFlag::Right | OriginFlag::Top);
 		mTCost.setFont(mFont);
 		mTCost.setCharacterSize(18);
 		mTCost.setStyle(sf::Text::Bold);
@@ -40,10 +40,10 @@ namespace gui
 		bool isUnitData = std::is_same<T, data::UnitData>::value;
 		for (int i = 0; i < (isUnitData ? 5 : 3); i++) {
 			mTStats.emplace_back();
-			mTStats.back().second.setOriginFlags(OriginFlags::Left | OriginFlags::CenterY);
+			mTStats.back().second.setOriginFlags(OriginFlag::Left | OriginFlag::CenterY);
 			mTStats.back().second.setFont(mFont);
 			mTStats.back().second.setCharacterSize(14);
-			mTStats.back().first.setOriginFlags(OriginFlags::Right | OriginFlags::CenterY);
+			mTStats.back().first.setOriginFlags(OriginFlag::Right | OriginFlag::CenterY);
 			mTStats.back().first.setFont(mFont);
 			mTStats.back().first.setCharacterSize(14);
 			mTStats.back().first.setTextColor(sf::Color(102, 255, 102));

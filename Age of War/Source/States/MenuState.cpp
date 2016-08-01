@@ -1,92 +1,123 @@
-#include "MenuState.h"
-
 #include <PYRO/StateStack.h>
 #include <PYRO/Utils.h>
 
-MenuState::MenuState(pyro::StateStack& stack, sf::RenderWindow& window)
+#include "MenuState.h"
+
+MenuState::MenuState(pyro::StateStack* stack, sf::RenderWindow* window)
 	: State(stack, window)
+	, cursor_(nullptr)
 {
-	window.setMouseCursorVisible(false);
-
-	mCursorTexture.loadFromFile("Assets/Textures/MouseCursor.png");
-	mCursor.setTexture(mCursorTexture);
-	mCursor.setPosition(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)));
-	mCursor.scale(0.9f, 0.9f);
-
-	mBackgroundTexture.loadFromFile("Assets/Textures/MenuBackground.jpg");
-	mBackgroundSprite.setTexture(mBackgroundTexture);
-
-	sf::Vector2f winSize(mWindow.getSize());
-	sf::Vector2f textureSize(mBackgroundTexture.getSize());
-	mBackgroundSprite.scale(winSize.x / textureSize.x, winSize.y / textureSize.y);
-
-	mFont.loadFromFile("Assets/Fonts/Menu.ttf");
-	mButtonTexture.loadFromFile("Assets/Textures/MenuButton.png");
-	const sf::Vector2f buttonSize(185.f, 50.f);
-	const float margin = 15.f;
-	for (unsigned i = 0; i < TypeCount; i++)
-	{
-		mButtons.emplace_back(pyro::gui::ClickableGUIEntity(window, buttonSize));
-		mButtons.back().activateText(true);
-		pyro::Text* text = mButtons.back().getText();
-
-		mButtons.back().setFillColor(sf::Color(0, 0, 0, 150));
-		mButtons.back().setTexture(&mButtonTexture);
-		text->setFont(mFont);
-		text->setTextColor(sf::Color::White);
-		text->setShadowOffset(2.f, 2.f);
-		text->setShadowColor(sf::Color(255, 255, 255, 50));
-		text->setOriginFlags(pyro::utils::OriginFlags::Center);
-		text->setPosition(mButtons.back().getSize() / 2.f);
-		mButtons.back().setPosition(winSize.x / 2.f - buttonSize.x / 2.f, winSize.y / 2.f + (buttonSize.y + margin) * i - buttonSize.y / 2.f);
-	}
-
-	mButtons[Play].getText()->setString("Play");
-	mButtons[Multiplayer].getText()->setString("Multiplayer");
-	mButtons[Quit].getText()->setString("Quit");
+	setupResources();
+	init();
 }
 
 bool MenuState::handleEvent(const sf::Event& event)
 {
 	if (event.type == sf::Event::MouseMoved) {
-		mCursor.setPosition(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow)));
+		cursor_->setPosition(window_->mapPixelToCoords(sf::Mouse::getPosition(*window_)));
 	}
-	else if (mButtons[Play].clicked(event)) {
+	else if (buttons_[Play]->clicked(event)) {
 		requestStatePop();
 		requestStatePush(pyro::StateID::Game);
 	} 
-	else if (mButtons[Multiplayer].clicked(event)) {
+	else if (buttons_[Multiplayer]->clicked(event)) {
 		requestStatePop();
 		requestStatePush(pyro::StateID::MultiplayerConnect);
 	} 
-	else if (event.type == sf::Event::Closed || mButtons[Quit].clicked(event)) {
+	else if (event.type == sf::Event::Closed || buttons_[Quit]->clicked(event)) {
 		requestStateClear();
 	}
+
+	scene_graph_.handleEvent(event);
 
 	return true;
 }
 
 bool MenuState::update(sf::Time dt)
 {
-	for (auto& button : mButtons)
-		if (button.hover()) {
-			button.setFillColor(sf::Color(255, 255, 255, 120));
+	for (auto& button : buttons_) {
+		if (button->hover()) {
+			button->setFillColor(sf::Color(255, 255, 255, 120));
 			break;
 		}
 		else {
-			button.setFillColor(sf::Color(0, 0, 0, 150));
+			button->setFillColor(sf::Color(0, 0, 0, 150));
 		}
+	}
+
+	scene_graph_.update(dt);
 
 	return true;
 }
 
 void MenuState::draw()
 {
-	mWindow.draw(mBackgroundSprite);
+	window_->draw(scene_graph_);
+}
 
-	for (const auto& button : mButtons) {
-		mWindow.draw(button);
+void MenuState::init()
+{
+	window_->setMouseCursorVisible(false);
+
+	// Init Scene Layers
+	for (unsigned i = 0; i < SceneLayerCount; i++) {
+		auto scene_layer(std::make_unique<pyro::SceneNode>());
+		scene_layers_.push_back(scene_layer.get());
+		scene_graph_.attachChild(std::move(scene_layer));
 	}
 
-	mWindow.draw(mCursor);
+	// Init Cursor
+	auto cursor(std::make_unique<pyro::VertexArrayNode>(cursor_texture_));
+	cursor->setPosition(window_->mapPixelToCoords(sf::Mouse::getPosition(*window_)));
+	cursor->scale(0.9f, 0.9f);
+	cursor_ = cursor.get();
+	scene_layers_[CursorLayer]->attachChild(std::move(cursor));
+
+	// Init Background
+	const sf::Vector2f win_size(window_->getSize());
+	const sf::Vector2f texture_size(background_texture_.getSize());
+
+	auto background(std::make_unique<pyro::VertexArrayNode>(background_texture_));
+	background->scale(win_size.x / texture_size.x, win_size.y / texture_size.y);
+	scene_layers_[BackgroundLayer]->attachChild(std::move(background));
+
+	// Init Buttons
+	const sf::Vector2f button_size(185.f, 50.f);
+	const float margin = 15.f;
+	const sf::Vector2f half_win_size(win_size / 2.f);
+	const sf::Vector2f half_button_size(button_size / 2.f);
+
+	for (unsigned i = 0; i < ButtonTypeCount; i++) {
+		auto button(std::make_unique<pyro::gui::Button>(button_size, window_));
+		button->setTexture(&button_texture_);
+		button->setPosition(half_win_size.x - half_button_size.x,
+			                half_win_size.y + (button_size.y + margin) * i - half_button_size.y);
+		button->activateText(true);
+
+		pyro::Text* text = button->getText();
+		text->setFont(font_);
+		text->setTextColor(sf::Color::White);
+		text->activateShadow(true);
+		text->setShadowOffset(2.f, 2.f);
+		text->setShadowColor(sf::Color(255, 255, 255, 50));
+		text->setOriginFlags(pyro::utils::OriginFlag::Center);
+		pyro::utils::setRelativeAlignment(*button, pyro::utils::OriginFlag::Center, 0.f, text);
+
+		buttons_.push_back(button.get());
+		scene_layers_[ButtonLayer]->attachChild(std::move(button));
+	}
+
+	buttons_[Play]->getText()->setString("Play");
+	buttons_[Multiplayer]->getText()->setString("Multiplayer");
+	buttons_[Quit]->getText()->setString("Quit");
+}
+
+void MenuState::setupResources()
+{
+	// Fonts
+	font_.loadFromFile("Assets/Fonts/Menu.ttf");
+	// Textures
+	cursor_texture_.loadFromFile("Assets/Textures/MouseCursor.png");
+	button_texture_.loadFromFile("Assets/Textures/MenuButton.png");
+	background_texture_.loadFromFile("Assets/Textures/MenuBackground.jpg");
 }
