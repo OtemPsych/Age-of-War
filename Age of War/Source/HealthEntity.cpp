@@ -1,45 +1,38 @@
 #include "HealthEntity.h"
+#include "DataTables.h"
 
-#include <SFML/Graphics/RenderTarget.hpp>
-
-HealthEntity::HealthEntity(Side side, EntityType entityType, float health, const sf::Texture& texture)
-	: Entity(side, entityType, texture)
-	, mHealth(health)
-	, mHealthBar(getGlobalBounds(), entityType == EntityType::Unit, side == Side::Ally ? sf::Color(0, 230, 0) : sf::Color(179, 0, 0))
-	, mIsDestroyable(false)
+HealthEntity::HealthEntity(Side side, data::HealthEntityData* health_entity_data)
+	: Entity(side, health_entity_data)
+	, health_entity_data_(health_entity_data)
+	, health_bar_(nullptr)
+	, health_(health_entity_data->health.value.current)
 {
-	if (side == Side::Enemy && entityType == EntityType::Unit)
-		mHealthBar.rotate(180.f);
-}
+	auto health_bar(std::make_unique<gui::Bar>(getLocalBounds(), side == Side::Ally ? sf::Color(0, 230, 0) : sf::Color(179, 0, 0),
+		            entity_data_->entity_type == EntityType::Unit));
 
-HealthEntity::HealthEntity(Side side, EntityType entityType, float health, const sf::Texture& texture, sf::IntRect rect)
-	: Entity(side, entityType, texture, rect)
-	, mHealth(health)
-	, mHealthBar(getGlobalBounds(), entityType == EntityType::Unit, side == Side::Ally ? sf::Color(0, 230, 0) : sf::Color(179, 0, 0))
-	, mIsDestroyable(false)
-{
-	if (side == Side::Enemy && entityType == EntityType::Unit)
-		mHealthBar.rotate(180.f);
+	if (side == Side::Enemy && health_entity_data->entity_type == Entity::EntityType::Unit) {
+		health_bar->rotate(180.f);
+	}
+
+	health_bar_ = health_bar.get();
+	attachChild(std::move(health_bar));
 }
 
 HealthEntity::~HealthEntity()
 {
 }
 
-void HealthEntity::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void HealthEntity::receiveDamage(unsigned damage)
 {
-	Entity::draw(target, states);
-	target.draw(mHealthBar, states.transform *= getTransform());
+	if (health_ <= damage)
+		health_ = 0;
+	else
+		health_ -= damage;
+
+	health_bar_->updateBarValue(health_, health_entity_data_->health.value.current);
 }
 
-void HealthEntity::receiveDamage(unsigned short damage)
+bool HealthEntity::isDestroyed() const
 {
-	if (mHealth.current > damage)
-		mHealth.current -= damage;
-	else {
-		mHealth.current = 0;
-		mIsDestroyable = true;
-	}
-
-	mHealthBar.update(mHealth.original, mHealth.current);
+	return health_ == 0;
 }

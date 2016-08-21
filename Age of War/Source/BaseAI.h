@@ -6,11 +6,13 @@
 class BaseAI : public Base
 {
 public:
-	BaseAI(Side side, sf::IntRect worldBounds, sf::Font& font, const sf::Texture& baseTexture,
-		   const pyro::TextureHolder<Unit::UnitType>& unitTextures,
-		   const pyro::TextureHolder<Turret::TurretType>& turretTextures,
-		   pyro::SoundPlayer<Unit::SoundID>& soundPlayer);
+	BaseAI(const sf::FloatRect& world_bounds, const sf::Font& damage_font,
+		   const pyro::TextureHolder<Unit::UnitType>& unit_textures,
+		   const pyro::TextureHolder<Turret::TurretType>& turret_textures,
+		   Side side, data::BaseData* base_data,
+		   pyro::SoundPlayer<Unit::SoundID>* sound_player,
+		   const std::vector<pyro::SceneNode*>* scene_layers);
 public:
-	virtual void update(sf::Time dt) override;
+	virtual void updateCurrent(sf::Time dt) override;
 };
 #endif

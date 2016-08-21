@@ -1,33 +1,38 @@
 #ifndef Turret_H_
 #define Turret_H_
 
+#include <PYRO/VertexArrayNode.h>
+
 #include "Unit.h"
 
+namespace data { struct TurretData; }
 class Turret : public Entity
 {
 public:
-	enum TurretType { LaserTurret, TypeCount };
-private:
-	TurretType                      mTurretType;
-	std::vector<sf::VertexArray>    mProjectiles;
-	unsigned short                  mDamage;
-	float                           mRange;
-	pyro::utils::Resource<sf::Time> mAttackRate;
-	float                           mProjectileSpeed;
-								    
-	sf::Vector2f                    mEnemyPosition;
-								    
-	ValueDisplays                   mDamageDisplays;
+	enum TurretType { LaserTurret, TurretCount };
 
+public:
+	Turret(const sf::Font& damage_font, const sf::Vector2f& base_size, Side side,
+		   data::TurretData* turret_data, data::ValueDisplayData* value_display_data,
+		   pyro::SceneNode* gui_scene_layer, pyro::SceneNode* proj_scene_layer);
+	~Turret();
+public:
+	void attack(HealthEntity* enemy);
+	void nullifyEnemyTargeted();
 private:
 	void spawnProjectile();
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-public:
-	Turret(Side side, sf::Font& damageDisplayFont, sf::Vector2f baseSize, data::TurretData& data,
-		   const pyro::TextureHolder<TurretType>& textures);
-public:
-	void drawDamageDisplays(sf::RenderTarget& target, sf::RenderStates states) const;
-	void attack(Unit& unit);
-	virtual void update(sf::Time dt) override;
+	bool enemyInRange(HealthEntity* enemy);
+	virtual void updateCurrent(sf::Time dt) override;
+
+private:
+	data::TurretData*                   turret_data_;
+	pyro::SceneNode*                    gui_scene_layer_;
+	pyro::SceneNode*                    proj_scene_layer_;
+	HealthEntity*                       enemy_targeted_;
+
+	std::vector<pyro::VertexArrayNode*> projectiles_;
+	sf::Vector2f                        enemy_position_;
+	sf::Time                            attack_rate_;
+	ValueDisplayManager*                damage_display_manager_;
 };
 #endif

@@ -106,16 +106,27 @@ void PauseState::init()
 	buttons_[Quit_Desktop]->getText()->setString("Quit to Desktop");
 
 	// Init Background
-	auto background_blur(std::make_unique<pyro::VertexArrayNode>(sf::Vector2f(view.width, view.height),
-		                                                         sf::Color(0, 0, 0, 150)));
+	auto background_blur(std::make_unique<pyro::VertexArrayNode>(sf::Vector2f(view.width, view.height)));
+	background_blur->setFillColor(sf::Color(0, 0, 0, 150));
 	background_blur->setPosition(view.left, 0.f);
 	scene_layers_[BackgroundLayer]->attachChild(std::move(background_blur));
 
 	const float top_pos_y = buttons_.front()->getPosition().y - margin;
 	const float bot_pos_y = buttons_.back()->getPosition().y + button_size.y + margin;
-	auto background(std::make_unique<pyro::VertexArrayNode>(sf::Vector2f(view.width, bot_pos_y - top_pos_y),
-		                                                    sf::Color(0, 0, 0, 200)));
-	background->setPosition(view.left, top_pos_y);
+	auto background(std::make_unique<pyro::VertexArrayNode>(sf::Vector2f(view.width - 800.f, bot_pos_y - top_pos_y)));
+	background->setFillColor(sf::Color(0, 0, 0, 200));
+	background->setOriginFlags(pyro::utils::OriginFlag::CenterX | pyro::utils::OriginFlag::Top);
+	background->setPosition(view.left + view.width / 2.f, top_pos_y);
+
+	background->vertices_.append(sf::Vertex(sf::Vector2f(-400.f, 0.f),                   sf::Color(0, 0, 0, 0)));
+	background->vertices_.append(sf::Vertex(sf::Vector2f(0.f,    0.f),                   sf::Color(0, 0, 0, 200)));
+	background->vertices_.append(sf::Vertex(sf::Vector2f(0.f,    bot_pos_y - top_pos_y), sf::Color(0, 0, 0, 200)));
+	background->vertices_.append(sf::Vertex(sf::Vector2f(-400.f, bot_pos_y - top_pos_y), sf::Color(0, 0, 0, 0)));
+
+	background->vertices_.append(sf::Vertex(sf::Vector2f(background->vertices_[1].position.x, 0.f),                   sf::Color(0, 0, 0, 200)));
+	background->vertices_.append(sf::Vertex(sf::Vector2f(view.width - 400.f,                  0.f),                   sf::Color(0, 0, 0, 0)));
+	background->vertices_.append(sf::Vertex(sf::Vector2f(view.width - 400.f,                  bot_pos_y - top_pos_y), sf::Color(0, 0, 0, 0)));
+	background->vertices_.append(sf::Vertex(sf::Vector2f(background->vertices_[1].position.x, bot_pos_y - top_pos_y), sf::Color(0, 0, 0, 200)));
 	scene_layers_[BackgroundLayer]->attachChild(std::move(background));
 }
 

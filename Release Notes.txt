@@ -1,3 +1,23 @@
+v0.10.1 | 21/08/2016
+
+  Updates
+
+   - Unit spawn buttons now only display the units' head instead of their whole body
+
+
+
+v0.10.0 | 12/08/2016 - 14/08/2016
+
+  * Migrated game to Pyro Engine v2.0.1
+
+  Updates
+
+    - Minor changes to the pause screen design
+
+    - Refined unit moving/attacking transition states
+
+
+
 v0.9.1 | 05/07/2016
 
   Updates

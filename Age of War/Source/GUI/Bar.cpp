@@ -2,50 +2,55 @@
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
+#include <iostream>
+
 namespace gui
 {
-	Bar::Bar(sf::FloatRect entityBounds, bool horizontal, const sf::Color& color)
-		: mOutline(sf::Vector2f(entityBounds.width, 0.055f * entityBounds.height))
-		, mVertices(sf::Quads)
+	Bar::Bar(const sf::FloatRect& entity_lbounds, const sf::Color& color, bool horizontal)
+		: VertexArrayNode(sf::Vector2f(0.f, 0.f))
+		, color_(color)
+		, horizontal_(horizontal)
 	{
-		mVertices.append(sf::Vertex(sf::Vector2f(0.f,                0.f),                         color));
-		mVertices.append(sf::Vertex(sf::Vector2f(entityBounds.width, 0.f),                         color));
-		mVertices.append(sf::Vertex(sf::Vector2f(entityBounds.width, 0.055f * entityBounds.height), color));
-		mVertices.append(sf::Vertex(sf::Vector2f(0.f,                0.055f * entityBounds.height), color));
-
-		setOrigin(entityBounds.width / 2.f, getOrigin().y);
-
-		mOutline.setFillColor(sf::Color(51, 51, 51));
-		mOutline.setOutlineColor(sf::Color::White);
-		mOutline.setOutlineThickness(0.015f * entityBounds.width);
-
-		if (horizontal) {
-			setPosition(0.f, -entityBounds.height / 2.f - mVertices[2].position.y - mOutline.getOutlineThickness() - 10.f);
-		}
-		else {
-			rotate(-90.f);
-			setPosition(-entityBounds.width / 2.f - mVertices[2].position.y - mOutline.getOutlineThickness() - 2.f, 0.f);
-		}
+		setOriginFlags(pyro::utils::OriginFlag::Center);
+		correctBarProperties(entity_lbounds);
 	}
 
 	Bar::~Bar()
 	{
 	}
 
-	sf::FloatRect Bar::getGlobalBounds() const
+	void Bar::correctBarProperties(const sf::FloatRect& entity_lbounds)
 	{
-		return mOutline.getGlobalBounds();
-	}
+		vertices_.clear();
 
-	void Bar::draw(sf::RenderTarget& target, sf::RenderStates states) const
-	{
-		target.draw(mOutline, states.transform *= getTransform());
-		target.draw(mVertices, states);
-	}
+		const float padding = entity_lbounds.width * 0.015f;
+		const sf::Vector2f padded_edges(entity_lbounds.width - padding, 0.068f * entity_lbounds.height);
+		const sf::Color background_color(sf::Color(51, 51, 51));
 
-	void Bar::update(unsigned total, unsigned current)
-	{
-		mVertices[1].position.x =
-		mVertices[2].position.x = current * mOutline.getSize().x / total;
+		// Outline
+		vertices_.append(sf::Vertex(sf::Vector2f(0.f,                  0.f)));
+		vertices_.append(sf::Vertex(sf::Vector2f(entity_lbounds.width, 0.f)));
+		vertices_.append(sf::Vertex(sf::Vector2f(entity_lbounds.width, padded_edges.y)));
+		vertices_.append(sf::Vertex(sf::Vector2f(0.f,                  padded_edges.y)));
+		// Background
+		vertices_.append(sf::Vertex(sf::Vector2f(padding,        padding),                  background_color));
+		vertices_.append(sf::Vertex(sf::Vector2f(padded_edges.x, padding),                  background_color));
+		vertices_.append(sf::Vertex(sf::Vector2f(padded_edges.x, padded_edges.y - padding), background_color));
+		vertices_.append(sf::Vertex(sf::Vector2f(padding,        padded_edges.y - padding), background_color));
+		// Actual
+		vertices_.append(sf::Vertex(sf::Vector2f(padding,        padding),                  color_));
+		vertices_.append(sf::Vertex(sf::Vector2f(padded_edges.x, padding),                  color_));
+		vertices_.append(sf::Vertex(sf::Vector2f(padded_edges.x, padded_edges.y - padding), color_));
+		vertices_.append(sf::Vertex(sf::Vector2f(padding,        padded_edges.y - padding), color_));
+
+		correntOriginFlags();
+
+		if (horizontal_) {
+			setPosition(entity_lbounds.width / 2.f, -padded_edges.y);
+		}
+		else {
+			rotate(-90.f);
+			setPosition(-padded_edges.y / 2.f - 1.f, entity_lbounds.height / 2.f);
+		}
 	}
 }

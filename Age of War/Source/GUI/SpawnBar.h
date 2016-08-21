@@ -10,23 +10,24 @@ namespace gui
 {
 	class SpawnBar : public Bar
 	{
-	private:
-		bool	       mSpawning;
-		Unit::UnitType mUnitType;
-		sf::Time       mUnitSpawnTime;
-		sf::Time       mElapsedTime;
-				       
-		UnitQueue      mUnitQueue;
-
-	private:
-		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	public:
-		SpawnBar(sf::FloatRect unitBounds, bool horizontal);
+		SpawnBar(const sf::FloatRect& unit_lbounds, bool horizontal);
 	public:
-		bool update(sf::Time dt);
 		bool spawnNewUnit(const UnitQueue::UnitData& data);
 
-		inline Unit::UnitType getUnitTypeSpawning() const { return mUnitType; }
+		inline Unit::UnitType getUnitTypeSpawning() const { return unit_type_; }
+		inline bool isNextSpawnReady() const { return next_spawn_ready_; }
+	private:
+		virtual void updateCurrent(sf::Time dt) override;
+
+	private:
+		bool	                        spawning_;
+		Unit::UnitType                  unit_type_;
+		pyro::utils::Resource<sf::Time> spawn_time_;
+					                    
+		bool                            next_spawn_ready_;
+					                    
+		UnitQueue*                      unit_queue_;
 	};
 }
 #endif

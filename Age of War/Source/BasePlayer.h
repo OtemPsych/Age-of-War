@@ -2,44 +2,68 @@
 #define BasePlayer_H_
 
 #include "Base.h"
+#include "Camera.h"
 #include "GUI/SpawnButtons.h"
 #include "GUI/TurretPlacementIndicators.h"
+#include "GUI/UpgradeButtons.h"
 
 class BasePlayer : public Base
 {
 private:
-	using UnitSpawnButtons = gui::SpawnButtons<data::UnitData, Unit::UnitType>;
+	using UnitSpawnButtons   = gui::SpawnButtons<data::UnitData, Unit::UnitType>;
 	using TurretSpawnButtons = gui::SpawnButtons<data::TurretData, Turret::TurretType>;
-private:
-	sf::Font                            mCoinFont;
-	pyro::Text		                    mCoinText;
-	sf::Texture		                    mCoinTexture;
-	sf::Sprite		                    mCoinSprite;
-	Animation                           mCoinRotateAnimation;
-					                    
-	UnitSpawnButtons                    mUnitButtons;
-	TurretSpawnButtons                  mTurretButtons;
 
-	bool                                mActiveTurretPlacementIndicators;
-	std::unique_ptr<sf::RectangleShape> mTurretIndicator;
-	gui::TurretPlacementIndicators      mTurretPlacementIndicators;
+	using UnitUpgradeButtons   = gui::UpgradeButtons<data::UnitData, Unit::UnitType>;
+	using TurretUpgradeButtons = gui::UpgradeButtons<data::TurretData, Turret::TurretType>;
 
-	sf::RenderWindow&                   mWindow;
-
-private:
-	void setupGoldGUI();
-
-	void updateGoldGUI();
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 public:
-	BasePlayer(sf::RenderWindow& window, sf::IntRect worldBounds, sf::Font& font, const sf::Texture& baseTexture,
-		       const pyro::TextureHolder<Unit::UnitType>& unitTextures,
-			   const pyro::TextureHolder<Turret::TurretType>& turretTextures,
-		       pyro::SoundPlayer<Unit::SoundID>& soundPlayer);
+	BasePlayer(const sf::FloatRect& world_bounds, const sf::Font& damage_font,
+		       const pyro::TextureHolder<Unit::UnitType>& unit_textures,
+		       const pyro::TextureHolder<Turret::TurretType>& turret_textures,
+		       Side side, sf::RenderWindow* window, data::BaseData* base_data,
+		       pyro::SoundPlayer<Unit::SoundID>* sound_player,
+			   const std::vector<pyro::SceneNode*>* scene_layers);
 public:
-	void updateGUIPositions();
-	void handleEvent(const sf::Event& event);
-	virtual void update(sf::Time dt) override;
 	virtual void modifyGold(int amount) override;
-};
+private:
+	void init(const sf::FloatRect& world_bounds);
+	void updateGoldGUI();
+	virtual void handleEventCurrent(const sf::Event& event) override;
+	virtual void updateCurrent(sf::Time dt) override;
+
+private:
+	sf::RenderWindow*               window_;
+								    
+	pyro::SpriteNode*               coin_;
+	pyro::Text*                     coin_text_;
+	sf::Font                        coin_font_;
+	sf::Texture                     coin_texture_;
+	data::AnimationData             coin_rotation_animation_data_;
+	Animation*                      coin_rotation_animation_;
+						            
+	UnitSpawnButtons*               unit_buttons_;
+	TurretSpawnButtons*             turret_buttons_;
+
+	UnitUpgradeButtons*             unit_upgrade_buttons_;
+	TurretUpgradeButtons*           turret_upgrade_buttons_;
+						            
+	bool                            active_turret_placement_indicators_;
+						            
+	pyro::VertexArrayNode*          turret_indicator_;
+	gui::TurretPlacementIndicators* turret_placement_indicators_;
+};									 
+
+//class BasePlayer : public Base
+//{
+//private:
+//	sf::Sprite		                    mCoinSprite;
+//	std::unique_ptr<sf::RectangleShape> mTurretIndicator;
+//	gui::TurretPlacementIndicators      mTurretPlacementIndicators;
+//private:
+//	void setupGoldGUI();
+//	void updateGoldGUI();
+//	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+//public:
+//	void updateGUIPositions();
+//};
 #endif

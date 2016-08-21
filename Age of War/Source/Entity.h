@@ -1,30 +1,26 @@
 #ifndef Entity_H_
 #define Entity_H_
 
+#include <PYRO/SpriteNode.h>
+
 #include <SFML/System/Time.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 
-class Entity : public sf::Transformable, public sf::Drawable
+namespace data { struct EntityData; }
+class Entity : public pyro::SpriteNode
 {
 public:
 	enum class Side { Ally, Enemy };
-protected:
 	enum class EntityType { Unit, Turret, Base };
-protected:
-	Side       mSide;
-	EntityType mEntityType;
-	sf::Sprite mSprite;
 
-private:
-	void setup();
-protected:
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 public:
-	Entity(Side side, EntityType entityType, const sf::Texture& texture);
-	Entity(Side side, EntityType entityType, const sf::Texture& texture, sf::IntRect rect);
+	Entity(Side side, data::EntityData* entity_data);
 	virtual ~Entity();
 public:
-	sf::FloatRect getGlobalBounds() const;
-	virtual void update(sf::Time dt) = 0;
+	EntityType getEntityType() const;
+
+protected:
+	Side              side_;
+	data::EntityData* entity_data_;
 };
 #endif

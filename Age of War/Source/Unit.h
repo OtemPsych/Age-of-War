@@ -3,52 +3,50 @@
 
 #include "HealthEntity.h"
 #include "Animation.h"
-#include "ValueDisplays.h"
+#include "ValueDisplayManager.h"
 
 #include <PYRO/Audio/SoundPlayer.h>
-#include <PYRO/ResourceHolder.h>
 
+namespace data { struct UnitData; struct ValueDisplayData; }
 class Unit : public HealthEntity
 {
 public:
-	enum GeneralUnitType { Melee, Ranged };
-	enum UnitType { Mage, Knight, Samurai, Shadow, Destroyer, Executioner, TypeCount };
-	enum class UnitUpgradeType { Health, Damage, Range, Rate, TypeCount};
-	enum class SoundID { MageAttack, KnightAttack, TypeCount };
-private:
-	pyro::utils::Resource<sf::Time> mAttackRate;
-	const float                     mSpeed;
-								    
-	bool                            mMoving;
-	Animation                       mWalkingAnimation;
-protected:						    
-	GeneralUnitType                 mGeneralUnitType;
-	UnitType                        mUnitType;
-	const float                     mAttackRange;
-	const unsigned short            mDamage;
-	pyro::SoundPlayer<SoundID>&     mSoundPlayer;
-								    
-	ValueDisplays                   mDamageDisplays;
-								    
-	bool                            mAttacking;
-	Animation                       mAttackAnimation;
-
+	enum class GeneralUnitType { Melee, Ranged };
+	enum UnitType { Mage, Knight, Samurai, Shadow, Destroyer, Executioner, UnitCount };
+	enum class SoundID { MageAttack, KnightAttack, SoundCount };
 protected:
-	bool enemyInRange(HealthEntity& enemy);
-	virtual void handleAttackAnimation(HealthEntity& enemy);
+	enum class UnitState { Idle, Moving, Attacking, StateCount };
+
 public:
-	Unit(Side side, sf::Font& damageDisplayFont, data::UnitData& data,
-		 const pyro::TextureHolder<UnitType>& unitTextures, pyro::SoundPlayer<SoundID>& soundPlayer);
+	Unit(Side side, Unit* front_unit, data::UnitData* unit_data,
+		 data::ValueDisplayData* value_display_data,
+		 pyro::SoundPlayer<Unit::SoundID>* sound_player,
+		 pyro::SceneNode* gui_scene_layer);
 	virtual ~Unit();
 public:
-	void drawDamageDisplays(sf::RenderTarget& target, sf::RenderStates states) const;
+	GeneralUnitType getGeneralUnitType() const;
+	UnitType        getUnitType() const;
 
-	virtual void attack(HealthEntity& enemy);
-	virtual void update(sf::Time dt) override;
+	virtual void attack(HealthEntity* enemy);
+	virtual void nullifyEnemyTargeted();
+	inline void nullifyFrontUnit() { front_unit_ = nullptr; }
+protected:
+	bool enemyInRange(HealthEntity* enemy);
+	virtual void updateCurrent(sf::Time dt) override;
 
-	inline void startMovement(bool flag) { mMoving = flag; }
-	inline void stopAttacking() { mAttacking = false; }
-	inline GeneralUnitType getGeneralUnitType() const { return mGeneralUnitType; }
-	inline UnitType        getUnitType() const { return mUnitType; }
+protected:
+	ValueDisplayManager*        damage_display_manager_;
+	pyro::SoundPlayer<SoundID>* sound_player_;
+	Animation*                  attack_animation_;
+
+	HealthEntity*               enemy_targeted_;
+	sf::Time                    attack_rate_;
+	UnitState                   unit_state_;
+private:
+	data::UnitData*             unit_data_;
+	pyro::SceneNode*            gui_scene_layer_;
+	Animation*                  walking_animation_;
+
+	Unit*                       front_unit_;
 };
 #endif

@@ -1,95 +1,133 @@
 #include "Unit.h"
-#include "Base.h"
+#include "DataTables.h"
 
 #include <PYRO/Math.h>
 
-#include <SFML/Graphics/RenderTarget.hpp>
-
-Unit::Unit(Side side, sf::Font& damageDisplayFont, data::UnitData& data,
-	       const pyro::TextureHolder<UnitType>& unitTextures, pyro::SoundPlayer<SoundID>& soundPlayer)
-	: HealthEntity(side, EntityType::Unit, data.health.value.current, unitTextures.get(static_cast<UnitType>(data.unitType)),
-			       data.walkRects.front().first)
-	, mAttackRange(data.range.value.current)
-	, mAttackRate(data.rate.value.current)
-	, mSpeed(data.speed)
-	, mDamageDisplays(sf::Vector2f(0.f, 30.f), sf::Vector2f(0.f, -1.8f), sf::seconds(0.75f), damageDisplayFont)
-	, mMoving(true)
-	, mWalkingAnimation(mSprite, data.walkRects, sf::seconds(0.65f), true)
-	, mGeneralUnitType(static_cast<GeneralUnitType>(data.generalUnitType))
-	, mUnitType(static_cast<UnitType>(data.unitType))
-	, mDamage(data.damage.value.current)
-	, mSoundPlayer(soundPlayer)
-	, mAttacking(false)
-	, mAttackAnimation(mSprite, data.attackRects, data.rate.value.current, false)
+Unit::Unit(Side side, Unit* front_unit, data::UnitData* unit_data,
+	       data::ValueDisplayData* value_display_data,
+	       pyro::SoundPlayer<Unit::SoundID>* sound_player,
+		   pyro::SceneNode* gui_scene_layer)
+	: HealthEntity(side, unit_data)
+	, damage_display_manager_(nullptr)
+	, sound_player_(sound_player)
+	, attack_animation_(nullptr)
+	, enemy_targeted_(nullptr)
+	, attack_rate_(sf::Time::Zero)
+	, unit_state_(UnitState::Moving)
+	, unit_data_(unit_data)
+	, gui_scene_layer_(gui_scene_layer)
+	, walking_animation_(nullptr)
+	, front_unit_(front_unit)
 {
-	scale(data.scale, data.scale);
+	auto damage_display_manager(std::make_unique<ValueDisplayManager>(value_display_data));
+	damage_display_manager_ = damage_display_manager.get();
+	gui_scene_layer->attachChild(std::move(damage_display_manager));
+
+	auto attack_animation(std::make_unique<Animation>(unit_data->attack_animation_data, this));
+	attack_animation_ = attack_animation.get();
+	attachChild(std::move(attack_animation));
+
+	auto walking_animation(std::make_unique<Animation>(unit_data->walk_animation_data, this));
+	walking_animation_ = walking_animation.get();
+	attachChild(std::move(walking_animation));
+
+	health_bar_->correctBarProperties(getLocalBounds());
 }
 
 Unit::~Unit()
 {
+	gui_scene_layer_->detachChild(*damage_display_manager_);
 }
 
-bool Unit::enemyInRange(HealthEntity& enemy)
+Unit::GeneralUnitType Unit::getGeneralUnitType() const
 {
-	const sf::FloatRect gBounds(getGlobalBounds());
-	const sf::FloatRect enemyGBounds(enemy.getGlobalBounds());
+	return unit_data_->general_unit_type;
+}
 
-	if (mSide == Side::Ally) {
-		if (gBounds.left + gBounds.width + mAttackRange >= enemyGBounds.left)
-			return true;
+Unit::UnitType Unit::getUnitType() const
+{
+	return unit_data_->unit_type;
+}
+
+void Unit::attack(HealthEntity* enemy)
+{
+	if (enemy_targeted_) {
+		if (attack_rate_ >= unit_data_->rate.value.current) {
+			enemy_targeted_->receiveDamage(unit_data_->damage.value.current);
+			damage_display_manager_->addValueDisplay(getGlobalBounds(), enemy_targeted_->getGlobalBounds(),
+				                                     unit_data_->damage.value.current);
+
+			attack_rate_ = sf::Time::Zero;
+			attack_animation_->restart();
+		}
 	}
-	else
-		if (gBounds.left - mAttackRange <= enemyGBounds.left + enemyGBounds.width)
-			return true;
+	else if (enemyInRange(enemy)) {
+		enemy_targeted_ = enemy;
+		unit_state_ = UnitState::Attacking;
+
+		attack_rate_ = sf::Time::Zero;
+		attack_animation_->restart();
+	}
+}
+
+void Unit::nullifyEnemyTargeted()
+{
+	enemy_targeted_ = nullptr;
+}
+
+bool Unit::enemyInRange(HealthEntity* enemy)
+{
+	if (enemy) {
+		const sf::FloatRect gbounds(getGlobalBounds());
+		const sf::FloatRect enemy_gbounds(enemy->getGlobalBounds());
+
+		if (side_ == Side::Ally) {
+			if (gbounds.left + gbounds.width + unit_data_->range.value.current >= enemy_gbounds.left)
+				return true;
+		}
+		else {
+			if (gbounds.left - unit_data_->range.value.current <= enemy_gbounds.left + enemy_gbounds.width)
+				return true;
+		}
+	}
 
 	return false;
 }
 
-void Unit::handleAttackAnimation(HealthEntity& enemy)
+void Unit::updateCurrent(sf::Time dt)
 {
-	if (!mAttackAnimation.isAnimationOngoing())
-	{
-		if (mUnitType < static_cast<unsigned short>(Unit::SoundID::TypeCount))
-			mSoundPlayer.play(static_cast<Unit::SoundID>(mUnitType), getPosition(), 10.f);
-		enemy.receiveDamage(mDamage);
-		mDamageDisplays.addValueDisplay(getGlobalBounds(), enemy.getGlobalBounds(), mDamage);
-		mAttackRate.current = sf::Time::Zero;
-		mAttackAnimation.restart();
-	}
-}
-
-void Unit::drawDamageDisplays(sf::RenderTarget& target, sf::RenderStates states) const
-{
-	target.draw(mDamageDisplays, states);
-}
-
-void Unit::attack(HealthEntity& enemy)
-{
-	if (enemyInRange(enemy)) {
-		mMoving = false;
-		if (mAttackRate.current >= mAttackRate.original)
-			mAttacking = true;
-	}
-	else
-		mMoving = true;
-
-	handleAttackAnimation(enemy);
-}
-
-void Unit::update(sf::Time dt)
-{
-	mAttackRate.current += dt;
-
-	if (!mAttacking && mMoving)
-	{
-		mWalkingAnimation.update(dt);
-		if (mSide == Side::Ally)
-			move(mSpeed * dt.asSeconds(), 0.f);
+	if (unit_state_ == UnitState::Moving) {
+		walking_animation_->activateUpdating(ActivationTarget::Current, true);
+		attack_animation_->activateUpdating(ActivationTarget::Current, false);
+		if (side_ == Side::Ally)
+			move(unit_data_->speed * dt.asSeconds(), 0.f);
 		else
-			move(-(mSpeed * dt.asSeconds()), 0.f);
+			move(-(unit_data_->speed * dt.asSeconds()), 0.f);
 	}
-	else if (mAttacking)
-		mAttackAnimation.update(dt);
+	else if (unit_state_ == UnitState::Attacking) {
+		walking_animation_->activateUpdating(ActivationTarget::Current, false);
+		attack_animation_->activateUpdating(ActivationTarget::Current, true);
+		attack_rate_ += dt;
+	}
+	else {
+		walking_animation_->activateUpdating(ActivationTarget::Current, false);
+		attack_animation_->activateUpdating(ActivationTarget::Current, false);
+	}
 
-	mDamageDisplays.update(dt);
+	if (front_unit_ && getGlobalBounds().intersects(front_unit_->getGlobalBounds())) {
+		if (unit_state_ == UnitState::Moving)
+			unit_state_ = UnitState::Idle;
+	}
+	else {
+		unit_state_ = enemy_targeted_ && enemyInRange(enemy_targeted_) ? UnitState::Attacking : UnitState::Moving;
+	}
+
+	//if (unit_state_ == UnitState::Moving && front_unit_ && getGlobalBounds().intersects(front_unit_->getGlobalBounds())) {
+	//	unit_state_ = UnitState::Idle;
+	//}
+
+	//if (front_unit_ && getGlobalBounds().intersects(front_unit_->getGlobalBounds()))
+	//	unit_state_ = UnitState::Idle;
+	//else
+	//	unit_state_ = enemy_targeted_ && enemyInRange(enemy_targeted_) ? UnitState::Attacking : UnitState::Moving;
 }

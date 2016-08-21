@@ -1,72 +1,83 @@
 #include "RangedUnit.h"
+#include "DataTables.h"
 
 #include <PYRO/Math.h>
 
-#include <SFML/Graphics/RenderTarget.hpp>
-
-RangedUnit::RangedUnit(Side side, sf::Font& font, data::UnitData& data,
-	                   const pyro::TextureHolder<UnitType>& textures, pyro::SoundPlayer<SoundID>& soundPlayer)
-	: Unit(side, font, data, textures, soundPlayer)
-	, mProjectileSpeed(data.rangedData->projectileSpeed)
-	, mSpawnProjectile(data.rangedData->spawnProjectile)
+RangedUnit::RangedUnit(Side side, Unit* front_unit,
+	                   data::RangedUnitData* ranged_unit_data,
+	                   data::ValueDisplayData* value_display_data,
+	                   pyro::SoundPlayer<Unit::SoundID>* sound_player,
+					   pyro::SceneNode* gui_scene_layer, pyro::SceneNode* proj_scene_layer)
+	: Unit(side, front_unit, ranged_unit_data, value_display_data, sound_player, gui_scene_layer)
+	, ranged_unit_data_(ranged_unit_data)
+	, proj_scene_layer_(proj_scene_layer)
 {
 }
 
-void RangedUnit::handleAttackAnimation(HealthEntity& enemy)
+RangedUnit::~RangedUnit()
 {
-	if (!mAttackAnimation.isAnimationOngoing())
-	{
-		sf::FloatRect gBounds(getGlobalBounds());
-		mSpawnProjectile(mProjectiles, sf::Vector2f(gBounds.width, gBounds.height));
+	for (auto& itr = projectiles_.begin(); itr != projectiles_.end(); itr++) {
+		proj_scene_layer_->detachChild(*(*itr));
+	}
+	projectiles_.clear();
+}
 
-		if (mUnitType < static_cast<unsigned short>(Unit::SoundID::TypeCount))
-			mSoundPlayer.play(static_cast<Unit::SoundID>(mUnitType), getPosition(), 10.f);
+void RangedUnit::attack(HealthEntity* enemy)
+{
+	if (enemy_targeted_) {
+		if (attack_rate_ >= ranged_unit_data_->rate.value.current) {
+			ranged_unit_data_->spawn_projectile(&projectiles_, getGlobalBounds(), proj_scene_layer_);
+			if (side_ == Side::Enemy)
+				projectiles_.back()->move(-getGlobalBounds().width, 0.f);
 
-		mAttackAnimation.restart();
+			attack_rate_ = sf::Time::Zero;
+			attack_animation_->restart();
+		}
+	}
+	else if (enemyInRange(enemy)) {
+		enemy_targeted_ = enemy;
+		unit_state_ = UnitState::Attacking;
+
+		attack_rate_ = sf::Time::Zero;
+		attack_animation_->restart();
 	}
 }
 
-void RangedUnit::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void RangedUnit::nullifyEnemyTargeted()
 {
-	Unit::draw(target, states);
+	enemy_targeted_ = nullptr;
 
-	states.transform *= getTransform();
-	for (const auto& projectile : mProjectiles) {
-		target.draw(projectile, states);
+	for (auto& itr = projectiles_.begin(); itr != projectiles_.end(); itr++) {
+		proj_scene_layer_->detachChild(*(*itr));
 	}
+	projectiles_.clear();
 }
 
-void RangedUnit::attack(HealthEntity& enemy)
+void RangedUnit::updateCurrent(sf::Time dt)
 {
-	Unit::attack(enemy);
+	if (enemy_targeted_) {
+		for (auto& projectile : projectiles_) {
+			const sf::Vector2f proj_pos(projectile->getPosition());
+			const sf::Vector2f enemy_pos(enemy_targeted_->getPosition());
+			const float distance = pyro::math::getHypotenuse(enemy_pos - proj_pos);
 
-	for (unsigned i = 0; i < mProjectiles.size(); i++)
-		if (enemy.getGlobalBounds().contains(getTransform().transformPoint(mProjectiles[i][0].position))) {
-			enemy.receiveDamage(mDamage);
-			mDamageDisplays.addValueDisplay(getGlobalBounds(), enemy.getGlobalBounds(), mDamage);
-			mProjectiles.erase(mProjectiles.begin() + i);
+			sf::Vector2f velocity(ranged_unit_data_->projectile_speed * (enemy_pos.x - proj_pos.x) / distance,
+								  ranged_unit_data_->projectile_speed * (enemy_pos.y - proj_pos.y) / distance);
+
+			projectile->move(velocity * dt.asSeconds());
 		}
 
-	mEnemyPosition = enemy.getPosition();
-}
+		for (size_t i = 0; i < projectiles_.size(); ++i) {
+			if (enemy_targeted_->getGlobalBounds().intersects(projectiles_[i]->getGlobalBounds())) {
+				enemy_targeted_->receiveDamage(ranged_unit_data_->damage.value.current);
+				damage_display_manager_->addValueDisplay(getGlobalBounds(), enemy_targeted_->getGlobalBounds(),
+					ranged_unit_data_->damage.value.current);
 
-void RangedUnit::update(sf::Time dt)
-{
-	for (auto& projectile : mProjectiles) {
-		sf::Vector2f projPos(getTransform().transformPoint(projectile[0].position));
-		float distance = pyro::math::getHypotenuse(mEnemyPosition - projPos);
-
-		sf::Vector2f velocity(mProjectileSpeed * (mEnemyPosition.x - projPos.x) / distance * dt.asSeconds(),
-			                  mProjectileSpeed * (mEnemyPosition.y - projPos.y) / distance * dt.asSeconds());
-		if (mSide == Side::Enemy)
-			velocity = sf::Vector2f(-velocity.x, velocity.y);
-
-		for (unsigned i = 0; i < projectile.getVertexCount(); i++)
-			projectile[i].position += velocity;
+				proj_scene_layer_->detachChild(*projectiles_[i]);
+				projectiles_.erase(projectiles_.begin() + i);
+			}
+		}
 	}
 
-	if (!mProjectiles.empty() && std::abs(getPosition().x - getTransform().transformPoint(mProjectiles.front()[0].position).x) > mAttackRange * 1.5f)
-		mProjectiles.erase(mProjectiles.begin());
-
-	Unit::update(dt);
+	Unit::updateCurrent(dt);
 }

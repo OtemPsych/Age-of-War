@@ -1,5 +1,6 @@
 #include "GameState.h"
 #include "GameOverState.h"
+#include "../DataTables.h"
 
 #include <PYRO/StateStack.h>
 
@@ -7,107 +8,25 @@
 
 GameState::GameState(pyro::StateStack* stack, sf::RenderWindow* window)
 	: State(stack, window)
-	, mBasePlayer(nullptr)
-	, mBaseOpponent(nullptr)
-	, mWindowBounds(0, 0, window->getSize().x, window->getSize().y)
+	, cursor_(nullptr)
+	, base_player_(nullptr)
+	, base_opponent_(nullptr)
+	, window_bounds_(0, 0, window->getSize().x, window->getSize().y)
 {
 	setupResources();
-	setupBackground();
-
-	mCursor.setTexture(mCursorTexture);
-	mCursor.scale(0.9f, 0.9f);
-
-	sf::Vector2u winSize(window->getSize());
-	mBasePlayer = std::unique_ptr<BasePlayer>(new BasePlayer(*window, mWorldBounds, mDisplayDamageFont, mBaseTexture,
-		                                                     mUnitTextures, mTurretTextures, mSoundPlayer));
-	mBaseOpponent = std::unique_ptr<Base>(new BaseAI(Entity::Side::Enemy, mWorldBounds, mDisplayDamageFont, mBaseTexture,
-		                                             mUnitTextures, mTurretTextures, mSoundPlayer));
-
-	mMusicPlayer.setVolume(75.f);
-	mMusicPlayer.play(MusicID::Soundtrack, true);
+	base_data_ = std::move(data::initBaseData(base_textures_));
+	
+	buildScene();
 }
 
 GameState::~GameState()
 {
 }
 
-void GameState::setupBackground()
-{
-	sf::Vector2f winSize(window_->getSize());
-	sf::Vector2f textureSize(mBackgroundTexture.getSize());
-
-	mBackgroundTexture.setRepeated(true);
-	mBackground.setTexture(mBackgroundTexture);
-	mBackground.scale(1.f, window_->getSize().y / textureSize.y);
-	mBackground.setTextureRect(sf::IntRect(0, 0, static_cast<int>(textureSize.x * 1.5f), static_cast<int>(textureSize.y)));
-
-	mWorldBounds = mBackground.getTextureRect();
-}
-
-void GameState::setupResources()
-{
-	mUnitTextures.load("Assets/Textures/Mage.png", Unit::UnitType::Mage);
-	mUnitTextures.load("Assets/Textures/Knight.png", Unit::UnitType::Knight);
-	mUnitTextures.load("Assets/Textures/Destroyer.png", Unit::UnitType::Destroyer);
-	mUnitTextures.load("Assets/Textures/Executioner.png", Unit::UnitType::Executioner);
-	mUnitTextures.load("Assets/Textures/Shadow.png", Unit::UnitType::Shadow);
-	mUnitTextures.load("Assets/Textures/Samurai.png", Unit::UnitType::Samurai);
-
-	mTurretTextures.load("Assets/Textures/LaserTurret.png", Turret::LaserTurret);
-
-	mCursorTexture.loadFromFile("Assets/Textures/MouseCursor.png");
-	mCursorTexture.setSmooth(true);
-	mBackgroundTexture.loadFromFile("Assets/Textures/Background.png");
-	mBaseTexture.loadFromFile("Assets/Textures/Base.png");
-
-	mDisplayDamageFont.loadFromFile("Assets/Fonts/Zombie.ttf");
-
-	mMusicPlayer.loadTheme(MusicID::Soundtrack, "Assets/Music/Soundtrack.ogg");
-	mSoundPlayer.loadEffect(Unit::SoundID::MageAttack, "Assets/Sounds/MageAttack.ogg");
-	mSoundPlayer.loadEffect(Unit::SoundID::KnightAttack, "Assets/Sounds/KnightAttack.ogg");
-}
-
 void GameState::unpauseMusic()
 {
-	mMusicPlayer.pause(false);
-	mCursor.setPosition(window_->mapPixelToCoords(sf::Mouse::getPosition(*window_)));
-}
-
-void GameState::updateCamera()
-{
-	if (mWindowBounds.contains(sf::Mouse::getPosition(*window_)))
-	{
-		sf::View newView(window_->getView());
-		const sf::Vector2f viewCenter = newView.getCenter();
-		const sf::Vector2i mousePos = sf::Mouse::getPosition(*window_);
-		const float coordsX = window_->mapPixelToCoords(mousePos).x;
-		const float halfViewWidth = newView.getSize().x / 2.f;
-		const float movement = 7.f;
-		const float scrollEdge = 100.f;
-
-		if (coordsX >= viewCenter.x + halfViewWidth - scrollEdge) {
-			const float totalDisplacement = viewCenter.x + halfViewWidth + movement;
-			sf::View newView(window_->getView());
-			if (totalDisplacement < mWorldBounds.width)
-				newView.move(-(mWindowBounds.width - mousePos.x - scrollEdge) * movement / 100.f, 0.f);
-			else
-				newView.setCenter(mWorldBounds.width - halfViewWidth, viewCenter.y);
-
-			window_->setView(newView);
-			mBasePlayer->updateGUIPositions();
-		}
-		else if (coordsX <= viewCenter.x - halfViewWidth + scrollEdge) {
-			const float totalDisplacement = viewCenter.x - halfViewWidth - movement;
-			sf::View newView(window_->getView());
-			if (totalDisplacement > mWorldBounds.left)
-				newView.move(-(scrollEdge - mousePos.x) * movement / 100.f, 0.f);
-			else
-				newView.setCenter(mWorldBounds.left + halfViewWidth, viewCenter.y);
-
-			window_->setView(newView);
-			mBasePlayer->updateGUIPositions();
-		}
-	}
+	music_player_.pause(false);
+	cursor_->setPosition(window_->mapPixelToCoords(sf::Mouse::getPosition(*window_)));
 }
 
 bool GameState::handleEvent(const sf::Event& event)
@@ -115,66 +34,125 @@ bool GameState::handleEvent(const sf::Event& event)
 	if ((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
 		|| event.type == sf::Event::LostFocus) {
 		requestStatePush(pyro::StateID::Pause);
-		mMusicPlayer.pause(true);
+		music_player_.pause(true);
 	}
 	else if (event.type == sf::Event::Closed) {
 		requestStateClear();
 	}
 
-	mBasePlayer->handleEvent(event);
+	scene_graph_.handleEvent(event);
 
 	return true;
 }
 
 bool GameState::update(sf::Time dt)
 {
-	mBasePlayer->update(dt);
-	mBaseOpponent->update(dt);
-
-	if (mBasePlayer->hasUnits())
-		mBaseOpponent->attack(mBasePlayer->getFirstUnit());
+	if (base_player_->hasUnits())
+		base_opponent_->attack(base_player_->getFirstUnit());
 	else {
-		mBaseOpponent->attack(*mBasePlayer);
-		if (mBasePlayer->isDestroyable()) {
+		base_opponent_->attack(base_player_);
+		if (base_player_->isDestroyed()) {
 			auto* gameOverState = const_cast<GameOverState*>(dynamic_cast<const GameOverState*>(stack_->getState(pyro::StateID::GameOver)));
 			if (gameOverState) {
 				gameOverState->setGameOverType(GameOverState::GameOverType::Defeat);
 			} else {
 				requestStatePush(pyro::StateID::GameOver);
-				mMusicPlayer.stop();
+				music_player_.stop();
 			}
 		}
 	}
 
-	if (mBaseOpponent->hasUnits())
-		mBasePlayer->attack(mBaseOpponent->getFirstUnit());
+	if (base_opponent_->hasUnits())
+		base_player_->attack(base_opponent_->getFirstUnit());
 	else {
-		mBasePlayer->attack(*mBaseOpponent);
-		if (mBaseOpponent->isDestroyable()) {
+		base_player_->attack(base_opponent_);
+		if (base_opponent_->isDestroyed()) {
 			auto* gameOverState = const_cast<GameOverState*>(dynamic_cast<const GameOverState*>(stack_->getState(pyro::StateID::GameOver)));
 			if (gameOverState) {
 				gameOverState->setGameOverType(GameOverState::GameOverType::Victory);
 			} else {
 				requestStatePush(pyro::StateID::GameOver);
-				mMusicPlayer.stop();
+				music_player_.stop();
 			}
 		}
 	}
 
-	updateCamera();
-	mCursor.setPosition(window_->mapPixelToCoords(sf::Mouse::getPosition(*window_)));
+	cursor_->setPosition(window_->mapPixelToCoords(sf::Mouse::getPosition(*window_)));
+
+	scene_graph_.update(dt);
 
 	return true;
 }
 
 void GameState::draw()
 {
-	window_->draw(mBackground, &mBackgroundTexture);
-	window_->draw(*mBasePlayer);
-	window_->draw(*mBaseOpponent);
+	window_->draw(scene_graph_);
+}
 
-	mBasePlayer->drawUnitDamageDisplays(*window_, sf::RenderStates::Default);
-	mBaseOpponent->drawUnitDamageDisplays(*window_, sf::RenderStates::Default);
+void GameState::buildScene()
+{
+	// Init Scene Layers
+	for (unsigned i = 0; i < SceneLayers::SceneLayerCount; i++) {
+		auto scene_layer(std::make_unique<pyro::SceneNode>());
+		scene_layers_.push_back(scene_layer.get());
+		scene_graph_.attachChild(std::move(scene_layer));
+	}
 
-	window_->draw(mCursor);
+	// Init Background to Background Layer
+	const sf::Vector2f texture_size(background_texture_.getSize());
+	const sf::FloatRect background_texture_rect(0.f, 0.f, texture_size.x * 1.5f, texture_size.y);
+	auto background(std::make_unique<pyro::VertexArrayNode>(background_texture_));
+	background->setTextureRect(background_texture_rect);
+	background->scale(1.f, window_bounds_.height / texture_size.y);
+	scene_layers_[SceneLayers::Background]->attachChild(std::move(background));
+
+	world_bounds_ = background_texture_rect;
+
+	// Init Bases to Bases Layer
+	auto base_player(std::make_unique<BasePlayer>(world_bounds_, damage_font_, unit_textures_,
+		                                          turret_textures_, Entity::Side::Ally, window_,
+											      base_data_[Base::BaseType::DefaultBase].get(),
+											      &sound_player_, &scene_layers_));
+	base_player_ = base_player.get();
+	scene_layers_[SceneLayers::Bases]->attachChild(std::move(base_player));
+
+	auto base_opponent(std::make_unique<BaseAI>(world_bounds_, damage_font_, unit_textures_,
+		                                        turret_textures_, Entity::Side::Enemy,
+		                                        base_data_[Base::BaseType::DefaultBase].get(),
+											    &sound_player_, &scene_layers_));
+	base_opponent_ = base_opponent.get();
+	scene_layers_[SceneLayers::Bases]->attachChild(std::move(base_opponent));
+
+	// Init Cursor to Cursor Layer
+	auto cursor(std::make_unique<pyro::VertexArrayNode>(cursor_texture_));
+	cursor->scale(0.9f, 0.9f);
+	cursor_ = cursor.get();
+	scene_layers_[SceneLayers::Cursor]->attachChild(std::move(cursor));
+
+	music_player_.setVolume(75.f);
+	music_player_.play(MusicID::Soundtrack, true);
+}
+
+void GameState::setupResources()
+{
+	unit_textures_.load("Assets/Textures/Mage.png", Unit::UnitType::Mage);
+	unit_textures_.load("Assets/Textures/Knight.png", Unit::UnitType::Knight);
+	unit_textures_.load("Assets/Textures/Destroyer.png", Unit::UnitType::Destroyer);
+	unit_textures_.load("Assets/Textures/Executioner.png", Unit::UnitType::Executioner);
+	unit_textures_.load("Assets/Textures/Shadow.png", Unit::UnitType::Shadow);
+	unit_textures_.load("Assets/Textures/Samurai.png", Unit::UnitType::Samurai);
+
+	turret_textures_.load("Assets/Textures/LaserTurret.png", Turret::LaserTurret);
+
+	cursor_texture_.loadFromFile("Assets/Textures/MouseCursor.png");
+	cursor_texture_.setSmooth(true);
+	background_texture_.loadFromFile("Assets/Textures/Background.png");
+	background_texture_.setRepeated(true);
+	base_textures_.load("Assets/Textures/Base.png", Base::BaseType::DefaultBase);
+
+	damage_font_.loadFromFile("Assets/Fonts/Zombie.ttf");
+
+	music_player_.loadTheme(MusicID::Soundtrack, "Assets/Music/Soundtrack.ogg");
+	sound_player_.loadEffect(Unit::SoundID::MageAttack, "Assets/Sounds/MageAttack.ogg");
+	sound_player_.loadEffect(Unit::SoundID::KnightAttack, "Assets/Sounds/KnightAttack.ogg");
 }

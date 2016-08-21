@@ -1,4 +1,7 @@
 #include "SmokeSystem.h"
+#include "Animation.h"
+#include "DataTables.h"
+#include "Tools/TextureDataReader.h"
 
 #include <PYRO/Math.h>
 
@@ -6,27 +9,21 @@
 
 SmokeSystem::SmokeSystem()
 {
-	mSmokeTexture.loadFromFile("Assets/Textures/Smoke.png");
-}
-
-void SmokeSystem::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-	for (const auto& smoke : mSmokes)
-		target.draw(smoke, states);
+	smoke_texture_.loadFromFile("Assets/Textures/Smoke.png");
 }
 
 void SmokeSystem::addEmitterPosition(const sf::Vector2f& pos)
 {
-	for (const auto& smoke : mSmokes)
+	for (const auto& smoke : smokes_)
 		if (smoke.getEmitterPosition() == pos)
 			return;
 
-	mSmokes.emplace_back(sf::Quads, 172);
-	mSmokes.back().setEmitterPosition(pos);
-	mSmokes.back().activateEmitter(true);
-	mSmokes.back().setTexture(&mSmokeTexture);
-	sf::Vector2f textureSize(static_cast<sf::Vector2f>(mSmokeTexture.getSize()));
-	mSmokes.back().setInitializer([&textureSize]()
+	smokes_.emplace_back(sf::Quads, 172);
+	smokes_.back().setEmitterPosition(pos);
+	smokes_.back().activateEmitter(true);
+	smokes_.back().setTexture(&smoke_texture_);
+	sf::Vector2f textureSize(static_cast<sf::Vector2f>(smoke_texture_.getSize()));
+	smokes_.back().setInitializer([&textureSize]()
 	{
 		pyro::Particle particle;
 
@@ -67,14 +64,20 @@ void SmokeSystem::addEmitterPosition(const sf::Vector2f& pos)
 
 		return std::move(particle);
 	});
-	mSmokes.back().setAffector([](pyro::Particle& particle, sf::Time dt)
+	smokes_.back().setAffector([](pyro::Particle& particle, sf::Time dt)
 	{
 		particle.position += particle.velocity * dt.asSeconds();
 	});
 }
 
-void SmokeSystem::update(sf::Time dt)
+void SmokeSystem::updateCurrent(sf::Time dt)
 {
-	for (auto& smoke : mSmokes)
+	for (auto& smoke : smokes_)
 		smoke.update(dt);
+}
+
+void SmokeSystem::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
+{
+	for (const auto& smoke : smokes_)
+		target.draw(smoke, states);
 }

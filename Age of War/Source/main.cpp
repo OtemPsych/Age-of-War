@@ -1,6 +1,7 @@
 #include "States/MenuState.h"
 #include "States/MultiplayerConnectState.h"
-#include "States/MultiplayerGameState.h"
+//#include "States/MultiplayerGameState.h"
+#include "States/GameState.h"
 #include "States/PauseState.h"
 #include "States/GameOverState.h"
 
@@ -17,7 +18,7 @@ int main()
 	app.setFPS(144);
 	app.registerState<MenuState>(pyro::StateID::Menu);
 	app.registerState<MultiplayerConnectState>(pyro::StateID::MultiplayerConnect);
-	app.registerState<MultiplayerGameState>(pyro::StateID::Multiplayer);
+	//app.registerState<MultiplayerGameState>(pyro::StateID::Multiplayer);
 	app.registerState<GameState>(pyro::StateID::Game);
 	app.registerState<PauseState>(pyro::StateID::Pause);
 	app.registerState<GameOverState>(pyro::StateID::GameOver);

@@ -1,27 +1,42 @@
 #ifndef UpgradeButtons_H_
 #define UpgradeButtons_H_
 
-#include "../UnitTurretData.h"
-
 #include <PYRO/GUI/Button.h>
 
 namespace gui
 {
-	template <typename T>
-	class UpgradeButtons : public sf::Transformable, public sf::Drawable, private sf::NonCopyable
+	template <typename T, typename K>
+	class UpgradeButtons : public pyro::SceneNode, private sf::NonCopyable
 	{
 	private:
-		using Buttons = std::vector<std::pair<pyro::gui::Button, sf::VertexArray>>;
-		using TData = std::vector<T>;
+		struct Button : public pyro::gui::Button {
+			pyro::VertexArrayNode*                overlay;
+			data::UnitTurretData::UpgradeStatType stat_type;
+
+			Button(const sf::Vector2f& button_size, sf::RenderWindow* window);
+		};
 	private:
-		Buttons      mButtons;
-		const TData& mTData;
+		using ButtonColors = std::pair<sf::Color, sf::Color>;
+		using TData = std::vector<std::unique_ptr<T>>;
+		using UpgradeButtonTextureHolder = pyro::TextureHolder<data::UnitTurretData::UpgradeStatType>;
+
+	public:
+		UpgradeButtons(const TData& data, const std::pair<std::vector<sf::Vector2f>, sf::Vector2f>& button_properties,
+					   sf::RenderWindow* window);
+		//UpgradeButtons(const TData& data, const sf::Vector2f& spawnButtonSize);
+	private:
+		void setup(const std::pair<std::vector<sf::Vector2f>, sf::Vector2f>& button_properties);
+		void setupResources();
 
 	private:
-		void setup(const sf::Vector2f& spawnButtonSize);
-		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-	public:
-		UpgradeButtons(const TData& data, const sf::Vector2f& spawnButtonSize);
+		const TData&                       data_;
+		sf::RenderWindow*                  window_;
+
+		UpgradeButtonTextureHolder         button_textures_;
+		std::vector<std::pair<Button*, K>> buttons_;
+		ButtonColors                       button_colors_;
+		//Buttons      mButtons;
+		//const TData& mTData;
 	};
 }
 #include "UpgradeButtons.inl"

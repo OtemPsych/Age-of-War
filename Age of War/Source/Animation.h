@@ -1,33 +1,26 @@
 #ifndef Animation_H_
 #define Animation_H_
 
-#include "UnitTurretData.h"
+#include <PYRO/SpriteNode.h>
 
-#include <SFML/System/Time.hpp>
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/Sprite.hpp>
-
-#include <vector>
-
-class Animation
+namespace data { struct AnimationData; }
+class Animation : public pyro::SceneNode
 {
-private:
-	sf::Sprite&		            mSprite;
-	data::UnitData::TextureData mTextureRects;
-	unsigned		            mCurrentRect;
-	sf::Time		            mTimePerRect;
-	sf::Time		            mElapsedTime;
-	const bool		            mRepeat;
-					            
-	bool			            mAnimationOngoing;
-
 public:
-	Animation(sf::Sprite& sprite, data::UnitData::TextureData& textureRects,
-			  sf::Time duration, bool repeat = false);
+	Animation(const data::AnimationData& animation_data, pyro::SpriteNode* node);
 public:
-	void update(sf::Time dt);
 	void restart();
+	inline bool isAnimationOngoing() const { return animation_ongoing_; }
+private:
+	void updateNodeProperties();
+	virtual void updateCurrent(sf::Time dt) override;
 
-	inline bool isAnimationOngoing() const { return mAnimationOngoing; }
+private:
+	const data::AnimationData& animation_data_;
+	pyro::SpriteNode*          node_;
+
+	unsigned                   current_rect_;
+	sf::Time                   elapsed_time_;
+	bool                       animation_ongoing_;
 };
 #endif

@@ -1,46 +1,54 @@
 #include "Animation.h"
+#include "DataTables.h"
 
-Animation::Animation(sf::Sprite& sprite, data::UnitData::TextureData& textureRects,
-					 sf::Time duration, bool repeat)
-	: mSprite(sprite)
-	, mTextureRects(textureRects)
-	, mCurrentRect(0)
-	, mTimePerRect(duration / static_cast<float>(textureRects.size()))
-	, mElapsedTime(sf::Time::Zero)
-	, mRepeat(repeat)
-	, mAnimationOngoing(true)
+Animation::Animation(const data::AnimationData& animation_data, pyro::SpriteNode* node)
+	: animation_data_(animation_data)
+	, node_(node)
+	, current_rect_(0)
+	, elapsed_time_(sf::Time::Zero)
+	, animation_ongoing_(true)
 {
-}
-
-void Animation::update(sf::Time dt)
-{
-	if (mAnimationOngoing && (mElapsedTime += dt) >= mTimePerRect)
-	{
-		if (mCurrentRect < mTextureRects.size() - 1 || mRepeat)
-		{
-			mSprite.setTextureRect(mTextureRects[mCurrentRect].first);
-
-			sf::FloatRect lBounds(mSprite.getLocalBounds());
-			sf::Vector2f origin(mTextureRects[mCurrentRect].second);
-			mSprite.setOrigin(origin.x * lBounds.width, origin.y * lBounds.height);
-
-			mElapsedTime = sf::Time::Zero;
-
-			if (mRepeat)
-				if (mCurrentRect < mTextureRects.size() - 1)
-					mCurrentRect++;
-				else
-					mCurrentRect = 0;
-			else
-				mCurrentRect++;
-		}
-		else
-			mAnimationOngoing = false;
-	}
+	updateNodeProperties();
 }
 
 void Animation::restart()
 {
-	mCurrentRect = 0;
-	mAnimationOngoing = true;
+	current_rect_ = 0;
+	animation_ongoing_ = true;
+}
+
+void Animation::updateNodeProperties()
+{
+	node_->setTextureRect(animation_data_.frames[current_rect_].texture_rect);
+
+	const sf::FloatRect node_lbounds(node_->getLocalBounds());
+	const sf::Vector2f& node_origin = animation_data_.frames[current_rect_].origin;
+	node_->setOrigin(node_origin.x * node_lbounds.width, node_origin.y * node_lbounds.height);
+}
+
+void Animation::updateCurrent(sf::Time dt)
+{
+	bool reached_end = !(current_rect_ < animation_data_.frames.size() - 1 || animation_data_.repeat);
+
+	if (animation_ongoing_ && !reached_end 
+		&& (elapsed_time_ += dt) >= animation_data_.frames[current_rect_].frame_duration) 
+	{
+		if (!reached_end || animation_data_.repeat) {
+			updateNodeProperties();
+			elapsed_time_ = sf::Time::Zero;
+
+			if (animation_data_.repeat) {
+				if (current_rect_ < animation_data_.frames.size() - 1)
+					current_rect_++;
+				else
+					current_rect_ = 0;
+			}
+			else {
+				current_rect_++;
+			}
+		}
+		else {
+			animation_ongoing_ = false;
+		}
+	}
 }

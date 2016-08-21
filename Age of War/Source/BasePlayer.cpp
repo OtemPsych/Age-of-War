@@ -1,126 +1,153 @@
 #include "BasePlayer.h"
 #include "Tools/TextureDataReader.h"
+#include "DataTables.h"
+#include "States/GameState.h"
 
-BasePlayer::BasePlayer(sf::RenderWindow& window, sf::IntRect worldBounds, sf::Font& font, const sf::Texture& baseTexture,
-	                   const pyro::TextureHolder<Unit::UnitType>& unitTextures,
-	                   const pyro::TextureHolder<Turret::TurretType>& turretTextures,
-	                   pyro::SoundPlayer<Unit::SoundID>& soundPlayer)
-	: Base(Side::Ally, worldBounds, font, baseTexture, unitTextures, turretTextures, soundPlayer)
-	, mCoinRotateAnimation(mCoinSprite, readTextureData("Coin", "Rotate"), sf::seconds(0.8f), true)
-	, mUnitButtons(mUnitData, window, unitTextures, sf::Vector2f(55.f, 60.f))
-	, mTurretButtons(mTurretData, window, turretTextures, sf::Vector2f(55.f, 25.f))
-	, mActiveTurretPlacementIndicators(false)
-	, mTurretIndicator(nullptr)
-	, mTurretPlacementIndicators(mTurretWindowRects, window)
-	, mWindow(window)
+BasePlayer::BasePlayer(const sf::FloatRect& world_bounds, const sf::Font& damage_font,
+	                   const pyro::TextureHolder<Unit::UnitType>& unit_textures,
+	                   const pyro::TextureHolder<Turret::TurretType>& turret_textures,
+	                   Side side, sf::RenderWindow* window, data::BaseData* base_data,
+	                   pyro::SoundPlayer<Unit::SoundID>* sound_player,
+					   const std::vector<pyro::SceneNode*>* scene_layers)
+	: Base(world_bounds, damage_font, unit_textures, turret_textures, side, base_data, sound_player, scene_layers)
+	, window_(window)
+	, coin_(nullptr)
+	, coin_text_(nullptr)
+	, coin_rotation_animation_(nullptr)
+	, unit_buttons_(nullptr)
+	, turret_buttons_(nullptr)
+	, unit_upgrade_buttons_(nullptr)
+	, turret_upgrade_buttons_(nullptr)
+	, active_turret_placement_indicators_(false)
+	, turret_indicator_(nullptr)
+	, turret_placement_indicators_(nullptr)
 {
-	setupGoldGUI();
-
-	mTurretPlacementIndicators.setPosition(getPosition());
+	init(world_bounds);
 }
 
-void BasePlayer::setupGoldGUI()
+void BasePlayer::modifyGold(int amount)
 {
-	mCoinTexture.loadFromFile("Assets/Textures/Coin.png");
-	mCoinSprite.setTexture(mCoinTexture);
-	mCoinSprite.setPosition(30.f, 30.f);
+	gold_ += amount;
+	updateGoldGUI();
+}
 
-	mCoinFont.loadFromFile("Assets/Fonts/Gold.ttf");
-	mCoinText.setFont(mCoinFont);
-	mCoinText.setCharacterSize(45);
-	mCoinText.setTextColor(sf::Color::Black);
-	mCoinText.activateShadow(true);
-	mCoinText.setShadowOffset(3.f, 2.f);
-	mCoinText.setShadowColor(sf::Color(255, 255, 255, 150));
-	mCoinText.setOriginFlags(pyro::utils::OriginFlag::Left | pyro::utils::OriginFlag::CenterY);
-	mCoinText.setPosition(60.f, mCoinSprite.getPosition().y);
+void BasePlayer::init(const sf::FloatRect& world_bounds)
+{
+	// Init Camera
+	auto camera(std::make_unique<Camera>(world_bounds, window_));
+
+	// Init Spawn Buttons
+	auto unit_buttons(std::make_unique<UnitSpawnButtons>(unit_data_, unit_textures_, sf::Vector2f(65.f, 70.f), window_));
+	unit_buttons->setPosition(window_->getSize().x / 2.f, 10.f);
+	unit_buttons_ = unit_buttons.get();
+
+	auto turret_buttons(std::make_unique<TurretSpawnButtons>(turret_data_, turret_textures_, sf::Vector2f(65.f, 30.f), window_));
+	turret_buttons->setPosition(window_->getSize().x / 4.f, 10.f);
+	turret_buttons_ = turret_buttons.get();
+
+	// Init Upgrade Buttons
+	auto unit_upgrade_buttons(std::make_unique<UnitUpgradeButtons>(unit_data_, unit_buttons_->getButtonProperties(),
+		window_));
+	unit_upgrade_buttons_ = unit_upgrade_buttons.get();
+	camera->attachChild(std::move(unit_upgrade_buttons));
+	camera->attachChild(std::move(unit_buttons));
+
+	auto turret_upgrade_buttons(std::make_unique<TurretUpgradeButtons>(turret_data_, turret_buttons_->getButtonProperties(),
+		window_));
+	turret_upgrade_buttons_ = turret_upgrade_buttons.get();
+	camera->attachChild(std::move(turret_upgrade_buttons));
+	camera->attachChild(std::move(turret_buttons));
+
+	// Init Coin
+	coin_texture_.loadFromFile("Assets/Textures/Coin.png");
+	auto coin(std::make_unique<pyro::SpriteNode>(coin_texture_));
+	coin->setPosition(30.f, 30.f);
+
+	coin_font_.loadFromFile("Assets/Fonts/Gold.ttf");
+	auto coin_text(std::make_unique<pyro::Text>());
+	coin_text->setFont(coin_font_);
+	coin_text->setCharacterSize(45);
+	coin_text->setTextColor(sf::Color::Black);
+	coin_text->activateShadow(true);
+	coin_text->setShadowOffset(3.f, 2.f);
+	coin_text->setShadowColor(sf::Color(255, 255, 255, 150));
+	coin_text->setOriginFlags(pyro::utils::OriginFlag::Left | pyro::utils::OriginFlag::CenterY);
+	coin_text->setPosition(60.f, coin->getPosition().y);
+
+	coin_rotation_animation_data_.frames = std::move(readTextureData("Coin", "Rotate"));
+	coin_rotation_animation_data_.repeat = true;
+	coin_rotation_animation_data_.total_duration = sf::seconds(0.8f);
+	data::setupIndividualAnimation(&coin_rotation_animation_data_);
+	auto coin_rotation_animation(std::make_unique<Animation>(coin_rotation_animation_data_, coin.get()));
+	coin->attachChild(std::move(coin_rotation_animation));
+
+	coin_ = coin.get();
+	coin_text_ = coin_text.get();
+	camera->attachChild(std::move(coin));
+	camera->attachChild(std::move(coin_text));
+
+	// Init Turret Placement Indicators
+	auto turret_placement_indicators(std::make_unique<gui::TurretPlacementIndicators>(turret_window_rects_, window_));
+	turret_placement_indicators->activateDrawing(ActivationTarget::Both, false);
+	turret_placement_indicators->setPosition(getLocalBounds().width / 2.f, getLocalBounds().height / 2.f + 15.f);
+
+	turret_placement_indicators_ = turret_placement_indicators.get();
+	attachChild(std::move(turret_placement_indicators));
+
+	scene_layers_->at(GameState::Gui)->attachChild(std::move(camera));
+
 	updateGoldGUI();
 }
 
 void BasePlayer::updateGoldGUI()
 {
-	mUnitButtons.updateButtonOverlay(mGold);
-	mTurretButtons.updateButtonOverlay(mGold);
+	unit_buttons_->updateButtonOverlay(gold_);
+	turret_buttons_->updateButtonOverlay(gold_);
 
-	mCoinText.setString(std::to_string(mGold));
+	coin_text_->setString(std::to_string(gold_));
 }
 
-void BasePlayer::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void BasePlayer::handleEventCurrent(const sf::Event& event)
 {
-	Base::draw(target, states);
-
-	if (mActiveTurretPlacementIndicators) {
-		target.draw(mTurretPlacementIndicators, states.transform * getTransform());
-		target.draw(*mTurretIndicator, states);
-	}
-
-	target.draw(mUnitButtons, states);
-	target.draw(mTurretButtons, states);
-
-	target.draw(mCoinSprite, states);
-	target.draw(mCoinText, states);
-}
-
-void BasePlayer::updateGUIPositions()
-{
-	const float viewCenterX = mWindow.getView().getCenter().x;
-	const float halfViewX = mWindow.getView().getSize().x / 2.f;
-
-	mUnitButtons.setPosition(viewCenterX - halfViewX, mUnitButtons.getPosition().y);
-	mTurretButtons.setPosition(viewCenterX - halfViewX, mTurretButtons.getPosition().y);
-	mCoinSprite.setPosition(viewCenterX - halfViewX + 30.f, mCoinSprite.getPosition().y);
-	mCoinText.setPosition(viewCenterX - halfViewX + 60.f, mCoinSprite.getPosition().y);
-}
-
-void BasePlayer::handleEvent(const sf::Event& event)
-{
-	int i = mUnitButtons.handleEvent(event);
-	if (i != -1)
+	int i = unit_buttons_->getTypeClicked();
+	if (i >= 0)
 		handleUnitSpawn(static_cast<Unit::UnitType>(i));
 
-	int j = mTurretButtons.handleEvent(event);
-	if (j != -1 && mGold >= mTurretData[j].cost) {
-		mActiveTurretPlacementIndicators = true;
-		mTurretTypeToSpawn = j;
+	int j = turret_buttons_->getTypeClicked();
+	if (j >= 0 && gold_ >= turret_data_[j]->cost) {
+		active_turret_placement_indicators_ = true;
+		turret_type_to_spawn_ = j;
+		turret_placement_indicators_->activateDrawing(ActivationTarget::Both, true);
 
-		mTurretIndicator = std::make_unique<sf::RectangleShape>(mTurretButtons.getButtonBox(j));
-		sf::FloatRect lBounds(mTurretIndicator->getLocalBounds());
-		mTurretIndicator->setOrigin(lBounds.width / 3.f, lBounds.height / 3.f);
-		mTurretIndicator->setOutlineThickness(0.f);
+		auto turret_indicator = std::move(turret_buttons_->getButtonBox(j));
+		sf::FloatRect lbounds(turret_indicator->getLocalBounds());
+		turret_indicator->setOrigin(lbounds.width / 3.f, lbounds.height / 3.f);
+		turret_indicator_ = turret_indicator.get();
+		scene_layers_->at(GameState::Gui)->attachChild(std::move(turret_indicator));
 	}
 
-	if (mActiveTurretPlacementIndicators)
-	{
-		if (mTurretPlacementIndicators.handleEvent(event)) {
-			handleTurretSpawn(static_cast<Turret::TurretType>(mTurretTypeToSpawn), mTurretPlacementIndicators.getTurretIndicator());
-			mActiveTurretPlacementIndicators = false;
-			mTurretTypeToSpawn = -1;
-			mTurretIndicator.reset();
+	if (active_turret_placement_indicators_ && event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+		if (turret_placement_indicators_->getTurretIndicator() != -1) {
+			handleTurretSpawn(static_cast<Turret::TurretType>(turret_type_to_spawn_), turret_placement_indicators_->getTurretIndicator());
+			active_turret_placement_indicators_ = false;
+			turret_type_to_spawn_ = -1;
+			scene_layers_->at(GameState::Gui)->detachChild(*turret_indicator_);
+			turret_indicator_ = nullptr;
+			turret_placement_indicators_->activateDrawing(ActivationTarget::Both, false);
 		}
-		else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
-			mActiveTurretPlacementIndicators = false;
-			mTurretIndicator.reset();
+		else {
+			active_turret_placement_indicators_ = false;
+			scene_layers_->at(GameState::Gui)->detachChild(*turret_indicator_);
+			turret_indicator_ = nullptr;
+			turret_placement_indicators_->activateDrawing(ActivationTarget::Both, false);
 		}
 	}
 }
 
-void BasePlayer::update(sf::Time dt)
+void BasePlayer::updateCurrent(sf::Time dt)
 {
-	Base::update(dt);
-
-	mUnitButtons.update();
-	mTurretButtons.update();
-
-	if (mActiveTurretPlacementIndicators) {
-		mTurretPlacementIndicators.update();
-		mTurretIndicator->setPosition(static_cast<sf::Vector2f>(sf::Mouse::getPosition(mWindow)));
+	Base::updateCurrent(dt);
+	if (turret_indicator_) {
+		turret_indicator_->setPosition(window_->mapPixelToCoords(sf::Mouse::getPosition(*window_)));
 	}
-
-	mCoinRotateAnimation.update(dt);
-}
-
-void BasePlayer::modifyGold(int amount)
-{
-	mGold += amount;
-	updateGoldGUI();
 }

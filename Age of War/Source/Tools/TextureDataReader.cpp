@@ -4,10 +4,10 @@
 #include <iostream>
 #include <string>
 
-data::UnitData::TextureData readTextureData(const std::string& unit_name,
-	                                        const std::string& anim_type)
+std::vector<data::AnimationFrame> readTextureData(const std::string& unit_name,
+	                                              const std::string& anim_type)
 {
-	data::UnitData::TextureData data;
+	std::vector<data::AnimationFrame> frame_data;
 
 	std::ifstream fin("Assets/TextureData/" + unit_name + "Data.json", std::ios::in);
 	if (fin.is_open()) 
@@ -32,7 +32,7 @@ data::UnitData::TextureData readTextureData(const std::string& unit_name,
 			fin.seekg((size_t)fin.tellg() - (strRead.length() + 1));
 
 				// Find Rect Start
-			sf::IntRect rect;
+			sf::FloatRect rect;
 			char ch;
 			do {
 				fin.get(ch);
@@ -59,10 +59,10 @@ data::UnitData::TextureData readTextureData(const std::string& unit_name,
 				return value;
 			});
 
-			rect.left = std::stoi(findNextValue());
-			rect.top = std::stoi(findNextValue());
-			rect.width = std::stoi(findNextValue());
-			rect.height = std::stoi(findNextValue());
+			rect.left = std::stof(findNextValue());
+			rect.top = std::stof(findNextValue());
+			rect.width = std::stof(findNextValue());
+			rect.height = std::stof(findNextValue());
 
 			// Find Pivot
 			for (unsigned i = 0; i < 6; i++)
@@ -79,7 +79,9 @@ data::UnitData::TextureData readTextureData(const std::string& unit_name,
 			origin.x = std::stof(findNextValue());
 			origin.y = std::stof(findNextValue());
 
-			data.push_back(std::make_pair(rect, origin));
+			frame_data.emplace_back();
+			frame_data.back().texture_rect = rect;
+			frame_data.back().origin = origin;
 		}
 
 		fin.close();
@@ -87,5 +89,5 @@ data::UnitData::TextureData readTextureData(const std::string& unit_name,
 	else
 		std::cerr << "Unable to open file: " << unit_name << "Data.json" << std::endl;
 
-	return std::move(data);
+	return std::move(frame_data);
 }

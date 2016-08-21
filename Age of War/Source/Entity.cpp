@@ -1,42 +1,21 @@
 #include "Entity.h"
+#include "DataTables.h"
 
-#include <SFML/Graphics/RenderTarget.hpp>
-
-Entity::Entity(Side side, EntityType entityType, const sf::Texture& texture)
-	: mSide(side)
-	, mEntityType(entityType)
-	, mSprite(texture)
+Entity::Entity(Side side, data::EntityData* entity_data)
+	: SpriteNode(*entity_data->texture)
+	, side_(side)
+	, entity_data_(entity_data)
 {
-	setup();
-}
-
-Entity::Entity(Side side, EntityType entityType, const sf::Texture& texture, sf::IntRect rect)
-	: mSide(side)
-	, mEntityType(entityType)
-	, mSprite(texture, rect)
-{
-	setup();
+	setOriginFlags(pyro::utils::OriginFlag::Center);
+	scale(side_ == Side::Enemy ? -entity_data_->scale : entity_data_->scale,
+		  entity_data_->scale);
 }
 
 Entity::~Entity()
 {
 }
 
-void Entity::setup()
+Entity::EntityType Entity::getEntityType() const
 {
-	sf::FloatRect lBounds(mSprite.getLocalBounds());
-	mSprite.setOrigin(lBounds.width / 2.f, lBounds.height / 2.f);
-
-	if (mSide == Side::Enemy)
-		scale(-1.f, 1.f);
-}
-
-void Entity::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-	target.draw(mSprite, states.transform *= getTransform());
-}
-
-sf::FloatRect Entity::getGlobalBounds() const
-{
-	return getTransform().transformRect(mSprite.getGlobalBounds());
+	return entity_data_->entity_type;
 }

@@ -3,40 +3,41 @@
 
 #include "../Unit.h"
 
-#include <SFML/Graphics/RectangleShape.hpp>
-
 #include <queue>
 #include <array>
 
 namespace gui
 {
-	class UnitQueue : public sf::Transformable, public sf::Drawable, private sf::NonCopyable
+	class UnitQueue : public pyro::SceneNode, private sf::NonCopyable
 	{
 	private:
 		enum class Identifier { Fill, Empty };
 	public:
 		struct UnitData {
+			UnitData(Unit::UnitType type, sf::Time spawn_time);
+
 			Unit::UnitType type;
-			sf::Time       spawn;
-
-			UnitData(Unit::UnitType pType, sf::Time pSpawn);
+			sf::Time       spawn_time;
 		};
-	private:
-		std::queue<UnitData>			  mQueue;
-		std::array<sf::RectangleShape, 5> mIdentifiers;
 
-	private:
-		void update(const Identifier& id);
-		void setupIdentifiers(sf::FloatRect spawnBarBounds);
-		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	public:
-		explicit UnitQueue(sf::FloatRect spawnBarBounds);
+		explicit UnitQueue(const sf::FloatRect& spawn_bar_bounds);
 	public:
-		void push(const UnitData& data);
+		void push(const UnitData& unit_data);
 		UnitData getNextUnitData();
 
-		inline bool empty() const { return mQueue.size() == 0; }
-		inline bool full() const { return mQueue.size() == mIdentifiers.size(); }
+		virtual sf::FloatRect getLocalBounds() const override;
+
+		inline bool empty() const { return queue_.size() == 0; }
+		inline bool full() const { return queue_.size() == identifiers_.size(); }
+	private:
+		void updateIdentifiers(Identifier id);
+		void setupIdentifiers(const sf::FloatRect& spawn_bar_bounds);
+		virtual void updateCurrent(sf::Time dt) override;
+
+	private:
+		std::queue<UnitData>                  queue_;
+		std::array<pyro::VertexArrayNode*, 5> identifiers_;
 	};
 }
 #endif
